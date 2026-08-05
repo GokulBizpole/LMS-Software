@@ -1,0 +1,572 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+// ================= ENUMS =================
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+
+enum PartnerStatus {
+  ACTIVE
+  INACTIVE
+}
+
+
+enum CustomerStatus {
+  ACTIVE
+  CLOSED
+  BLOCKED
+}
+
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  CLOSED
+  OVERDUE
+  REJECTED
+}
+
+
+enum PaymentFrequency {
+  WEEKLY
+  MONTHLY
+}
+
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  LATE
+}
+
+
+enum PaymentMethod {
+  CASH
+  UPI
+  BANK_TRANSFER
+}
+
+
+enum ExpenseCategory {
+  OFFICE
+  SALARY
+  PETROL
+  ELECTRICITY
+  RENT
+  OTHER
+}
+
+
+
+// ================= ADMIN =================
+
+
+model Admin {
+
+  id          String      @id @default(uuid())
+
+  name        String      @db.VarChar(100)
+
+  email       String      @unique @db.VarChar(150)
+
+  password    String      @db.VarChar(255)
+
+  role        AdminRole   @default(SUPER_ADMIN)
+
+  isActive    Boolean     @default(true)
+
+
+  auditLogs   AuditLog[]
+
+
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+
+
+  @@map("admins")
+}
+
+
+
+// ================= PARTNER =================
+
+
+model Partner {
+
+  id                String        @id @default(uuid())
+
+
+  partnerCode       String        @unique @db.VarChar(20)
+
+
+  name              String        @db.VarChar(100)
+
+  phone             String        @unique @db.VarChar(15)
+
+  email             String?       @unique @db.VarChar(150)
+
+  address           String?       @db.Text
+
+
+
+  investmentAmount  Decimal       @db.Decimal(15,2)
+
+  currentBalance    Decimal       @db.Decimal(15,2)
+
+
+
+  status            PartnerStatus @default(ACTIVE)
+
+
+
+  loans             Loan[]
+
+  expenses          Expense[]
+
+
+
+  createdAt         DateTime @default(now())
+
+  updatedAt         DateTime @updatedAt
+
+
+
+  @@map("partners")
+}
+
+
+
+// ================= CUSTOMER =================
+
+
+model Customer {
+
+
+  id                String          @id @default(uuid())
+
+
+  customerCode      String          @unique @db.VarChar(20)
+
+
+  name              String          @db.VarChar(100)
+
+
+  phone             String          @unique @db.VarChar(15)
+
+  alternatePhone    String?         @db.VarChar(15)
+
+
+
+  aadhaarNumber     String?         @unique @db.VarChar(20)
+
+  panNumber         String?         @unique @db.VarChar(20)
+
+
+
+  address           String?         @db.Text
+
+  city              String?         @db.VarChar(100)
+
+  state             String?         @db.VarChar(100)
+
+  pincode           String?         @db.VarChar(10)
+
+
+
+  guarantorName     String?         @db.VarChar(100)
+
+  guarantorPhone    String?         @db.VarChar(15)
+
+
+
+  status            CustomerStatus  @default(ACTIVE)
+
+
+
+  loans             Loan[]
+
+  documents         CustomerDocument[]
+
+
+
+  createdAt         DateTime @default(now())
+
+  updatedAt         DateTime @updatedAt
+
+
+
+  @@index([phone])
+
+  @@map("customers")
+}
+
+
+
+// ================= LOAN =================
+
+
+model Loan {
+
+
+  id                  String          @id @default(uuid())
+
+
+  loanNumber          String          @unique @db.VarChar(30)
+
+
+
+  customerId          String
+
+  partnerId           String
+
+
+
+  customer            Customer        @relation(fields:[customerId], references:[id])
+
+  partner             Partner         @relation(fields:[partnerId], references:[id])
+
+
+
+  principalAmount     Decimal         @db.Decimal(15,2)
+
+  interestPercentage  Decimal         @db.Decimal(5,2)
+
+  interestAmount      Decimal         @db.Decimal(15,2)
+
+  totalPayable        Decimal         @db.Decimal(15,2)
+
+  balanceAmount       Decimal         @db.Decimal(15,2)
+
+
+
+  paymentFrequency    PaymentFrequency
+
+
+
+  duration            Int
+
+
+  installmentAmount   Decimal         @db.Decimal(15,2)
+
+
+  paidInstallments    Int             @default(0)
+
+
+  totalInstallments   Int
+
+
+
+  penaltyPercentage   Decimal?        @db.Decimal(5,2)
+
+  penaltyAmount       Decimal?        @db.Decimal(15,2)
+
+
+
+  status              LoanStatus      @default(PENDING)
+
+
+
+  approvedBy          String?
+
+  approvedAt          DateTime?
+
+
+
+  startDate           DateTime?
+
+  endDate             DateTime?
+
+
+
+  remarks             String?         @db.Text
+
+
+
+  payments            Payment[]
+
+  schedules           LoanSchedule[]
+
+
+
+  createdAt           DateTime @default(now())
+
+  updatedAt           DateTime @updatedAt
+
+
+
+  @@index([customerId])
+
+  @@index([partnerId])
+
+
+  @@map("loans")
+}
+
+
+
+// ================= PAYMENT =================
+
+
+model Payment {
+
+
+  id                 String          @id @default(uuid())
+
+
+  receiptNumber      String          @unique @db.VarChar(30)
+
+
+
+  loanId             String
+
+  scheduleId         String?
+
+
+
+  loan               Loan            @relation(fields:[loanId], references:[id])
+
+
+  schedule           LoanSchedule?   @relation(fields:[scheduleId], references:[id])
+
+
+
+  installmentNumber  Int
+
+
+
+  amount             Decimal         @db.Decimal(15,2)
+
+
+  penalty            Decimal         @default(0) @db.Decimal(15,2)
+
+
+  totalReceived      Decimal         @db.Decimal(15,2)
+
+
+
+  paymentMethod      PaymentMethod
+
+
+
+  paymentStatus      PaymentStatus   @default(PENDING)
+
+
+
+  paidAt             DateTime?
+
+
+
+  remarks            String?         @db.Text
+
+
+
+  createdAt          DateTime @default(now())
+
+  updatedAt          DateTime @updatedAt
+
+
+
+  @@index([loanId])
+
+
+  @@map("payments")
+}
+
+
+
+// ================= EXPENSE =================
+
+
+model Expense {
+
+
+  id              String          @id @default(uuid())
+
+
+  partnerId       String
+
+
+  partner         Partner         @relation(fields:[partnerId], references:[id])
+
+
+  category        ExpenseCategory
+
+
+  amount          Decimal         @db.Decimal(15,2)
+
+
+  description     String?         @db.Text
+
+
+  expenseDate     DateTime
+
+
+
+  createdAt       DateTime @default(now())
+
+
+
+  @@map("expenses")
+}
+
+
+
+// ================= CUSTOMER DOCUMENT =================
+
+
+model CustomerDocument {
+
+
+  id              String @id @default(uuid())
+
+
+  customerId      String
+
+
+  customer        Customer @relation(fields:[customerId], references:[id])
+
+
+
+  documentType    String @db.VarChar(100)
+
+
+  fileName        String @db.VarChar(255)
+
+
+  filePath        String @db.Text
+
+
+
+  uploadedAt      DateTime @default(now())
+
+
+
+  @@map("customer_documents")
+}
+
+
+
+// ================= AUDIT LOG =================
+
+
+model AuditLog {
+
+
+  id          String @id @default(uuid())
+
+
+  adminId     String?
+
+
+  admin       Admin? @relation(fields:[adminId], references:[id])
+
+
+  action      String @db.VarChar(150)
+
+
+  tableName   String @db.VarChar(100)
+
+
+  recordId    String @db.VarChar(100)
+
+
+  ipAddress   String? @db.VarChar(50)
+
+
+
+  createdAt   DateTime @default(now())
+
+
+
+  @@map("audit_logs")
+}
+
+
+
+// ================= LOAN SCHEDULE =================
+
+
+model LoanSchedule {
+
+
+  id              String @id @default(uuid())
+
+
+  loanId          String
+
+
+  loan            Loan @relation(fields:[loanId], references:[id])
+
+
+
+  installmentNo   Int
+
+
+  dueDate         DateTime
+
+
+  amount          Decimal @db.Decimal(15,2)
+
+
+  penalty         Decimal @default(0) @db.Decimal(15,2)
+
+
+
+  isPaid          Boolean @default(false)
+
+
+  paidDate        DateTime?
+
+
+
+  payments        Payment[]
+
+
+
+  createdAt       DateTime @default(now())
+
+
+
+  @@map("loan_schedule")
+}
+
+
+
+// ================= SETTINGS =================
+
+
+model Setting {
+
+
+  id          String @id @default(uuid())
+
+
+  key         String @unique
+
+
+  value       String @db.Text
+
+
+
+  createdAt   DateTime @default(now())
+
+
+  updatedAt   DateTime @updatedAt
+
+
+
+  @@map("settings")
+}
