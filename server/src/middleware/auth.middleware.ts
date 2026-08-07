@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-interface JwtPayload {
-  id: string;
-  role: string;
-}
+import { env } from "../config/env";
 
 export interface AuthRequest extends Request {
-  user?: JwtPayload;
+  user?: {
+    id: string;
+    role?: string;
+    type: "ADMIN" | "PARTNER";
+  };
 }
 
 export const authenticate = (
@@ -18,27 +18,28 @@ export const authenticate = (
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Token is required",
+        message: "Access token missing",
       });
     }
 
     const token = authHeader.split(" ")[1];
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as JwtPayload;
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
+      id: string;
+      role?: string;
+      type: "ADMIN" | "PARTNER";
+    };
 
     req.user = decoded;
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       success: false,
-      message: "Invalid token",
+      message: "Invalid or expired token",
     });
   }
 };

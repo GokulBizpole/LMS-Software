@@ -1,104 +1,123 @@
 import { Request, Response } from "express";
-import { createCustomer, deleteCustomerById, getAllCustomers, getCustomerById, updateCustomerById } from "../services/customer.service";
+import {
+  createCustomer,
+  deleteCustomerById,
+  getAllCustomers,
+  getCustomerById,
+  updateCustomerById,
+} from "../services/customer.service";
 
-export const addCustomer = async (
-  req: Request,
-  res: Response
-) => {
+// ================= CREATE CUSTOMER =================
+export const addCustomer = async (req: any, res: Response) => {
   try {
-    const customer = await createCustomer(req.body);
+    const customer = await createCustomer(
+      req.body,
+      req.user?.id,
+      req.ip
+    );
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Customer created successfully",
       data: customer,
     });
-  } catch (error) {
-    return res.status(400).json({
+  } catch (error: any) {
+    res.status(400).json({
       success: false,
-      message: (error as Error).message,
+      message: error.message,
     });
   }
 };
-export const getCustomers = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const customers = await getAllCustomers();
 
-    return res.status(200).json({
+// ================= GET ALL CUSTOMERS =================
+export const getCustomers = async (req: Request, res: Response) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = (req.query.search as string) || "";
+    const sortBy = (req.query.sortBy as string) || "createdAt";
+    const order = (req.query.order as "asc" | "desc") || "desc";
+
+    const result = await getAllCustomers(
+      page,
+      limit,
+      search,
+      sortBy,
+      order
+    );
+
+    res.status(200).json({
       success: true,
-      data: customers,
+      ...result,
     });
-  } catch (error) {
-    return res.status(500).json({
+  } catch (error: any) {
+    res.status(500).json({
       success: false,
-      message: (error as Error).message,
+      message: error.message,
     });
   }
 };
 
-export const getCustomer = async (
-  req: Request,
-  res: Response
-) => {
+// ================= GET CUSTOMER =================
+export const getCustomer = async (req: any, res: Response) => {
   try {
-    const id = String(req.params.id);
+    const customer = await getCustomerById(
+      req.params.id as string
+    );
 
-    const customer = await getCustomerById(id);
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: customer,
     });
-  } catch (error) {
-    return res.status(404).json({
+  } catch (error: any) {
+    res.status(404).json({
       success: false,
-      message: (error as Error).message,
+      message: error.message,
     });
   }
 };
-export const updateCustomer = async (
-  req: Request,
-  res: Response
-) => {
+
+// ================= UPDATE CUSTOMER =================
+export const updateCustomer = async (req: any, res: Response) => {
   try {
-    const id = String(req.params.id);
+    const customer = await updateCustomerById(
+      req.params.id as string,
+      req.body,
+      req.user?.id,
+      req.ip
+    );
 
-    const customer = await updateCustomerById(id, req.body);
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Customer updated successfully",
       data: customer,
     });
-  } catch (error) {
-    return res.status(400).json({
+  } catch (error: any) {
+    res.status(400).json({
       success: false,
-      message: (error as Error).message,
+      message: error.message,
     });
   }
 };
 
-export const deleteCustomer = async (
-  req: Request,
-  res: Response
-) => {
+// ================= DELETE CUSTOMER =================
+export const deleteCustomer = async (req: any, res: Response) => {
   try {
-    const id = String(req.params.id);
+    const customer = await deleteCustomerById(
+      req.params.id as string,
+      req.user?.id,
+      req.ip
+    );
 
-    const customer = await deleteCustomerById(id);
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      message: "Customer blocked successfully",
+      message: "Customer deleted successfully",
       data: customer,
     });
-  } catch (error) {
-    return res.status(404).json({
+  } catch (error: any) {
+    res.status(400).json({
       success: false,
-      message: (error as Error).message,
+      message: error.message,
     });
   }
 };

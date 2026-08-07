@@ -1,4 +1,5 @@
 import prisma from "../config/db";
+import { createAuditLog } from "./audit.service";
 
 interface CreateCustomerData {
   customerCode: string;
@@ -31,7 +32,9 @@ interface UpdateCustomerData {
 }
 
 export const createCustomer = async (
-  data: CreateCustomerData
+  data: CreateCustomerData,
+  adminId?: string,
+  ipAddress?: string
 ) => {
   const existingCustomer = await prisma.customer.findFirst({
     where: {
@@ -52,16 +55,74 @@ export const createCustomer = async (
     throw new Error("Customer already exists");
   }
 
-  return prisma.customer.create({
-    data,
-  });
+  const customer = await prisma.customer.create({
+  data,
+});
+
+await createAuditLog({
+  adminId,
+  action: "CREATE",
+  tableName: "CUSTOMER",
+  recordId: customer.id,
+  ipAddress,
+});
+
+return customer;
 };
-export const getAllCustomers = async () => {
-  return await prisma.customer.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+export const getAllCustomers = async (
+  page = 1,
+  limit = 10,
+  search = "",
+  sortBy = "createdAt",
+  order: "asc" | "desc" = "desc"
+) => {
+  const skip = (page - 1) * limit;
+
+  // const where = search
+  //   ? {
+  //       OR: [
+  //         {
+  //           name: {
+  //             contains: search,
+  //             mode: "insensitive" as const,
+  //           },
+  //         },
+  //         {
+  //           phone: {
+  //             contains: search,
+  //           },
+  //         },
+  //         {
+  //           customerCode: {
+  //             contains: search,
+  //           },
+  //         },
+  //       ],
+  //     }
+  //   : {};
+
+  const [customers, total] = await Promise.all([
+    prisma.customer.findMany({
+      // where,
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+
+    prisma.customer.count({
+      // where,
+    }),
+  ]);
+
+  return {
+    customers,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const getCustomerById = async (id: string) => {
@@ -79,7 +140,9 @@ export const getCustomerById = async (id: string) => {
 };
 export const updateCustomerById = async (
   id: string,
-  data: UpdateCustomerData
+  data: UpdateCustomerData,
+  adminId?: string,
+  ipAddress?: string
 ) => {
   const customer = await prisma.customer.findUnique({
     where: { id },
@@ -89,13 +152,28 @@ export const updateCustomerById = async (
     throw new Error("Customer not found");
   }
 
-  return prisma.customer.update({
+  const updatedCustomer = await prisma.customer.update({
     where: { id },
     data,
   });
+
+  await createAuditLog({
+    adminId,
+    action: "UPDATE",
+    tableName: "CUSTOMER",
+    recordId: customer.id,
+    ipAddress,
+  });
+
+  return updatedCustomer;
 };
 
-export const deleteCustomerById = async (id: string) => {
+
+export const deleteCustomerById = async (
+  id: string,
+  adminId?: string,
+  ipAddress?: string
+) => {
   const customer = await prisma.customer.findUnique({
     where: { id },
   });
@@ -104,10 +182,20 @@ export const deleteCustomerById = async (id: string) => {
     throw new Error("Customer not found");
   }
 
-  return prisma.customer.update({
+  const deletedCustomer = await prisma.customer.update({
     where: { id },
     data: {
       status: "BLOCKED",
     },
   });
+
+  await createAuditLog({
+    adminId,
+    action: "DELETE",
+    tableName: "CUSTOMER",
+    recordId: customer.id,
+    ipAddress,
+  });
+
+  return deletedCustomer;
 };

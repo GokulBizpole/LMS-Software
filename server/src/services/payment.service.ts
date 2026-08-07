@@ -1,4 +1,5 @@
 import prisma from "../config/db";
+import { createAuditLog } from "./audit.service";
 
 interface CreatePaymentData {
   loanId: string;
@@ -8,12 +9,31 @@ interface CreatePaymentData {
   remarks?: string;
 }
 
+
 export const createPayment = async (
-  data: CreatePaymentData
+  data: CreatePaymentData,
+  adminId?: string,
+  ipAddress?: string
 ) => {
+
+  
   const loan = await prisma.loan.findUnique({
-    where: { id: data.loanId },
-  });
+  where: {
+    id: data.loanId,
+  },
+});
+
+if (!loan) {
+  throw new Error("Loan not found");
+}
+
+// 👇 ADD THIS
+if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
+  throw new Error(
+    "Loan must be approved before collecting payment"
+  );
+}
+  
 
   if (!loan) {
     throw new Error("Loan not found");
@@ -34,52 +54,211 @@ export const createPayment = async (
     throw new Error("Installment already paid");
   }
 
-  // Next step-la payment save pannuvom...
+  if (Number(data.amount) !== Number(schedule.amount)) {
+    throw new Error(
+      `Invalid installment amount. Expected ${schedule.amount}`
+    );
+  }
 
-  const receiptNumber = `RCP${Date.now()}`;
+  const receiptCount = await prisma.payment.count();
 
-const payment = await prisma.$transaction(async (tx) => {
-  const payment = await tx.payment.create({
-    data: {
-      receiptNumber,
-      loanId: data.loanId,
-      installmentNumber: data.installmentNumber,
-      amount: data.amount,
-      penalty: schedule.penalty,
-      totalReceived: data.amount + Number(schedule.penalty),
-      paymentMethod: data.paymentMethod,
-      paymentStatus: "PAID",
-      paidAt: new Date(),
-      remarks: data.remarks,
-    },
+  const receiptNumber =
+    "RCP" + String(receiptCount + 1).padStart(6, "0");
+
+  const payment = await prisma.$transaction(async (tx) => {
+    const createdPayment = await tx.payment.create({
+      data: {
+        receiptNumber,
+        loanId: data.loanId,
+        scheduleId: schedule.id,
+        installmentNumber: data.installmentNumber,
+        amount: data.amount,
+        penalty: schedule.penalty,
+        totalReceived:
+          Number(data.amount) + Number(schedule.penalty),
+        paymentMethod: data.paymentMethod,
+        paymentStatus: "PAID",
+        paidAt: new Date(),
+        remarks: data.remarks,
+      },
+    });
+
+    await tx.loanSchedule.update({
+      where: {
+        id: schedule.id,
+      },
+      data: {
+        isPaid: true,
+        paidDate: new Date(),
+      },
+    });
+
+    const updatedLoan = await tx.loan.update({
+      where: {
+        id: data.loanId,
+      },
+      data: {
+        balanceAmount: {
+          decrement: data.amount,
+        },
+        paidInstallments: {
+          increment: 1,
+        },
+      },
+    });
+
+    if (Number(updatedLoan.balanceAmount) <= 0) {
+      await tx.loan.update({
+        where: {
+          id: data.loanId,
+        },
+        data: {
+          balanceAmount: 0,
+          status: "CLOSED",
+        },
+      });
+    }
+
+    return createdPayment;
   });
 
-  await tx.loanSchedule.update({
-    where: {
-      id: schedule.id,
-    },
-    data: {
-      isPaid: true,
-      paidDate: new Date(),
-    },
-  });
-
-  await tx.loan.update({
-    where: {
-      id: data.loanId,
-    },
-    data: {
-      balanceAmount: {
-        decrement: data.amount,
-      },
-      paidInstallments: {
-        increment: 1,
-      },
-    },
+  await createAuditLog({
+    adminId,
+    action: "CREATE",
+    tableName: "PAYMENT",
+    recordId: payment.id,
+    ipAddress,
   });
 
   return payment;
-});
+};
 
-return payment;
+export const getAllPayments = async (
+  page = 1,
+  limit = 10,
+  search = "",
+  sortBy = "paidAt",
+  order: "asc" | "desc" = "desc"
+) => {
+  const skip = (page - 1) * limit;
+
+  const where = search
+    ? {
+        OR: [
+          {
+            receiptNumber: {
+              contains: search,
+            },
+          },
+          {
+            loan: {
+              loanNumber: {
+                contains: search,
+              },
+            },
+          },
+          {
+            loan: {
+              customer: {
+                name: {
+                  contains: search,
+                },
+              },
+            },
+          },
+        ],
+      }
+    : {};
+
+  const allowedSortFields = [
+    "paidAt",
+    "amount",
+    "receiptNumber",
+    "createdAt",
+  ];
+
+  const finalSortBy = allowedSortFields.includes(sortBy)
+    ? sortBy
+    : "paidAt";
+
+  const [payments, total] = await Promise.all([
+    prisma.payment.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: {
+        [finalSortBy]: order,
+      },
+      include: {
+        loan: {
+          select: {
+            loanNumber: true,
+            customer: {
+              select: {
+                customerCode: true,
+                name: true,
+                phone: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+
+    prisma.payment.count({
+      where,
+    }),
+  ]);
+
+  return {
+    payments,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
+export const getPaymentById = async (id: string) => {
+  const payment = await prisma.payment.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      loan: {
+        include: {
+          customer: true,
+          partner: true,
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new Error("Payment not found");
+  }
+
+  return payment;
+};
+
+export const getPaymentReceipt = async (id: string) => {
+  const payment = await prisma.payment.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      loan: {
+        include: {
+          customer: true,
+          partner: true,
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new Error("Payment not found");
+  }
+
+  return payment;
 };
