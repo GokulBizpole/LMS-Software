@@ -1,13 +1,25 @@
 import { Router } from "express";
-import { addCustomer, deleteCustomer, getCustomer, getCustomers, updateCustomer } from "../controllers/customer.controller";
+import {
+  addCustomer,
+  deleteCustomer,
+ getCustomer,
+  getCustomers,
+  updateCustomer,
+} from "../controllers/customer.controller";
+
 import { authenticate } from "../middleware/auth.middleware";
+import { adminOnly } from "../middleware/role.middleware";
 
 const router = Router();
 
-router.post("/", authenticate, addCustomer);
-router.get("/", authenticate, getCustomers);
-router.get("/:id", authenticate, getCustomer);
-router.put("/:id", authenticate, updateCustomer);
-router.delete("/:id", authenticate, deleteCustomer);
+router.post("/", authenticate, adminOnly, addCustomer);
+
+router.get("/", authenticate, adminOnly, getCustomers);
+
+router.get("/:id", authenticate, adminOnly, getCustomer);
+
+router.put("/:id", authenticate, adminOnly, updateCustomer);
+
+router.delete("/:id", authenticate, adminOnly, deleteCustomer);
 
 export default router;

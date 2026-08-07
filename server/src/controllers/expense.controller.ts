@@ -1,26 +1,17 @@
 import { Request, Response } from "express";
-import {
-  createPartner,
-  deletePartnerById,
-  getAllPartners,
-  getPartnerById,
-  updatePartnerById,
-} from "../services/partner.service";
+import { createExpense, deleteExpenseById, getAllExpenses, getExpenseById, updateExpenseById } from "../services/expense.service";
 
-// ================= CREATE PARTNER =================
-
-export const addPartner = async (req: any, res: Response) => {
+export const addExpense = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const partner = await createPartner(
-      req.body,
-      req.user?.id,
-      req.ip
-    );
+    const expense = await createExpense(req.body);
 
     return res.status(201).json({
       success: true,
-      message: "Partner created successfully",
-      data: partner,
+      message: "Expense added successfully",
+      data: expense,
     });
   } catch (error) {
     return res.status(400).json({
@@ -30,9 +21,7 @@ export const addPartner = async (req: any, res: Response) => {
   }
 };
 
-// ================= GET ALL PARTNERS =================
-
-export const getPartners = async (
+export const getExpenses = async (
   req: Request,
   res: Response
 ) => {
@@ -41,11 +30,11 @@ export const getPartners = async (
     const limit = Number(req.query.limit) || 10;
     const search = String(req.query.search || "");
 
-    const sortBy = String(req.query.sortBy || "createdAt");
+    const sortBy = String(req.query.sortBy || "expenseDate");
     const order =
       req.query.order === "asc" ? "asc" : "desc";
 
-    const data = await getAllPartners(
+    const data = await getAllExpenses(
       page,
       limit,
       search,
@@ -65,20 +54,18 @@ export const getPartners = async (
   }
 };
 
-// ================= GET PARTNER =================
-
-export const getPartner = async (
+export const getExpense = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const partner = await getPartnerById(
-      String(req.params.id)
-    );
+    const id = String(req.params.id);
+
+    const expense = await getExpenseById(id);
 
     return res.status(200).json({
       success: true,
-      data: partner,
+      data: expense,
     });
   } catch (error) {
     return res.status(404).json({
@@ -88,24 +75,22 @@ export const getPartner = async (
   }
 };
 
-// ================= UPDATE PARTNER =================
-
-export const updatePartner = async (
-  req: any,
+export const updateExpense = async (
+  req: Request,
   res: Response
 ) => {
   try {
-    const partner = await updatePartnerById(
-      String(req.params.id),
-      req.body,
-      req.user?.id,
-      req.ip
+    const id = String(req.params.id);
+
+    const expense = await updateExpenseById(
+      id,
+      req.body
     );
 
     return res.status(200).json({
       success: true,
-      message: "Partner updated successfully",
-      data: partner,
+      message: "Expense updated successfully",
+      data: expense,
     });
   } catch (error) {
     return res.status(400).json({
@@ -115,23 +100,18 @@ export const updatePartner = async (
   }
 };
 
-// ================= DELETE PARTNER =================
-
-export const deletePartner = async (
-  req: any,
+export const deleteExpense = async (
+  req: Request,
   res: Response
 ) => {
   try {
-    const partner = await deletePartnerById(
-      String(req.params.id),
-      req.user?.id,
-      req.ip
-    );
+    const id = String(req.params.id);
+
+    const result = await deleteExpenseById(id);
 
     return res.status(200).json({
       success: true,
-      message: "Partner deactivated successfully",
-      data: partner,
+      ...result,
     });
   } catch (error) {
     return res.status(404).json({

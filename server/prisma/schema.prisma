@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // ================= ENUMS =================
 
 enum AdminRole {
@@ -15,19 +14,16 @@ enum AdminRole {
   ADMIN
 }
 
-
 enum PartnerStatus {
   ACTIVE
   INACTIVE
 }
-
 
 enum CustomerStatus {
   ACTIVE
   CLOSED
   BLOCKED
 }
-
 
 enum LoanStatus {
   PENDING
@@ -38,12 +34,10 @@ enum LoanStatus {
   REJECTED
 }
 
-
 enum PaymentFrequency {
   WEEKLY
   MONTHLY
 }
-
 
 enum PaymentStatus {
   PAID
@@ -51,13 +45,11 @@ enum PaymentStatus {
   LATE
 }
 
-
 enum PaymentMethod {
   CASH
   UPI
   BANK_TRANSFER
 }
-
 
 enum ExpenseCategory {
   OFFICE
@@ -68,505 +60,317 @@ enum ExpenseCategory {
   OTHER
 }
 
-
-
 // ================= ADMIN =================
 
-
 model Admin {
+  id String @id @default(uuid())
 
-  id          String      @id @default(uuid())
+  name String @db.VarChar(100)
 
-  name        String      @db.VarChar(100)
+  email String @unique @db.VarChar(150)
 
-  email       String      @unique @db.VarChar(150)
+  password String @db.VarChar(255)
 
-  password    String      @db.VarChar(255)
+  role AdminRole @default(SUPER_ADMIN)
 
-  role        AdminRole   @default(SUPER_ADMIN)
+  isActive Boolean @default(true)
 
-  isActive    Boolean     @default(true)
+  auditLogs AuditLog[]
 
+  createdAt DateTime @default(now())
 
-  auditLogs   AuditLog[]
-
-
-  createdAt   DateTime @default(now())
-
-  updatedAt   DateTime @updatedAt
-
+  updatedAt DateTime @updatedAt
 
   @@map("admins")
 }
 
-
-
 // ================= PARTNER =================
 
-
 model Partner {
+  id String @id @default(uuid())
 
-  id                String        @id @default(uuid())
+  partnerCode String @unique @db.VarChar(20)
 
+  name String @db.VarChar(100)
 
-  partnerCode       String        @unique @db.VarChar(20)
+  phone String @unique @db.VarChar(15)
 
+  email String? @unique @db.VarChar(150)
 
-  name              String        @db.VarChar(100)
+  password String?
 
-  phone             String        @unique @db.VarChar(15)
+  address String? @db.Text
 
-  email             String?       @unique @db.VarChar(150)
+  investmentAmount Decimal @db.Decimal(15, 2)
 
-  address           String?       @db.Text
+  currentBalance Decimal @db.Decimal(15, 2)
 
+  status PartnerStatus @default(ACTIVE)
 
+  loans Loan[]
 
-  investmentAmount  Decimal       @db.Decimal(15,2)
+  expenses Expense[]
 
-  currentBalance    Decimal       @db.Decimal(15,2)
+  createdAt DateTime @default(now())
 
-
-
-  status            PartnerStatus @default(ACTIVE)
-
-
-
-  loans             Loan[]
-
-  expenses          Expense[]
-
-
-
-  createdAt         DateTime @default(now())
-
-  updatedAt         DateTime @updatedAt
-
-
+  updatedAt DateTime @updatedAt
 
   @@map("partners")
 }
 
-
-
 // ================= CUSTOMER =================
 
-
 model Customer {
+  id String @id @default(uuid())
 
+  customerCode String @unique @db.VarChar(20)
 
-  id                String          @id @default(uuid())
+  name String @db.VarChar(100)
 
+  phone String @unique @db.VarChar(15)
 
-  customerCode      String          @unique @db.VarChar(20)
+  alternatePhone String? @db.VarChar(15)
 
+  aadhaarNumber String? @unique @db.VarChar(20)
 
-  name              String          @db.VarChar(100)
+  panNumber String? @unique @db.VarChar(20)
 
+  address String? @db.Text
 
-  phone             String          @unique @db.VarChar(15)
+  city String? @db.VarChar(100)
 
-  alternatePhone    String?         @db.VarChar(15)
+  state String? @db.VarChar(100)
 
+  pincode String? @db.VarChar(10)
 
+  guarantorName String? @db.VarChar(100)
 
-  aadhaarNumber     String?         @unique @db.VarChar(20)
+  guarantorPhone String? @db.VarChar(15)
 
-  panNumber         String?         @unique @db.VarChar(20)
+  status CustomerStatus @default(ACTIVE)
 
+  loans Loan[]
 
+  documents CustomerDocument[]
 
-  address           String?         @db.Text
+  createdAt DateTime @default(now())
 
-  city              String?         @db.VarChar(100)
-
-  state             String?         @db.VarChar(100)
-
-  pincode           String?         @db.VarChar(10)
-
-
-
-  guarantorName     String?         @db.VarChar(100)
-
-  guarantorPhone    String?         @db.VarChar(15)
-
-
-
-  status            CustomerStatus  @default(ACTIVE)
-
-
-
-  loans             Loan[]
-
-  documents         CustomerDocument[]
-
-
-
-  createdAt         DateTime @default(now())
-
-  updatedAt         DateTime @updatedAt
-
-
+  updatedAt DateTime @updatedAt
 
   @@index([phone])
-
   @@map("customers")
 }
 
-
-
 // ================= LOAN =================
 
-
 model Loan {
+  id String @id @default(uuid())
 
+  loanNumber String @unique @db.VarChar(30)
 
-  id                  String          @id @default(uuid())
+  customerId String
 
+  partnerId String
 
-  loanNumber          String          @unique @db.VarChar(30)
+  customer Customer @relation(fields: [customerId], references: [id])
 
+  partner Partner @relation(fields: [partnerId], references: [id])
 
+  principalAmount Decimal @db.Decimal(15, 2)
 
-  customerId          String
+  interestPercentage Decimal @db.Decimal(5, 2)
 
-  partnerId           String
+  interestAmount Decimal @db.Decimal(15, 2)
 
+  totalPayable Decimal @db.Decimal(15, 2)
 
+  balanceAmount Decimal @db.Decimal(15, 2)
 
-  customer            Customer        @relation(fields:[customerId], references:[id])
+  paymentFrequency PaymentFrequency
 
-  partner             Partner         @relation(fields:[partnerId], references:[id])
+  duration Int
 
+  installmentAmount Decimal @db.Decimal(15, 2)
 
+  paidInstallments Int @default(0)
 
-  principalAmount     Decimal         @db.Decimal(15,2)
+  totalInstallments Int
 
-  interestPercentage  Decimal         @db.Decimal(5,2)
+  penaltyPercentage Decimal? @db.Decimal(5, 2)
 
-  interestAmount      Decimal         @db.Decimal(15,2)
+  penaltyAmount Decimal? @db.Decimal(15, 2)
 
-  totalPayable        Decimal         @db.Decimal(15,2)
+  status LoanStatus @default(PENDING)
 
-  balanceAmount       Decimal         @db.Decimal(15,2)
+  approvedBy String?
 
+  approvedAt DateTime?
 
+  startDate DateTime?
 
-  paymentFrequency    PaymentFrequency
+  endDate DateTime?
 
+  remarks String? @db.Text
 
+  payments Payment[]
 
-  duration            Int
+  schedules LoanSchedule[]
 
+  createdAt DateTime @default(now())
 
-  installmentAmount   Decimal         @db.Decimal(15,2)
-
-
-  paidInstallments    Int             @default(0)
-
-
-  totalInstallments   Int
-
-
-
-  penaltyPercentage   Decimal?        @db.Decimal(5,2)
-
-  penaltyAmount       Decimal?        @db.Decimal(15,2)
-
-
-
-  status              LoanStatus      @default(PENDING)
-
-
-
-  approvedBy          String?
-
-  approvedAt          DateTime?
-
-
-
-  startDate           DateTime?
-
-  endDate             DateTime?
-
-
-
-  remarks             String?         @db.Text
-
-
-
-  payments            Payment[]
-
-  schedules           LoanSchedule[]
-
-
-
-  createdAt           DateTime @default(now())
-
-  updatedAt           DateTime @updatedAt
-
-
+  updatedAt DateTime @updatedAt
 
   @@index([customerId])
-
   @@index([partnerId])
-
-
   @@map("loans")
 }
 
-
-
 // ================= PAYMENT =================
 
-
 model Payment {
+  id String @id @default(uuid())
 
+  receiptNumber String @unique @db.VarChar(30)
 
-  id                 String          @id @default(uuid())
+  loanId String
 
+  scheduleId String?
 
-  receiptNumber      String          @unique @db.VarChar(30)
+  loan Loan @relation(fields: [loanId], references: [id])
 
+  schedule LoanSchedule? @relation(fields: [scheduleId], references: [id])
 
+  installmentNumber Int
 
-  loanId             String
+  amount Decimal @db.Decimal(15, 2)
 
-  scheduleId         String?
+  penalty Decimal @default(0) @db.Decimal(15, 2)
 
+  totalReceived Decimal @db.Decimal(15, 2)
 
+  paymentMethod PaymentMethod
 
-  loan               Loan            @relation(fields:[loanId], references:[id])
+  paymentStatus PaymentStatus @default(PENDING)
 
+  paidAt DateTime?
 
-  schedule           LoanSchedule?   @relation(fields:[scheduleId], references:[id])
+  remarks String? @db.Text
 
+  createdAt DateTime @default(now())
 
-
-  installmentNumber  Int
-
-
-
-  amount             Decimal         @db.Decimal(15,2)
-
-
-  penalty            Decimal         @default(0) @db.Decimal(15,2)
-
-
-  totalReceived      Decimal         @db.Decimal(15,2)
-
-
-
-  paymentMethod      PaymentMethod
-
-
-
-  paymentStatus      PaymentStatus   @default(PENDING)
-
-
-
-  paidAt             DateTime?
-
-
-
-  remarks            String?         @db.Text
-
-
-
-  createdAt          DateTime @default(now())
-
-  updatedAt          DateTime @updatedAt
-
-
+  updatedAt DateTime @updatedAt
 
   @@index([loanId])
-
-
   @@map("payments")
 }
 
-
-
 // ================= EXPENSE =================
 
-
 model Expense {
+  id String @id @default(uuid())
 
+  partnerId String
 
-  id              String          @id @default(uuid())
+  partner Partner @relation(fields: [partnerId], references: [id])
 
+  category ExpenseCategory
 
-  partnerId       String
+  amount Decimal @db.Decimal(15, 2)
 
+  description String? @db.Text
 
-  partner         Partner         @relation(fields:[partnerId], references:[id])
+  expenseDate DateTime
 
-
-  category        ExpenseCategory
-
-
-  amount          Decimal         @db.Decimal(15,2)
-
-
-  description     String?         @db.Text
-
-
-  expenseDate     DateTime
-
-
-
-  createdAt       DateTime @default(now())
-
-
+  createdAt DateTime @default(now())
 
   @@map("expenses")
 }
 
-
-
 // ================= CUSTOMER DOCUMENT =================
 
-
 model CustomerDocument {
+  id String @id @default(uuid())
 
+  customerId String
 
-  id              String @id @default(uuid())
+  customer Customer @relation(fields: [customerId], references: [id])
 
+  documentType String @db.VarChar(100)
 
-  customerId      String
+  fileName String @db.VarChar(255)
 
+  filePath String @db.Text
 
-  customer        Customer @relation(fields:[customerId], references:[id])
-
-
-
-  documentType    String @db.VarChar(100)
-
-
-  fileName        String @db.VarChar(255)
-
-
-  filePath        String @db.Text
-
-
-
-  uploadedAt      DateTime @default(now())
-
-
+  uploadedAt DateTime @default(now())
 
   @@map("customer_documents")
 }
 
-
-
 // ================= AUDIT LOG =================
 
-
 model AuditLog {
+  id String @id @default(uuid())
 
+  adminId String?
 
-  id          String @id @default(uuid())
+  admin Admin? @relation(fields: [adminId], references: [id])
 
+  action String @db.VarChar(150)
 
-  adminId     String?
+  tableName String @db.VarChar(100)
 
+  recordId String @db.VarChar(100)
 
-  admin       Admin? @relation(fields:[adminId], references:[id])
+  ipAddress String? @db.VarChar(50)
 
-
-  action      String @db.VarChar(150)
-
-
-  tableName   String @db.VarChar(100)
-
-
-  recordId    String @db.VarChar(100)
-
-
-  ipAddress   String? @db.VarChar(50)
-
-
-
-  createdAt   DateTime @default(now())
-
-
+  createdAt DateTime @default(now())
 
   @@map("audit_logs")
 }
 
-
-
 // ================= LOAN SCHEDULE =================
 
-
 model LoanSchedule {
+  id String @id @default(uuid())
 
+  loanId String
 
-  id              String @id @default(uuid())
+  loan Loan @relation(fields: [loanId], references: [id])
 
+  installmentNo Int
 
-  loanId          String
+  dueDate DateTime
 
+  amount Decimal @db.Decimal(15, 2)
 
-  loan            Loan @relation(fields:[loanId], references:[id])
+  penalty Decimal @default(0) @db.Decimal(15, 2)
 
+  isPaid Boolean @default(false)
 
+  paidDate DateTime?
 
-  installmentNo   Int
+  payments Payment[]
 
-
-  dueDate         DateTime
-
-
-  amount          Decimal @db.Decimal(15,2)
-
-
-  penalty         Decimal @default(0) @db.Decimal(15,2)
-
-
-
-  isPaid          Boolean @default(false)
-
-
-  paidDate        DateTime?
-
-
-
-  payments        Payment[]
-
-
-
-  createdAt       DateTime @default(now())
-
-
+  createdAt DateTime @default(now())
 
   @@map("loan_schedule")
 }
 
-
-
 // ================= SETTINGS =================
 
-
 model Setting {
+  id String @id @default(uuid())
 
+  companyName    String
+  companyPhone   String
+  companyEmail   String?
+  companyAddress String?
 
-  id          String @id @default(uuid())
+  defaultInterestPercentage Decimal @db.Decimal(5, 2)
+  defaultPenaltyPercentage  Decimal @db.Decimal(5, 2)
 
+  receiptPrefix String @default("RCP")
 
-  key         String @unique
-
-
-  value       String @db.Text
-
-
-
-  createdAt   DateTime @default(now())
-
-
-  updatedAt   DateTime @updatedAt
-
-
-
-  @@map("settings")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
