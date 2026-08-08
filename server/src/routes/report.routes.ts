@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { collectionReport, customerLedger, expenseReport, loanReport, partnerReport, profitLossReport } from "../controllers/report.controller";
+import { collectionReport, customerLedger, dueReport, expenseReport, loanReport, partnerReport, profitLossReport } from "../controllers/report.controller";
 import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -14,5 +14,6 @@ router.get(
   customerLedger
 );
 router.get("/partner", authenticate, partnerReport);
+router.get("/due", dueReport);
 
 export default router;

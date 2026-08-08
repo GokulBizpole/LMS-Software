@@ -238,3 +238,38 @@ export const getPartnerReport = async () => {
     };
   });
 };
+
+export const getDueReport = async () => {
+  const today = new Date();
+
+  return await prisma.loanSchedule.findMany({
+    where: {
+      isPaid: false,
+      dueDate: {
+        lte: today,
+      },
+    },
+    include: {
+      loan: {
+        include: {
+          customer: {
+            select: {
+              customerCode: true,
+              name: true,
+              phone: true,
+            },
+          },
+          partner: {
+            select: {
+              partnerCode: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      dueDate: "asc",
+    },
+  });
+};

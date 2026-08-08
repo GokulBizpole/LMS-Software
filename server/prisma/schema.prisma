@@ -77,6 +77,8 @@ model Admin {
 
   auditLogs AuditLog[]
 
+  notifications Notification[]
+
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
@@ -110,6 +112,8 @@ model Partner {
   loans Loan[]
 
   expenses Expense[]
+
+  notifications Notification[]
 
   createdAt DateTime @default(now())
 
@@ -150,6 +154,8 @@ model Customer {
   status CustomerStatus @default(ACTIVE)
 
   loans Loan[]
+
+  notifications Notification[]
 
   documents CustomerDocument[]
 
@@ -215,6 +221,8 @@ model Loan {
   payments Payment[]
 
   schedules LoanSchedule[]
+
+  notifications Notification[]
 
   createdAt DateTime @default(now())
 
@@ -373,4 +381,34 @@ model Setting {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  title   String
+  message String
+
+  adminId String?
+  admin   Admin?  @relation(fields: [adminId], references: [id])
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+
+  loanId String?
+  loan   Loan?   @relation(fields: [loanId], references: [id])
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
 }

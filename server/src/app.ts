@@ -10,7 +10,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import reportRoutes from "./routes/report.routes";
 import authRoutes from "./routes/auth.routes";
 import settingsRoutes from "./routes/settings.routes";
-
+import notificationRoutes from "./routes/notification.routes";
 const app = express();
 
 app.use(cors());
@@ -26,7 +26,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/settings", settingsRoutes);
-
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (_, res) => {
   res.json({ message: "LMS Finance API Running 🚀" });

@@ -60,6 +60,7 @@ export const loginAdmin = async (
     {
       id: admin.id,
       role: admin.role,
+       type: "ADMIN",
     },
     process.env.JWT_SECRET as string,
     {
