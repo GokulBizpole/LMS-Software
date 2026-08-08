@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getCollectionReport, getCustomerLedger, getExpenseReport, getLoanReport, getPartnerReport, getProfitLossReport } from "../services/report.service";
+import { getCollectionReport, getCustomerLedger, getDueReport, getExpenseReport, getLoanReport, getPartnerReport, getProfitLossReport } from "../services/report.service";
 
 export const loanReport = async (
   req: Request,
@@ -127,6 +127,26 @@ export const partnerReport = async (
     return res.status(200).json({
       success: true,
       total: data.length,
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const dueReport = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const data = await getDueReport();
+
+    return res.status(200).json({
+      success: true,
+      count: data.length,
       data,
     });
   } catch (error) {
