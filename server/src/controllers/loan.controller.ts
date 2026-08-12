@@ -41,12 +41,33 @@ export const getLoans = async (req: any, res: Response) => {
     const sortBy = String(req.query.sortBy || "createdAt");
     const order = req.query.order === "asc" ? "asc" : "desc";
 
+    const allowedStatuses = [
+      "PENDING",
+      "APPROVED",
+      "ACTIVE",
+      "CLOSED",
+      "OVERDUE",
+      "REJECTED",
+    ] as const;
+    const rawStatus = req.query.status
+      ? String(req.query.status).toUpperCase()
+      : undefined;
+    const status = allowedStatuses.find((s) => s === rawStatus);
+
+    const partnerId = req.query.partnerId
+      ? String(req.query.partnerId)
+      : undefined;
+    const customerId = req.query.customerId
+      ? String(req.query.customerId)
+      : undefined;
+
     const data = await getAllLoans(
       page,
       limit,
       search,
       sortBy,
-      order
+      order,
+      { status, partnerId, customerId }
     );
 
     return res.status(200).json({
@@ -136,6 +157,7 @@ export const rejectLoan = async (
   try {
     const loan = await rejectLoanById(
       req.params.id,
+      String(req.body?.reason || ""),
       req.user?.id,
       req.ip
     );

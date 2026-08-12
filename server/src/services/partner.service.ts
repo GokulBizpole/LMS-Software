@@ -132,13 +132,40 @@ export const getPartnerById = async (id: string) => {
     where: {
       id,
     },
+    include: {
+      loans: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          customer: {
+            select: {
+              id: true,
+              customerCode: true,
+              name: true,
+              phone: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!partner) {
     throw new Error("Partner not found");
   }
 
-  return partner;
+  const { loans, ...partnerFields } = partner;
+
+  const stats = {
+    totalLoans: loans.length,
+    activeLoans: loans.filter((l) => l.status === "ACTIVE").length,
+    closedLoans: loans.filter((l) => l.status === "CLOSED").length,
+    totalLoanAmount: loans.reduce(
+      (sum, l) => sum + Number(l.principalAmount),
+      0
+    ),
+  };
+
+  return { ...partnerFields, loans, stats };
 };
 
 // ================= UPDATE PARTNER =================
