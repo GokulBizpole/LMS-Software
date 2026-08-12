@@ -28,42 +28,60 @@ export const createExpense = async (
   }
 
   return await prisma.expense.create({
-    data,
+    data: {
+      ...data,
+      expenseDate: new Date(data.expenseDate),
+    },
   });
 };
+
+interface ExpenseFilters {
+  category?: string;
+  partnerId?: string;
+  startDate?: Date;
+  endDate?: Date;
+}
 
 export const getAllExpenses = async (
   page = 1,
   limit = 10,
   search = "",
   sortBy = "expenseDate",
-  order: "asc" | "desc" = "desc"
+  order: "asc" | "desc" = "desc",
+  filters: ExpenseFilters = {}
 ) => {
   const skip = (page - 1) * limit;
 
-  const where = search
-    ? {
-        OR: [
-          {
-            category: {
-              contains: search,
-            },
-          },
-          {
-            description: {
-              contains: search,
-            },
-          },
-          {
-            partner: {
-              name: {
-                contains: search,
-              },
-            },
-          },
-        ],
-      }
-    : {};
+  const andConditions: any[] = [];
+
+  if (search) {
+    andConditions.push({
+      OR: [
+        { description: { contains: search } },
+        { partner: { name: { contains: search } } },
+        { partner: { partnerCode: { contains: search } } },
+      ],
+    });
+  }
+
+  if (filters.category) {
+    andConditions.push({ category: filters.category });
+  }
+
+  if (filters.partnerId) {
+    andConditions.push({ partnerId: filters.partnerId });
+  }
+
+  if (filters.startDate || filters.endDate) {
+    andConditions.push({
+      expenseDate: {
+        ...(filters.startDate ? { gte: filters.startDate } : {}),
+        ...(filters.endDate ? { lte: filters.endDate } : {}),
+      },
+    });
+  }
+
+  const where = andConditions.length > 0 ? { AND: andConditions } : {};
 
   const allowedSortFields = [
     "expenseDate",
@@ -76,9 +94,9 @@ export const getAllExpenses = async (
     ? sortBy
     : "expenseDate";
 
-  const [expenses, total] = await Promise.all([
+  const [expenses, total, totalAmountResult] = await Promise.all([
     prisma.expense.findMany({
-    //   where,
+      where,
       skip,
       take: limit,
       orderBy: {
@@ -95,13 +113,21 @@ export const getAllExpenses = async (
     }),
 
     prisma.expense.count({
-    //   where,
+      where,
+    }),
+
+    prisma.expense.aggregate({
+      where,
+      _sum: {
+        amount: true,
+      },
     }),
   ]);
 
   return {
     expenses,
     total,
+    totalAmount: totalAmountResult._sum.amount ?? 0,
     page,
     limit,
     totalPages: Math.ceil(total / limit),
@@ -156,7 +182,10 @@ export const updateExpenseById = async (
     where: {
       id,
     },
-    data,
+    data: {
+      ...data,
+      ...(data.expenseDate ? { expenseDate: new Date(data.expenseDate) } : {}),
+    },
   });
 };
 

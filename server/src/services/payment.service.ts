@@ -133,42 +133,68 @@ if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
   return payment;
 };
 
+const getPeriodRange = (period?: "day" | "week" | "month") => {
+  if (!period) return null;
+
+  const now = new Date();
+  const from = new Date(now);
+  from.setHours(0, 0, 0, 0);
+
+  if (period === "week") {
+    const dayOfWeek = from.getDay();
+    const diffToMonday = (dayOfWeek + 6) % 7;
+    from.setDate(from.getDate() - diffToMonday);
+  } else if (period === "month") {
+    from.setDate(1);
+  }
+
+  const to = new Date();
+
+  return { gte: from, lte: to };
+};
+
 export const getAllPayments = async (
   page = 1,
   limit = 10,
   search = "",
   sortBy = "paidAt",
-  order: "asc" | "desc" = "desc"
+  order: "asc" | "desc" = "desc",
+  period?: "day" | "week" | "month"
 ) => {
   const skip = (page - 1) * limit;
 
-  const where = search
-    ? {
-        OR: [
-          {
-            receiptNumber: {
-              contains: search,
-            },
-          },
-          {
-            loan: {
-              loanNumber: {
+  const paidAtRange = getPeriodRange(period);
+
+  const where = {
+    ...(paidAtRange ? { paidAt: paidAtRange } : {}),
+    ...(search
+      ? {
+          OR: [
+            {
+              receiptNumber: {
                 contains: search,
               },
             },
-          },
-          {
-            loan: {
-              customer: {
-                name: {
+            {
+              loan: {
+                loanNumber: {
                   contains: search,
                 },
               },
             },
-          },
-        ],
-      }
-    : {};
+            {
+              loan: {
+                customer: {
+                  name: {
+                    contains: search,
+                  },
+                },
+              },
+            },
+          ],
+        }
+      : {}),
+  };
 
   const allowedSortFields = [
     "paidAt",
@@ -198,6 +224,12 @@ export const getAllPayments = async (
                 customerCode: true,
                 name: true,
                 phone: true,
+              },
+            },
+            partner: {
+              select: {
+                partnerCode: true,
+                name: true,
               },
             },
           },

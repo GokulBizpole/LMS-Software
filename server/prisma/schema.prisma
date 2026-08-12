@@ -218,6 +218,8 @@ model Loan {
 
   remarks String? @db.Text
 
+  rejectionReason String? @db.Text
+
   payments Payment[]
 
   schedules LoanSchedule[]

@@ -43,12 +43,20 @@ export const getPayments = async (
     const order =
       req.query.order === "asc" ? "asc" : "desc";
 
+    const rawPeriod = req.query.period
+      ? String(req.query.period)
+      : undefined;
+    const period = (["day", "week", "month"] as const).find(
+      (p) => p === rawPeriod
+    );
+
     const data = await getAllPayments(
       page,
       limit,
       search,
       sortBy,
-      order
+      order,
+      period
     );
 
     return res.status(200).json({

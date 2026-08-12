@@ -1,145 +1,235 @@
-// app/(dashboard)/customers/[id]/page.tsx
+// app/(dashboard)/customers/[id]/edit/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getCustomerById } from "@/services/customer.service";
+import {
+  getCustomerById,
+  updateCustomer,
+  type UpdateCustomerData,
+} from "@/services/customer.service";
 import type { Customer } from "@/types/customer";
-import { formatDate } from "@/utils/formatDate";
 
-function StatusBadge({ status }: { status: Customer["status"] }) {
-  const map: Record<Customer["status"], { bg: string; text: string }> = {
-    ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-    BLOCKED: { bg: "#FAEEDA", text: "#854F0B" },
-    CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
-  };
-  const c = map[status] ?? map.CLOSED;
-  return (
-    <span
-      className="text-xs font-medium px-2 py-1 rounded-md"
-      style={{ backgroundColor: c.bg, color: c.text }}
-    >
-      {status}
-    </span>
-  );
-}
+type FormState = UpdateCustomerData;
 
-function Field({ label, value }: { label: string; value?: string | null }) {
+const emptyForm: FormState = {
+  name: "",
+  phone: "",
+  alternatePhone: "",
+  aadhaarNumber: "",
+  panNumber: "",
+  address: "",
+  city: "",
+  state: "",
+  pincode: "",
+  guarantorName: "",
+  guarantorPhone: "",
+  status: "ACTIVE",
+};
+
+function TextField({
+  label,
+  name,
+  value,
+  onChange,
+  required,
+}: {
+  label: string;
+  name: keyof FormState;
+  value: string;
+  onChange: (name: keyof FormState, value: string) => void;
+  required?: boolean;
+}) {
   return (
     <div>
-      <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm text-[#2C2C2A]">{value || "—"}</p>
+      <label className="block text-xs text-[#888780] mb-1">
+        {label}
+        {required ? " *" : ""}
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        required={required}
+        className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+      />
     </div>
   );
 }
 
-export default function CustomerDetailPage() {
+function EditSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="h-4 w-32 bg-[#F1EFE8] rounded" />
+      <div className="h-6 w-48 bg-[#F1EFE8] rounded" />
+      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-9 bg-[#F1EFE8] rounded" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function EditCustomerPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [customer, setCustomer] = useState<Customer | null>(null);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [customerCode, setCustomerCode] = useState("");
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
     getCustomerById(id)
-      .then(setCustomer)
+      .then((customer: Customer) => {
+        setCustomerCode(customer.customerCode);
+        setForm({
+          name: customer.name,
+          phone: customer.phone,
+          alternatePhone: customer.alternatePhone ?? "",
+          aadhaarNumber: customer.aadhaarNumber ?? "",
+          panNumber: customer.panNumber ?? "",
+          address: customer.address ?? "",
+          city: customer.city ?? "",
+          state: customer.state ?? "",
+          pincode: customer.pincode ?? "",
+          guarantorName: customer.guarantorName ?? "",
+          guarantorPhone: customer.guarantorPhone ?? "",
+          status: customer.status,
+        });
+      })
       .catch((err) => {
         console.error(err);
-        setError("Could not load customer.");
+        setLoadError("Could not load customer.");
       })
       .finally(() => setLoading(false));
   }, [id]);
 
+  const handleChange = (name: keyof FormState, value: string) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id) return;
+    setSubmitError(null);
+    setSubmitting(true);
+
+    try {
+      const payload: UpdateCustomerData = {
+        ...form,
+        alternatePhone: form.alternatePhone || undefined,
+        aadhaarNumber: form.aadhaarNumber || undefined,
+        panNumber: form.panNumber || undefined,
+        address: form.address || undefined,
+        city: form.city || undefined,
+        state: form.state || undefined,
+        pincode: form.pincode || undefined,
+        guarantorName: form.guarantorName || undefined,
+        guarantorPhone: form.guarantorPhone || undefined,
+      };
+
+      await updateCustomer(id, payload);
+      router.push(`/customers/${id}`);
+    } catch (err: any) {
+      setSubmitError(err?.response?.data?.message || err.message || "Could not update customer.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
-    return <div className="h-40 bg-[#F1EFE8] rounded-2xl animate-pulse" />;
+    return <EditSkeleton />;
   }
 
-  if (error || !customer) {
+  if (loadError) {
     return (
-      <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
-        {error ?? "Customer not found."}
+      <div className="space-y-4">
+        <Link href="/customers" className="text-sm text-[#185FA5]">
+          ← Back to customers
+        </Link>
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+          {loadError}
+        </div>
       </div>
     );
   }
 
-  const initials = customer.name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
     <div className="space-y-6">
-      <button
-        onClick={() => router.push("/customers")}
-        className="text-sm text-[#185FA5]"
-      >
-        ← Back to customers
-      </button>
+      <Link href={`/customers/${id}`} className="text-sm text-[#185FA5]">
+        ← Back to customer
+      </Link>
 
-      {/* Profile header */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-lg font-semibold">
-            {initials}
+      <div>
+        <h1 className="text-xl font-semibold text-[#2C2C2A]">Edit customer</h1>
+        <p className="text-sm text-[#5F5E5A]">{customerCode}</p>
+      </div>
+
+      {submitError && (
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D]">
+          {submitError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-[#2C2C2A]">Personal details</h2>
+            <select
+              value={form.status}
+              onChange={(e) => handleChange("status", e.target.value)}
+              className="rounded-lg border border-[#B4B2A9] px-3 py-1.5 text-sm text-[#2C2C2A]"
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="BLOCKED">BLOCKED</option>
+              <option value="CLOSED">CLOSED</option>
+            </select>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-[#2C2C2A]">{customer.name}</h1>
-              <StatusBadge status={customer.status} />
-            </div>
-            <p className="text-sm text-[#5F5E5A]">
-              {customer.customerCode} · {customer.phone}
-              {customer.city ? ` · ${customer.city}, ${customer.state ?? ""}` : ""}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <TextField label="Name" name="name" value={form.name ?? ""} onChange={handleChange} required />
+            <TextField label="Phone" name="phone" value={form.phone ?? ""} onChange={handleChange} required />
+            <TextField label="Alternate phone" name="alternatePhone" value={form.alternatePhone ?? ""} onChange={handleChange} />
+            <TextField label="Aadhaar number" name="aadhaarNumber" value={form.aadhaarNumber ?? ""} onChange={handleChange} />
+            <TextField label="PAN number" name="panNumber" value={form.panNumber ?? ""} onChange={handleChange} />
+            <TextField label="Address" name="address" value={form.address ?? ""} onChange={handleChange} />
+            <TextField label="City" name="city" value={form.city ?? ""} onChange={handleChange} />
+            <TextField label="State" name="state" value={form.state ?? ""} onChange={handleChange} />
+            <TextField label="Pincode" name="pincode" value={form.pincode ?? ""} onChange={handleChange} />
           </div>
         </div>
-        <Link
-          href={`/customers/${customer.id}/edit`}
-          className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A]"
-        >
-          Edit
-        </Link>
-      </div>
 
-      {/* Details */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Personal details</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-          <Field label="Phone" value={customer.phone} />
-          <Field label="Alternate phone" value={customer.alternatePhone} />
-          <Field label="Aadhaar number" value={customer.aadhaarNumber} />
-          <Field label="PAN number" value={customer.panNumber} />
-          <Field label="Address" value={customer.address} />
-          <Field label="City" value={customer.city} />
-          <Field label="State" value={customer.state} />
-          <Field label="Pincode" value={customer.pincode} />
+        <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
+          <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Guarantor</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <TextField label="Guarantor name" name="guarantorName" value={form.guarantorName ?? ""} onChange={handleChange} />
+            <TextField label="Guarantor phone" name="guarantorPhone" value={form.guarantorPhone ?? ""} onChange={handleChange} />
+          </div>
         </div>
-      </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Guarantor</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-          <Field label="Guarantor name" value={customer.guarantorName} />
-          <Field label="Guarantor phone" value={customer.guarantorPhone} />
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            {submitting ? "Saving..." : "Save changes"}
+          </button>
+          <Link
+            href={`/customers/${id}`}
+            className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] hover:bg-[#F1EFE8]"
+          >
+            Cancel
+          </Link>
         </div>
-      </div>
-
-      <div className="rounded-2xl border border-[#E8E6DF] bg-[#F1EFE8] p-6">
-        <div className="grid grid-cols-2 gap-6">
-          <Field label="Registered" value={formatDate(customer.createdAt)} />
-          <Field label="Last updated" value={formatDate(customer.updatedAt)} />
-        </div>
-      </div>
-
-      {/*
-        NOTE: Loan history for this customer isn't wired up here yet —
-        it needs a GET /loans?customerId=... (or similar) endpoint.
-        Once confirmed, add a loans table section below.
-      */}
+      </form>
     </div>
   );
 }

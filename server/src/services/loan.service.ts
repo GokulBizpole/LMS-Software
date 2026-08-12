@@ -134,40 +134,52 @@ return {
   scheduleCount: schedules.length,
 };}
 
+interface GetAllLoansFilters {
+  status?: "PENDING" | "APPROVED" | "ACTIVE" | "CLOSED" | "OVERDUE" | "REJECTED";
+  partnerId?: string;
+  customerId?: string;
+}
+
 export const getAllLoans = async (
   page = 1,
   limit = 10,
   search = "",
   sortBy = "createdAt",
-  order: "asc" | "desc" = "desc"
+  order: "asc" | "desc" = "desc",
+  filters: GetAllLoansFilters = {}
 ) => {
   const skip = (page - 1) * limit;
 
-  const where = search
-    ? {
-        OR: [
-          {
-            loanNumber: {
-              contains: search,
-            },
-          },
-          {
-            customer: {
-              name: {
+  const where = {
+    ...(filters.status ? { status: filters.status } : {}),
+    ...(filters.partnerId ? { partnerId: filters.partnerId } : {}),
+    ...(filters.customerId ? { customerId: filters.customerId } : {}),
+    ...(search
+      ? {
+          OR: [
+            {
+              loanNumber: {
                 contains: search,
               },
             },
-          },
-          {
-            partner: {
-              name: {
-                contains: search,
+            {
+              customer: {
+                name: {
+                  contains: search,
+                },
               },
             },
-          },
-        ],
-      }
-    : {};
+            {
+              partner: {
+                name: {
+                  contains: search,
+                },
+              },
+            },
+          ],
+        }
+      : {}),
+  };
 
   const allowedSortFields = [
     "createdAt",
@@ -335,18 +347,14 @@ export const approveLoanById = async (
     throw new Error("Loan not found");
   }
 
-  if (loan.status === "APPROVED") {
-    throw new Error("Loan already approved");
-  }
-
-  if (loan.status === "REJECTED") {
-    throw new Error("Rejected loan cannot be approved");
+  if (loan.status !== "PENDING") {
+    throw new Error(`Loan is already ${loan.status.toLowerCase()} and cannot be approved`);
   }
 
   const approvedLoan = await prisma.loan.update({
     where: { id },
     data: {
-      status: "APPROVED",
+      status: "ACTIVE",
       approvedBy: adminId,
       approvedAt: new Date(),
     },
@@ -365,9 +373,14 @@ export const approveLoanById = async (
 
 export const rejectLoanById = async (
   id: string,
+  reason: string,
   adminId?: string,
   ipAddress?: string
 ) => {
+  if (!reason || !reason.trim()) {
+    throw new Error("Rejection reason is required");
+  }
+
   const loan = await prisma.loan.findUnique({
     where: { id },
   });
@@ -376,18 +389,15 @@ export const rejectLoanById = async (
     throw new Error("Loan not found");
   }
 
-  if (loan.status === "REJECTED") {
-    throw new Error("Loan already rejected");
-  }
-
-  if (loan.status === "APPROVED") {
-    throw new Error("Approved loan cannot be rejected");
+  if (loan.status !== "PENDING") {
+    throw new Error(`Loan is already ${loan.status.toLowerCase()} and cannot be rejected`);
   }
 
   const rejectedLoan = await prisma.loan.update({
     where: { id },
     data: {
       status: "REJECTED",
+      rejectionReason: reason,
       approvedBy: adminId,
       approvedAt: new Date(),
     },

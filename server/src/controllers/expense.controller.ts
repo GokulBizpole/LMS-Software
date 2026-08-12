@@ -34,12 +34,26 @@ export const getExpenses = async (
     const order =
       req.query.order === "asc" ? "asc" : "desc";
 
+    const category = req.query.category
+      ? String(req.query.category)
+      : undefined;
+    const partnerId = req.query.partnerId
+      ? String(req.query.partnerId)
+      : undefined;
+    const startDate = req.query.startDate
+      ? new Date(String(req.query.startDate))
+      : undefined;
+    const endDate = req.query.endDate
+      ? new Date(String(req.query.endDate))
+      : undefined;
+
     const data = await getAllExpenses(
       page,
       limit,
       search,
       sortBy,
-      order
+      order,
+      { category, partnerId, startDate, endDate }
     );
 
     return res.status(200).json({
