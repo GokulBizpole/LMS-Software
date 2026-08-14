@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 export default function LoanTable({ loans }: { loans: Loan[] }) {
   if (loans.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
         No loans found.
       </div>
     );

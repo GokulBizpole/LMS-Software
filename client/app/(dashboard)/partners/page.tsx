@@ -1,9 +1,11 @@
 
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePartners } from "@/hooks/usePartners";
 import PartnerTable from "@/components/tables/PartnerTable";
+import PartnerFormModal from "@/components/partners/PartnerFormModal";
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
 
@@ -84,6 +86,8 @@ export default function PartnersPage() {
     refetch,
   } = usePartners();
 
+  const [showCreate, setShowCreate] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -91,12 +95,12 @@ export default function PartnersPage() {
           <h1 className="text-xl font-semibold text-[#2C2C2A]">Partners</h1>
           <p className="text-sm text-[#5F5E5A]">{total} partner{total !== 1 ? "s" : ""}</p>
         </div>
-        <Link
-          href="/partners/create"
+        <button
+          onClick={() => setShowCreate(true)}
           className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg"
         >
           + Add partner
-        </Link>
+        </button>
       </div>
 
       <input
@@ -159,6 +163,15 @@ export default function PartnersPage() {
           </>
         )}
       </div>
+
+      <PartnerFormModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        onSaved={() => {
+          setShowCreate(false);
+          refetch();
+        }}
+      />
     </div>
   );
 }

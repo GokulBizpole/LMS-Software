@@ -32,7 +32,7 @@ export default function CustomerTable({
 }) {
   if (customers.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
         No customers found.
       </div>
     );

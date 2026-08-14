@@ -4,6 +4,7 @@
 import { useCustomerReport } from "@/hooks/useCustomerReport";
 import CustomerTable from "@/components/tables/CustomerTable";
 import StatCard from "@/components/dashboard/StatCard";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { formatDate } from "@/utils/formatDate";
 import { exportReportPdf } from "@/utils/exportPdf";
 import { Users, CheckCircle2, Archive, AlertTriangle } from "lucide-react";
@@ -25,12 +26,21 @@ export default function CustomerReportPage() {
     refetch,
   } = useCustomerReport();
 
-  const hasActiveFilters = search || status !== "all";
-
-  const clearFilters = () => {
-    setSearch("");
-    setStatus("all");
-  };
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "status",
+      label: "Status",
+      kind: "select",
+      value: status,
+      onChange: (v) => setStatus(v as typeof status),
+      options: [
+        { value: "all", label: "All statuses" },
+        { value: "ACTIVE", label: "Active" },
+        { value: "CLOSED", label: "Closed" },
+        { value: "BLOCKED", label: "Blocked" },
+      ],
+    },
+  ];
 
   const filtersSummary = [
     status !== "all" && `Status: ${status}`,
@@ -87,33 +97,15 @@ export default function CustomerReportPage() {
         <StatCard title="Blocked" value={String(summary.byStatus.BLOCKED ?? 0)} icon={AlertTriangle} iconBg="#FAEEDA" iconColor="#854F0B" />
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, code, phone, city..."
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
-          />
-
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All statuses</option>
-            <option value="ACTIVE">Active</option>
-            <option value="CLOSED">Closed</option>
-            <option value="BLOCKED">Blocked</option>
-          </select>
-        </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="text-sm font-medium text-[#185FA5] hover:underline">
-            Clear filters
-          </button>
-        )}
+      <div className="flex items-center gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search name, code, phone, city..."
+          className="w-full max-w-sm rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+        />
+        <FilterPopover fields={filterFields} />
       </div>
 
       <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">

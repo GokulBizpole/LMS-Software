@@ -1,18 +1,12 @@
 // services/auth.service.ts
 import api from "@/lib/axios";
-import type {
-  LoginRequest,
-  LoginResponse,
-  LoginResponseData,
-  AdminLoginResponseData,
-  PartnerLoginResponseData,
-} from "@/types/auth";
+import type { LoginRequest, LoginResponse, LoginResponseData } from "@/types/auth";
 
-
-
-export async function adminLogin(credentials: LoginRequest): Promise<LoginResponseData> {
-  const { data } = await api.post<LoginResponse<AdminLoginResponseData>>(
-    "/auth/admin/login",
+// Single endpoint for the unified login page — the backend figures out
+// whether the email belongs to an Admin or a Partner.
+export async function login(credentials: LoginRequest): Promise<LoginResponseData> {
+  const { data } = await api.post<LoginResponse<LoginResponseData>>(
+    "/auth/login",
     credentials
   );
 
@@ -20,22 +14,7 @@ export async function adminLogin(credentials: LoginRequest): Promise<LoginRespon
     throw new Error(data.message || "Login failed");
   }
 
-  // Backend returns { token, admin: {...} } — normalize to { token, user }
-  return { token: data.data.token, user: data.data.admin };
-}
-
-export async function partnerLogin(credentials: LoginRequest): Promise<LoginResponseData> {
-  const { data } = await api.post<LoginResponse<PartnerLoginResponseData>>(
-    "/auth/partner/login",
-    credentials
-  );
-
-  if (!data.success) {
-    throw new Error(data.message || "Login failed");
-  }
-
-  // Backend returns { token, partner: {...} } — normalize to { token, user }
-  return { token: data.data.token, user: data.data.partner };
+  return data.data;
 }
 
 export async function changePassword(payload: {

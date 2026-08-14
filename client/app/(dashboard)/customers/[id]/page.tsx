@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCustomerById } from "@/services/customer.service";
+import CustomerFormModal from "@/components/customers/CustomerFormModal";
 import type { Customer } from "@/types/customer";
 import { formatDate } from "@/utils/formatDate";
 
@@ -29,7 +30,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm text-[#2C2C2A] break-words">{value || "—"}</p>
+      <p className="text-sm text-[#2C2C2A] wrap-break-word">{value || "—"}</p>
     </div>
   );
 }
@@ -64,6 +65,7 @@ export default function CustomerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const load = () => {
     if (!id) return;
@@ -166,12 +168,12 @@ export default function CustomerDetailPage() {
             </p>
           </div>
         </div>
-        <Link
-          href={`/customers/${customer.id}/edit`}
+        <button
+          onClick={() => setShowEdit(true)}
           className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] text-center hover:bg-[#F1EFE8]"
         >
           Edit
-        </Link>
+        </button>
       </div>
 
       {/* Details */}
@@ -209,6 +211,16 @@ export default function CustomerDetailPage() {
         it needs a GET /loans?customerId=... (or similar) endpoint.
         Once confirmed, add a loans table section below.
       */}
+
+      <CustomerFormModal
+        open={showEdit}
+        onClose={() => setShowEdit(false)}
+        customer={customer}
+        onSaved={(updated) => {
+          setCustomer(updated);
+          setShowEdit(false);
+        }}
+      />
     </div>
   );
 }

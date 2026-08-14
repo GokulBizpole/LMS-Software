@@ -35,7 +35,6 @@ export interface Partner {
   name: string;
   phone: string;
   email: string;
-  password: string | null;
   address?: string | null;
   investmentAmount: string | number;
   currentBalance: string | number;

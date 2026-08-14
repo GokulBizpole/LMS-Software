@@ -11,6 +11,7 @@ import reportRoutes from "./routes/report.routes";
 import authRoutes from "./routes/auth.routes";
 import settingsRoutes from "./routes/settings.routes";
 import notificationRoutes from "./routes/notification.routes";
+import auditRoutes from "./routes/audit.routes";
 const app = express();
 
 app.use(cors());
@@ -27,6 +28,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/audit-logs", auditRoutes);
 
 app.get("/", (_, res) => {
   res.json({ message: "LMS Finance API Running 🚀" });

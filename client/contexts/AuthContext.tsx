@@ -3,14 +3,13 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { adminLogin, partnerLogin } from "@/services/auth.service";
+import { login as loginRequest } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth";
 
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
-  loginAsAdmin: (email: string, password: string) => Promise<void>;
-  loginAsPartner: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -43,20 +42,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("authUser", JSON.stringify(result.user));
     setUser(result.user);
 
-    if (result.user.role === "SUPER_ADMIN" || result.user.role === "ADMIN") {
-      router.push("/dashboard");
+    if (result.user.role === "PARTNER") {
+      router.push("/partner/dashboard");
     } else {
-      router.push("/dashboard"); // adjust if partner has a different landing route
+      router.push("/dashboard");
     }
   }
 
-  async function loginAsAdmin(email: string, password: string) {
-    const result = await adminLogin({ email, password });
-    await handleLoginSuccess(result);
-  }
-
-  async function loginAsPartner(email: string, password: string) {
-    const result = await partnerLogin({ email, password });
+  async function login(email: string, password: string) {
+    const result = await loginRequest({ email, password });
     await handleLoginSuccess(result);
   }
 
@@ -68,9 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, loginAsAdmin, loginAsPartner, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

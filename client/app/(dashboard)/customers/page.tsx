@@ -1,9 +1,10 @@
 
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { useCustomers } from "@/hooks/useCustomers";
 import CustomerTable from "@/components/tables/CustomerTable";
+import CustomerFormModal from "@/components/customers/CustomerFormModal";
 
 export default function CustomersPage() {
   const {
@@ -19,6 +20,8 @@ export default function CustomersPage() {
     refetch,
   } = useCustomers();
 
+  const [showCreate, setShowCreate] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -26,12 +29,12 @@ export default function CustomersPage() {
           <h1 className="text-xl font-semibold text-[#2C2C2A]">Customers</h1>
           <p className="text-sm text-[#5F5E5A]">{total} total customer{total !== 1 ? "s" : ""}</p>
         </div>
-        <Link
-          href="/customers/create"
+        <button
+          onClick={() => setShowCreate(true)}
           className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg"
         >
           + Add customer
-        </Link>
+        </button>
       </div>
 
       <input
@@ -86,6 +89,15 @@ export default function CustomersPage() {
           </>
         )}
       </div>
+
+      <CustomerFormModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        onSaved={() => {
+          setShowCreate(false);
+          refetch();
+        }}
+      />
     </div>
   );
 }

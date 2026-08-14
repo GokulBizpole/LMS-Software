@@ -23,7 +23,7 @@ function StatusBadge({ status }: { status: Partner["status"] }) {
 export default function PartnerTable({ partners }: { partners: Partner[] }) {
   if (partners.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
         No partners found.
       </div>
     );
