@@ -4,6 +4,7 @@
 import { usePartnerReport } from "@/hooks/usePartnerReport";
 import PartnerReportTable from "@/components/tables/PartnerReportTable";
 import StatCard from "@/components/dashboard/StatCard";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { exportReportPdf } from "@/utils/exportPdf";
 import { Handshake, Wallet, PiggyBank, AlertTriangle } from "lucide-react";
@@ -25,12 +26,20 @@ export default function PartnerReportPage() {
     refetch,
   } = usePartnerReport();
 
-  const hasActiveFilters = search || status !== "all";
-
-  const clearFilters = () => {
-    setSearch("");
-    setStatus("all");
-  };
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "status",
+      label: "Status",
+      kind: "select",
+      value: status,
+      onChange: (v) => setStatus(v as typeof status),
+      options: [
+        { value: "all", label: "All statuses" },
+        { value: "ACTIVE", label: "Active" },
+        { value: "INACTIVE", label: "Inactive" },
+      ],
+    },
+  ];
 
   const filtersSummary = [
     status !== "all" && `Status: ${status}`,
@@ -90,32 +99,15 @@ export default function PartnerReportPage() {
         <StatCard title="Total outstanding" value={formatCurrency(summary.totalOutstanding)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, code, phone..."
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
-          />
-
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All statuses</option>
-            <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
-          </select>
-        </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="text-sm font-medium text-[#185FA5] hover:underline">
-            Clear filters
-          </button>
-        )}
+      <div className="flex items-center gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search name, code, phone..."
+          className="w-full max-w-sm rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+        />
+        <FilterPopover fields={filterFields} />
       </div>
 
       <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">

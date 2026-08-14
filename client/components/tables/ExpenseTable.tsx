@@ -53,7 +53,7 @@ export default function ExpenseTable({
 
   if (expenses.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
         No expenses found.
       </div>
     );
@@ -80,7 +80,7 @@ export default function ExpenseTable({
               <td className="py-3 pr-4 text-[#2C2C2A]">
                 {e.partner ? `${e.partner.partnerCode} · ${e.partner.name}` : "—"}
               </td>
-              <td className="py-3 pr-4 text-[#5F5E5A] max-w-[240px] truncate">
+              <td className="py-3 pr-4 text-[#5F5E5A] max-w-60 truncate">
                 {e.description || "—"}
               </td>
               <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{formatCurrency(e.amount)}</td>

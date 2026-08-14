@@ -3,6 +3,7 @@
 
 import { useProfitLossReport } from "@/hooks/useProfitLossReport";
 import StatCard from "@/components/dashboard/StatCard";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { exportReportPdf } from "@/utils/exportPdf";
 import { Wallet, PiggyBank, Receipt, AlertTriangle, TrendingUp } from "lucide-react";
@@ -23,6 +24,18 @@ export default function ProfitLossReportPage() {
 
   const filtersSummary =
     mode === "range" ? `${startDate} to ${endDate}` : "All-time snapshot";
+
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "date",
+      label: "Date",
+      kind: "dateRange",
+      startValue: startDate,
+      endValue: endDate,
+      onStartChange: (v) => setStartDate(v),
+      onEndChange: (v) => setEndDate(v),
+    },
+  ];
 
   const handleDownload = () => {
     if (!summary) return;
@@ -67,22 +80,8 @@ export default function ProfitLossReportPage() {
         </button>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-        </div>
-
+      <div className="flex items-center gap-3">
+        <FilterPopover fields={filterFields} />
         {mode === "range" && (
           <button onClick={clearRange} className="text-sm font-medium text-[#185FA5] hover:underline">
             Clear date range (show all-time)
@@ -93,7 +92,7 @@ export default function ProfitLossReportPage() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-[110px] bg-[#F1EFE8] rounded-2xl animate-pulse" />
+            <div key={i} className="h-27.5 bg-[#F1EFE8] rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : error ? (

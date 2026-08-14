@@ -1,12 +1,11 @@
-// components/layout/DashboardLayout.tsx
+// components/layout/PartnerLayout.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-export default function DashboardLayout({
+export default function PartnerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -18,21 +17,22 @@ export default function DashboardLayout({
   // so this has to run client-side rather than in middleware.ts.
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    const storedUser = localStorage.getItem("authUser");
+
+    if (!token || !storedUser) {
       router.replace("/login");
       return;
     }
 
-    const storedUser = localStorage.getItem("authUser");
     try {
-      const role = storedUser ? JSON.parse(storedUser)?.role : null;
-      if (role === "PARTNER") {
-        router.replace("/partner/dashboard");
+      const role = JSON.parse(storedUser)?.role;
+      if (role !== "PARTNER") {
+        router.replace("/dashboard");
         return;
       }
     } catch {
-      // Malformed stored user — fall through and let the page load;
-      // API calls will 401/403 if the token is actually bad.
+      router.replace("/login");
+      return;
     }
 
     setChecked(true);
@@ -48,7 +48,6 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">
-      <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
         <main className="flex-1 p-6 overflow-y-auto">{children}</main>

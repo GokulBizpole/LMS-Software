@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getPartnerById } from "@/services/partner.service";
+import PartnerFormModal from "@/components/partners/PartnerFormModal";
 import type { Partner, PartnerLoanSummary } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
@@ -70,6 +71,7 @@ export default function PartnerDetailPage() {
   const [partner, setPartner] = useState<Partner | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -127,12 +129,12 @@ export default function PartnerDetailPage() {
             </p>
           </div>
         </div>
-        <Link
-          href={`/partners/${partner.id}/edit`}
+        <button
+          onClick={() => setShowEdit(true)}
           className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A]"
         >
           Edit
-        </Link>
+        </button>
       </div>
 
       {/* Investment & loan stats */}
@@ -223,6 +225,16 @@ export default function PartnerDetailPage() {
           </div>
         )}
       </div>
+
+      <PartnerFormModal
+        open={showEdit}
+        onClose={() => setShowEdit(false)}
+        partner={partner}
+        onSaved={(updated) => {
+          setPartner(updated);
+          setShowEdit(false);
+        }}
+      />
     </div>
   );
 }

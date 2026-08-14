@@ -12,24 +12,13 @@ export interface AuthUser {
   role: "SUPER_ADMIN" | "ADMIN" | "PARTNER" | string;
 }
 
-// Raw shapes as the backend actually returns them
-export interface AdminLoginResponseData {
-  token: string;
-  admin: AuthUser;
-}
-
-export interface PartnerLoginResponseData {
-  token: string;
-  partner: AuthUser;
-}
-
 export interface LoginResponse<T> {
   success: boolean;
   message: string;
   data: T;
 }
 
-// Normalized shape the rest of the app (AuthContext) works with
+// Shape returned by the unified /auth/login endpoint
 export interface LoginResponseData {
   token: string;
   user: AuthUser;

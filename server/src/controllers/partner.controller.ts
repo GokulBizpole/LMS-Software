@@ -88,6 +88,24 @@ export const getPartner = async (
   }
 };
 
+// ================= GET MY PARTNER PROFILE (self-service) =================
+
+export const getMyPartnerProfile = async (req: any, res: Response) => {
+  try {
+    const partner = await getPartnerById(String(req.user?.id));
+
+    return res.status(200).json({
+      success: true,
+      data: partner,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
 // ================= UPDATE PARTNER =================
 
 export const updatePartner = async (

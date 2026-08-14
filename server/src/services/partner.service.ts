@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
 
@@ -6,6 +7,7 @@ interface CreatePartnerData {
   name: string;
   phone: string;
   email?: string;
+  password?: string;
   address?: string;
   investmentAmount: number;
   currentBalance: number;
@@ -15,11 +17,20 @@ interface UpdatePartnerData {
   name?: string;
   phone?: string;
   email?: string;
+  password?: string;
   address?: string;
   investmentAmount?: number;
   currentBalance?: number;
   status?: "ACTIVE" | "INACTIVE";
 }
+
+// Strips the password hash before a partner record is sent back to the client
+const sanitizePartner = <T extends { password?: string | null }>(
+  partner: T
+) => {
+  const { password, ...safePartner } = partner;
+  return safePartner;
+};
 
 // ================= CREATE PARTNER =================
 
@@ -42,8 +53,19 @@ export const createPartner = async (
     throw new Error("Partner already exists");
   }
 
+  if (data.password && !data.email) {
+    throw new Error("Email is required to set up partner login");
+  }
+
+  const hashedPassword = data.password
+    ? await bcrypt.hash(data.password, 10)
+    : undefined;
+
   const partner = await prisma.partner.create({
-    data,
+    data: {
+      ...data,
+      password: hashedPassword,
+    },
   });
 
   await createAuditLog({
@@ -54,7 +76,7 @@ export const createPartner = async (
     ipAddress,
   });
 
-  return partner;
+  return sanitizePartner(partner);
 };
 
 // ================= GET ALL PARTNERS =================
@@ -117,7 +139,7 @@ export const getAllPartners = async (
   ]);
 
   return {
-    partners,
+    partners: partners.map(sanitizePartner),
     total,
     page,
     limit,
@@ -165,7 +187,7 @@ export const getPartnerById = async (id: string) => {
     ),
   };
 
-  return { ...partnerFields, loans, stats };
+  return { ...sanitizePartner(partnerFields), loans, stats };
 };
 
 // ================= UPDATE PARTNER =================
@@ -202,9 +224,18 @@ export const updatePartnerById = async (
     }
   }
 
+  if (data.password && !(data.email || existingPartner.email)) {
+    throw new Error("Email is required to set up partner login");
+  }
+
   const partner = await prisma.partner.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      password: data.password
+        ? await bcrypt.hash(data.password, 10)
+        : undefined,
+    },
   });
 
   await createAuditLog({
@@ -215,7 +246,7 @@ export const updatePartnerById = async (
     ipAddress,
   });
 
-  return partner;
+  return sanitizePartner(partner);
 };
 
 // ================= DELETE PARTNER (SOFT DELETE) =================
@@ -248,5 +279,5 @@ export const deletePartnerById = async (
     ipAddress,
   });
 
-  return deletedPartner;
+  return sanitizePartner(deletedPartner);
 };

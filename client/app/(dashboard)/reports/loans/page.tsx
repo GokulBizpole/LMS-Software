@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useLoanReport } from "@/hooks/useLoanReport";
 import LoanTable from "@/components/tables/LoanTable";
 import StatCard from "@/components/dashboard/StatCard";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { getPartners } from "@/services/partner.service";
 import { getCustomers } from "@/services/customer.service";
 import type { Partner } from "@/types/partner";
@@ -58,17 +59,47 @@ export default function LoanReportPage() {
     getCustomers({ limit: 1000 }).then((r) => setCustomers(r.customers)).catch(() => setCustomers([]));
   }, []);
 
-  const hasActiveFilters =
-    search || status !== "all" || partnerId !== "all" || customerId !== "all" || startDate || endDate;
-
-  const clearFilters = () => {
-    setSearch("");
-    setStatus("all");
-    setPartnerId("all");
-    setCustomerId("all");
-    setStartDate("");
-    setEndDate("");
-  };
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "status",
+      label: "Status",
+      kind: "select",
+      value: status,
+      onChange: (v) => setStatus(v as typeof status),
+      options: STATUS_OPTIONS.map((s) => ({ value: s.key, label: s.label })),
+    },
+    {
+      key: "partner",
+      label: "Partner",
+      kind: "select",
+      value: partnerId,
+      onChange: (v) => setPartnerId(v),
+      options: [
+        { value: "all", label: "All partners" },
+        ...partners.map((p) => ({ value: p.id, label: `${p.partnerCode} · ${p.name}` })),
+      ],
+    },
+    {
+      key: "customer",
+      label: "Customer",
+      kind: "select",
+      value: customerId,
+      onChange: (v) => setCustomerId(v),
+      options: [
+        { value: "all", label: "All customers" },
+        ...customers.map((c) => ({ value: c.id, label: `${c.customerCode} · ${c.name}` })),
+      ],
+    },
+    {
+      key: "date",
+      label: "Date",
+      kind: "dateRange",
+      startValue: startDate,
+      endValue: endDate,
+      onStartChange: (v) => setStartDate(v),
+      onEndChange: (v) => setEndDate(v),
+    },
+  ];
 
   const filtersSummary = [
     startDate && `From ${startDate}`,
@@ -131,70 +162,15 @@ export default function LoanReportPage() {
         <StatCard title="Outstanding balance" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search loan, customer, partner..."
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm sm:col-span-2"
-          />
-
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s.key} value={s.key}>{s.label}</option>
-            ))}
-          </select>
-
-          <select
-            value={partnerId}
-            onChange={(e) => setPartnerId(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All partners</option>
-            {partners.map((p) => (
-              <option key={p.id} value={p.id}>{p.partnerCode} · {p.name}</option>
-            ))}
-          </select>
-
-          <select
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All customers</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>{c.customerCode} · {c.name}</option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-        </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="text-sm font-medium text-[#185FA5] hover:underline">
-            Clear filters
-          </button>
-        )}
+      <div className="flex items-center gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search loan, customer, partner..."
+          className="w-full max-w-sm rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+        />
+        <FilterPopover fields={filterFields} />
       </div>
 
       <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">

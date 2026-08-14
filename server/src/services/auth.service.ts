@@ -63,8 +63,61 @@ export const partnerLoginService = async ({ email, password }: LoginPayload) => 
 
   return {
     token,
-    partner: { id: partner.id, name: partner.name, email: partner.email, partnerCode: partner.partnerCode },
+    partner: {
+      id: partner.id,
+      name: partner.name,
+      email: partner.email,
+      partnerCode: partner.partnerCode,
+      role: "PARTNER",
+    },
   };
+};
+
+// Single login endpoint for the unified login page — looks up the email as
+// an Admin first, then as a Partner, and signs a token for whichever matches.
+export const loginService = async ({ email, password }: LoginPayload) => {
+  const admin = await prisma.admin.findUnique({ where: { email } });
+
+  if (admin) {
+    if (!admin.isActive) throw new Error("Account is inactive. Contact super admin");
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) throw new Error("Invalid email or password");
+
+    const token = jwt.sign(
+      { id: admin.id, role: admin.role, type: "ADMIN" },
+      env.JWT_SECRET as string,
+      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
+    );
+
+    return {
+      token,
+      user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+    };
+  }
+
+  const partner = await prisma.partner.findUnique({ where: { email } });
+
+  if (partner) {
+    if (!partner.password) throw new Error("Invalid email or password");
+    if (partner.status !== "ACTIVE") throw new Error("Account is inactive. Contact admin");
+
+    const isMatch = await bcrypt.compare(password, partner.password);
+    if (!isMatch) throw new Error("Invalid email or password");
+
+    const token = jwt.sign(
+      { id: partner.id, type: "PARTNER" },
+      env.JWT_SECRET as string,
+      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
+    );
+
+    return {
+      token,
+      user: { id: partner.id, name: partner.name, email: partner.email, role: "PARTNER" },
+    };
+  }
+
+  throw new Error("Invalid email or password");
 };
 
 export const changePasswordService = async ({

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useExpenses } from "@/hooks/useExpenses";
 import ExpenseTable from "@/components/tables/ExpenseTable";
 import StatCard from "@/components/dashboard/StatCard";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { getPartners } from "@/services/partner.service";
 import type { Partner } from "@/types/partner";
 import { EXPENSE_CATEGORIES } from "@/types/expense";
@@ -42,17 +43,51 @@ export default function ExpenseReportPage() {
     getPartners({ limit: 1000 }).then((r) => setPartners(r.partners)).catch(() => setPartners([]));
   }, []);
 
-  const hasActiveFilters =
-    search || category !== "all" || partnerId !== "all" || startDate || endDate;
-
-  const clearFilters = () => {
-    setSearch("");
-    setCategory("all");
-    setPartnerId("all");
-    setStartDate("");
-    setEndDate("");
-    setPage(1);
-  };
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "category",
+      label: "Category",
+      kind: "select",
+      value: category,
+      onChange: (v) => {
+        setCategory(v as typeof category);
+        setPage(1);
+      },
+      options: [
+        { value: "all", label: "All categories" },
+        ...EXPENSE_CATEGORIES.map((c) => ({ value: c, label: c })),
+      ],
+    },
+    {
+      key: "partner",
+      label: "Partner",
+      kind: "select",
+      value: partnerId,
+      onChange: (v) => {
+        setPartnerId(v);
+        setPage(1);
+      },
+      options: [
+        { value: "all", label: "All partners" },
+        ...partners.map((p) => ({ value: p.id, label: `${p.partnerCode} · ${p.name}` })),
+      ],
+    },
+    {
+      key: "date",
+      label: "Date",
+      kind: "dateRange",
+      startValue: startDate,
+      endValue: endDate,
+      onStartChange: (v) => {
+        setStartDate(v);
+        setPage(1);
+      },
+      onEndChange: (v) => {
+        setEndDate(v);
+        setPage(1);
+      },
+    },
+  ];
 
   const filtersSummary = [
     startDate && `From ${startDate}`,
@@ -107,73 +142,18 @@ export default function ExpenseReportPage() {
         <StatCard title="Total amount" value={formatCurrency(totalAmount)} icon={Receipt} iconBg="#FAECE7" iconColor="#993C1D" />
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search description, partner..."
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm sm:col-span-2 lg:col-span-1"
-          />
-
-          <select
-            value={category}
-            onChange={(e) => {
-              setCategory(e.target.value as typeof category);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All categories</option>
-            {EXPENSE_CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-
-          <select
-            value={partnerId}
-            onChange={(e) => {
-              setPartnerId(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          >
-            <option value="all">All partners</option>
-            {partners.map((p) => (
-              <option key={p.id} value={p.id}>{p.partnerCode} · {p.name}</option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => {
-              setEndDate(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
-          />
-        </div>
-
-        {hasActiveFilters && (
-          <button onClick={clearFilters} className="text-sm font-medium text-[#185FA5] hover:underline">
-            Clear filters
-          </button>
-        )}
+      <div className="flex items-center gap-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder="Search description, partner..."
+          className="w-full max-w-sm rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+        />
+        <FilterPopover fields={filterFields} />
       </div>
 
       <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">

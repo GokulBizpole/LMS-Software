@@ -1,23 +1,23 @@
 // app/(auth)/login/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
-  const { loginAsAdmin } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      await loginAsAdmin(email, password);
-      // AuthContext handles the redirect to /dashboard on success
+      await login(email, password);
+      // AuthContext redirects to /dashboard (admin) or /partner/dashboard (partner)
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message || "Login failed");
     } finally {
@@ -32,10 +32,10 @@ export default function LoginPage() {
         className="w-full max-w-sm bg-white rounded-2xl border border-[#E8E6DF] p-8"
       >
         <h1 className="text-lg font-semibold text-[#2C2C2A] mb-1">
-          FinLoan admin
+          FinLoan
         </h1>
         <p className="text-sm text-[#888780] mb-6">
-          Sign in to manage loans and customers.
+          Sign in with your admin or partner account.
         </p>
 
         {error && (
@@ -51,7 +51,7 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full mb-4 rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
-          placeholder="admin@finloan.com"
+          placeholder="you@finloan.com"
         />
 
         <label className="block text-sm text-[#5F5E5A] mb-1">Password</label>

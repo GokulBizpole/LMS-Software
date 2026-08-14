@@ -29,7 +29,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[220px] shrink-0 bg-[#F1EFE8] border-r border-[#D3D1C7] min-h-screen flex flex-col p-4">
+    <aside className="w-55 shrink-0 bg-[#F1EFE8] border-r border-[#D3D1C7] min-h-screen flex flex-col p-4">
       <div className="flex items-center gap-2 mb-3 px-1">
         <div className="w-8 h-8 rounded-lg bg-[#2C2C2A] flex items-center justify-center text-white text-sm font-semibold">
           ₹

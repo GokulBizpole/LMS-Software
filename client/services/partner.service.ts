@@ -43,6 +43,7 @@ export interface CreatePartnerData {
   name: string;
   phone: string;
   email?: string;
+  password?: string;
   address?: string;
   investmentAmount: number;
   currentBalance: number;
@@ -73,6 +74,7 @@ export interface UpdatePartnerData {
   name?: string;
   phone?: string;
   email?: string;
+  password?: string;
   address?: string;
   investmentAmount?: number;
   currentBalance?: number;
