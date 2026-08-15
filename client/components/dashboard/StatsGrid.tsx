@@ -42,16 +42,16 @@ export default function StatsGrid({
       title: "Total Customers",
       value: String(stats.totalCustomers),
       icon: Users,
-      iconBg: "#F1EFE8",
-      iconColor: "#5F5E5A",
+      iconBg: "#ECE9DF",
+      iconColor: "#45443E",
     },
 
     {
       title: "Total Partners",
       value: String(stats.totalPartners),
       icon: Handshake,
-      iconBg: "#F1EFE8",
-      iconColor: "#5F5E5A",
+      iconBg: "#ECE9DF",
+      iconColor: "#45443E",
     },
 
     {
@@ -90,8 +90,8 @@ export default function StatsGrid({
       title: "Closed Loans",
       value: String(stats.closedLoans),
       icon: Archive,
-      iconBg: "#F1EFE8",
-      iconColor: "#5F5E5A",
+      iconBg: "#ECE9DF",
+      iconColor: "#45443E",
     },
 
     {

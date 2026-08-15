@@ -11,6 +11,7 @@ export function usePayments() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [period, setPeriod] = useState<PaymentPeriod>("all");
@@ -23,7 +24,7 @@ export function usePayments() {
       setError(null);
       const result = await getPayments({
         page,
-        limit: 10,
+        limit: pageSize,
         search,
         period: period === "all" ? undefined : period,
       });
@@ -36,17 +37,23 @@ export function usePayments() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, period]);
+  }, [page, pageSize, search, period]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, search, period]);
 
   return {
     payments,
     total,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

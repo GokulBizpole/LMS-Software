@@ -74,13 +74,13 @@ export default function ReportsDashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-[#2C2C2A]">Reports</h1>
-          <p className="text-sm text-[#5F5E5A]">Overview across the whole business.</p>
+          <h1 className="text-xl font-bold text-[#1A1A18]">Reports</h1>
+          <p className="text-sm text-[#45443E]">Overview across the whole business.</p>
         </div>
         <button
           onClick={handleDownload}
           disabled={!data}
-          className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
         >
           Download PDF
         </button>
@@ -89,7 +89,7 @@ export default function ReportsDashboardPage() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-27.5 bg-[#F1EFE8] rounded-2xl animate-pulse" />
+            <div key={i} className="h-27.5 bg-[#ECE9DF] rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : error ? (
@@ -101,8 +101,8 @@ export default function ReportsDashboardPage() {
         </div>
       ) : data ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Total customers" value={String(data.totalCustomers)} icon={Users} iconBg="#F1EFE8" iconColor="#5F5E5A" />
-          <StatCard title="Total partners" value={String(data.totalPartners)} icon={Handshake} iconBg="#F1EFE8" iconColor="#5F5E5A" />
+          <StatCard title="Total customers" value={String(data.totalCustomers)} icon={Users} iconBg="#ECE9DF" iconColor="#45443E" />
+          <StatCard title="Total partners" value={String(data.totalPartners)} icon={Handshake} iconBg="#ECE9DF" iconColor="#45443E" />
           <StatCard title="Active loans" value={String(data.activeLoans)} icon={FileText} iconBg="#EEEDFE" iconColor="#534AB7" />
           <StatCard title="Total loan amount" value={formatCurrency(data.totalLoanAmount)} icon={Wallet} iconBg="#E6F1FB" iconColor="#185FA5" />
           <StatCard title="Total collection" value={formatCurrency(data.totalCollection)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
@@ -113,16 +113,16 @@ export default function ReportsDashboardPage() {
       ) : null}
 
       <div>
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-3">Detailed reports</h2>
+        <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Detailed reports</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {REPORT_LINKS.map((r) => (
             <Link
               key={r.href}
               href={r.href}
-              className="rounded-2xl border border-[#E8E6DF] bg-white p-5 hover:border-[#B4B2A9] transition-colors"
+              className="rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
             >
-              <p className="text-sm font-semibold text-[#2C2C2A] mb-1">{r.label}</p>
-              <p className="text-xs text-[#888780]">{r.description}</p>
+              <p className="text-sm font-semibold text-[#1A1A18] mb-1">{r.label}</p>
+              <p className="text-xs text-[#6B6A62]">{r.description}</p>
             </Link>
           ))}
         </div>

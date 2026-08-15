@@ -92,14 +92,14 @@ export default function ExpenseFormModal({
             type="submit"
             form="expense-form"
             disabled={submitting}
-            className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+            className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {submitting ? "Saving..." : "Save expense"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] hover:bg-[#F1EFE8]"
+            className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
           >
             Cancel
           </button>

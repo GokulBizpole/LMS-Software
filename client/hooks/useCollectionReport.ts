@@ -5,8 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getPayments } from "@/services/payment.service";
 import type { Payment, PaymentStatus } from "@/types/payment";
 
-const PAGE_SIZE = 10;
-
 function inRange(dateStr: string | null | undefined, start: string, end: string) {
   if (!start && !end) return true;
   if (!dateStr) return false;
@@ -28,6 +26,7 @@ export function useCollectionReport() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const load = useCallback(async () => {
     try {
@@ -49,7 +48,7 @@ export function useCollectionReport() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, status, partnerCode, customerCode, startDate, endDate]);
+  }, [pageSize, search, status, partnerCode, customerCode, startDate, endDate]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -92,8 +91,8 @@ export function useCollectionReport() {
     );
   }, [filtered]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return {
     payments: paginated,
@@ -101,6 +100,8 @@ export function useCollectionReport() {
     summary,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

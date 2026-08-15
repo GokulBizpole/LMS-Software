@@ -13,7 +13,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-  CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
+  CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
   REJECTED: { bg: "#FAECE7", text: "#993C1D" },
 };
@@ -33,8 +33,8 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm text-[#2C2C2A]">{value || "—"}</p>
+      <p className="text-xs text-[#6B6A62] mb-1">{label}</p>
+      <p className="text-sm text-[#1A1A18]">{value || "—"}</p>
     </div>
   );
 }
@@ -42,12 +42,12 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 function DetailSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-4 w-32 bg-[#F1EFE8] rounded" />
-      <div className="h-6 w-56 bg-[#F1EFE8] rounded" />
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 space-y-4">
+      <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
+      <div className="h-6 w-56 bg-[#ECE9DF] rounded" />
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 space-y-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-10 bg-[#F1EFE8] rounded" />
+            <div key={i} className="h-10 bg-[#ECE9DF] rounded" />
           ))}
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function LoanDetailPage() {
       </Link>
 
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold text-[#2C2C2A]">
+        <h1 className="text-xl font-bold text-[#1A1A18]">
           {isPending ? `Review loan ${loan.loanNumber}` : `Loan ${loan.loanNumber}`}
         </h1>
         <StatusBadge status={loan.status} />
@@ -154,24 +154,24 @@ export default function LoanDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
+          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
               <div>
-                <p className="text-xs text-[#888780] mb-2">Customer</p>
-                <p className="text-sm font-semibold text-[#2C2C2A]">{loan.customer?.name}</p>
-                <p className="text-xs text-[#888780]">
+                <p className="text-xs text-[#6B6A62] mb-2">Customer</p>
+                <p className="text-sm font-semibold text-[#1A1A18]">{loan.customer?.name}</p>
+                <p className="text-xs text-[#6B6A62]">
                   {loan.customer?.customerCode} · {loan.customer?.phone}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-[#888780] mb-2">Submitted by partner</p>
-                <p className="text-sm font-semibold text-[#2C2C2A]">{loan.partner?.name}</p>
-                <p className="text-xs text-[#888780]">{loan.partner?.partnerCode}</p>
+                <p className="text-xs text-[#6B6A62] mb-2">Submitted by partner</p>
+                <p className="text-sm font-semibold text-[#1A1A18]">{loan.partner?.name}</p>
+                <p className="text-xs text-[#6B6A62]">{loan.partner?.partnerCode}</p>
               </div>
             </div>
 
-            <div className="border-t border-[#F1EFE8] pt-4">
-              <p className="text-xs text-[#888780] mb-3">Loan terms</p>
+            <div className="border-t border-[#ECE9DF] pt-4">
+              <p className="text-xs text-[#6B6A62] mb-3">Loan terms</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-4">
                 <Field label="Principal amount" value={formatCurrency(loan.principalAmount)} />
                 <Field
@@ -196,23 +196,23 @@ export default function LoanDetailPage() {
             </div>
 
             {loan.remarks && (
-              <div className="border-t border-[#F1EFE8] pt-4 mt-4">
-                <p className="text-xs text-[#888780] mb-1">Partner remarks</p>
-                <p className="text-sm text-[#2C2C2A]">&quot;{loan.remarks}&quot;</p>
+              <div className="border-t border-[#ECE9DF] pt-4 mt-4">
+                <p className="text-xs text-[#6B6A62] mb-1">Partner remarks</p>
+                <p className="text-sm text-[#1A1A18]">&quot;{loan.remarks}&quot;</p>
               </div>
             )}
 
             {loan.status === "REJECTED" && loan.rejectionReason && (
-              <div className="border-t border-[#F1EFE8] pt-4 mt-4">
-                <p className="text-xs text-[#888780] mb-1">Rejection reason</p>
+              <div className="border-t border-[#ECE9DF] pt-4 mt-4">
+                <p className="text-xs text-[#6B6A62] mb-1">Rejection reason</p>
                 <p className="text-sm text-[#993C1D]">{loan.rejectionReason}</p>
               </div>
             )}
           </div>
 
           {isPending && (
-            <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-              <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Decision</h2>
+            <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+              <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Decision</h2>
 
               {actionError && (
                 <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
@@ -220,7 +220,7 @@ export default function LoanDetailPage() {
                 </div>
               )}
 
-              <label className="block text-xs text-[#888780] mb-1">
+              <label className="block text-xs text-[#6B6A62] mb-1">
                 Rejection reason (required if rejecting)
               </label>
               <input
@@ -228,7 +228,7 @@ export default function LoanDetailPage() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="e.g. insufficient documents, high risk profile..."
-                className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A] mb-5"
+                className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18] mb-5"
               />
 
               <div className="flex items-center gap-3">
@@ -252,11 +252,11 @@ export default function LoanDetailPage() {
         </div>
 
         {isPending && (
-          <div className="rounded-2xl border border-[#E8E6DF] bg-[#F1EFE8] p-6 h-fit">
-            <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">What happens next</h2>
-            <div className="space-y-4 text-sm text-[#5F5E5A]">
+          <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6 h-fit">
+            <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">What happens next</h2>
+            <div className="space-y-4 text-sm text-[#45443E]">
               <div>
-                <p className="font-medium text-[#2C2C2A] mb-1">On Approve:</p>
+                <p className="font-medium text-[#1A1A18] mb-1">On Approve:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>Status → ACTIVE</li>
                   <li>EMI schedule unlocked</li>
@@ -264,7 +264,7 @@ export default function LoanDetailPage() {
                 </ul>
               </div>
               <div>
-                <p className="font-medium text-[#2C2C2A] mb-1">On Reject:</p>
+                <p className="font-medium text-[#1A1A18] mb-1">On Reject:</p>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>Status → REJECTED</li>
                   <li>Partner notified with reason</li>

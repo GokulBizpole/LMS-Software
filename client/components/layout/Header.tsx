@@ -17,10 +17,10 @@ export default function Header() {
     : "AD";
 
   return (
-    <header className="h-16 border-b border-[#D3D1C7] bg-white flex items-center justify-end gap-4 px-6">
+    <header className="h-16 border-b border-[#C4C1B3] bg-white flex items-center justify-end gap-4 px-6">
       <button
         type="button"
-        className="w-9 h-9 rounded-full border border-[#D3D1C7] flex items-center justify-center text-[#5F5E5A] hover:bg-[#F1EFE8]"
+        className="w-9 h-9 rounded-full border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
         aria-label="Notifications"
       >
         <Bell size={16} />
@@ -31,15 +31,15 @@ export default function Header() {
           {initials}
         </div>
         <div className="text-sm leading-tight hidden sm:block">
-          <p className="font-medium text-[#2C2C2A]">{user?.name ?? "Admin"}</p>
-          <p className="text-xs text-[#888780]">{user?.role ?? ""}</p>
+          <p className="font-medium text-[#1A1A18]">{user?.name ?? "Admin"}</p>
+          <p className="text-xs text-[#6B6A62]">{user?.role ?? ""}</p>
         </div>
       </div>
 
       <button
         type="button"
         onClick={logout}
-        className="w-9 h-9 rounded-full border border-[#D3D1C7] flex items-center justify-center text-[#993C1D] hover:bg-[#FAECE7]"
+        className="w-9 h-9 rounded-full border border-[#C4C1B3] flex items-center justify-center text-[#993C1D] hover:bg-[#FAECE7]"
         aria-label="Logout"
       >
         <LogOut size={16} />

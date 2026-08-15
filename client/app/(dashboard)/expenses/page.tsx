@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useExpenses } from "@/hooks/useExpenses";
 import ExpenseTable from "@/components/tables/ExpenseTable";
 import ExpenseFormModal from "@/components/expenses/ExpenseFormModal";
+import Pagination from "@/components/ui/Pagination";
 import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { getPartners } from "@/services/partner.service";
 import type { Partner } from "@/types/partner";
@@ -18,6 +19,8 @@ export default function ExpensesPage() {
     totalAmount,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,
@@ -93,14 +96,14 @@ export default function ExpensesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-[#2C2C2A]">Expenses</h1>
-          <p className="text-sm text-[#5F5E5A]">
+          <h1 className="text-xl font-bold text-[#1A1A18]">Expenses</h1>
+          <p className="text-sm text-[#45443E]">
             {total} expense{total !== 1 ? "s" : ""} · {formatCurrency(totalAmount)} total
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg"
+          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg"
         >
           + Add expense
         </button>
@@ -115,16 +118,16 @@ export default function ExpensesPage() {
             setPage(1);
           }}
           placeholder="Search description, partner..."
-          className="w-full max-w-sm rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+          className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
         />
         <FilterPopover fields={filterFields} />
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">
+      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 bg-[#F1EFE8] rounded animate-pulse" />
+              <div key={i} className="h-10 bg-[#ECE9DF] rounded animate-pulse" />
             ))}
           </div>
         ) : error ? (
@@ -138,29 +141,14 @@ export default function ExpensesPage() {
           <>
             <ExpenseTable expenses={expenses} onChanged={refetch} />
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#F1EFE8]">
-                <p className="text-xs text-[#888780]">
-                  Page {page} of {totalPages}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="w-8 h-8 rounded-lg border border-[#D3D1C7] text-sm disabled:opacity-40"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="w-8 h-8 rounded-lg border border-[#D3D1C7] text-sm disabled:opacity-40"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
           </>
         )}
       </div>

@@ -5,8 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getLoans } from "@/services/loan.service";
 import type { Loan, LoanStatus } from "@/types/loan";
 
-const PAGE_SIZE = 10;
-
 function inRange(dateStr: string | null | undefined, start: string, end: string) {
   if (!start && !end) return true;
   if (!dateStr) return false;
@@ -28,6 +26,7 @@ export function useLoanReport() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const load = useCallback(async () => {
     try {
@@ -49,7 +48,7 @@ export function useLoanReport() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, status, partnerId, customerId, startDate, endDate]);
+  }, [pageSize, search, status, partnerId, customerId, startDate, endDate]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -95,8 +94,8 @@ export function useLoanReport() {
     );
   }, [filtered]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return {
     loans: paginated,
@@ -104,6 +103,8 @@ export function useLoanReport() {
     summary,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

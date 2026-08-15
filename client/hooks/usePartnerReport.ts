@@ -6,8 +6,6 @@ import { getPartners } from "@/services/partner.service";
 import { getPartnerFinancials } from "@/services/report.service";
 import type { PartnerReportRow } from "@/types/report";
 
-const PAGE_SIZE = 10;
-
 export function usePartnerReport() {
   const [rows, setRows] = useState<PartnerReportRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +14,7 @@ export function usePartnerReport() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"ACTIVE" | "INACTIVE" | "all">("all");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const load = useCallback(async () => {
     try {
@@ -62,7 +61,7 @@ export function usePartnerReport() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, status]);
+  }, [pageSize, search, status]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -98,8 +97,8 @@ export function usePartnerReport() {
     );
   }, [filtered]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return {
     partners: paginated,
@@ -107,6 +106,8 @@ export function usePartnerReport() {
     summary,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

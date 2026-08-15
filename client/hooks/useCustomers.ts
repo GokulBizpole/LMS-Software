@@ -9,6 +9,7 @@ export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ export function useCustomers() {
     try {
       setLoading(true);
       setError(null);
-      const result = await getCustomers({ page, limit: 10, search });
+      const result = await getCustomers({ page, limit: pageSize, search });
       setCustomers(result.customers);
       setTotal(result.total);
       setTotalPages(result.totalPages);
@@ -28,17 +29,23 @@ export function useCustomers() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, pageSize, search]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, search]);
 
   return {
     customers,
     total,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

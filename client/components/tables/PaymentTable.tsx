@@ -23,53 +23,53 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
 export default function PaymentTable({ payments }: { payments: Payment[] }) {
   if (payments.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-[160px] text-sm text-[#6B6A62]">
         No payments found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-[#888780] text-xs border-b border-[#E8E6DF]">
-            <th className="py-2 pr-4 font-medium">Receipt</th>
-            <th className="py-2 pr-4 font-medium">Loan</th>
-            <th className="py-2 pr-4 font-medium">Customer</th>
-            <th className="py-2 pr-4 font-medium">Partner</th>
-            <th className="py-2 pr-4 font-medium">Installment</th>
-            <th className="py-2 pr-4 font-medium">Amount</th>
-            <th className="py-2 pr-4 font-medium">Penalty</th>
-            <th className="py-2 pr-4 font-medium">Total received</th>
-            <th className="py-2 pr-4 font-medium">Method</th>
-            <th className="py-2 pr-4 font-medium">Status</th>
-            <th className="py-2 pr-4 font-medium">Paid on</th>
-            <th className="py-2 pr-4 font-medium text-right">Actions</th>
+          <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
+            <th className="py-2 px-4 font-medium">Receipt</th>
+            <th className="py-2 px-4 font-medium">Loan</th>
+            <th className="py-2 px-4 font-medium">Customer</th>
+            <th className="py-2 px-4 font-medium">Partner</th>
+            <th className="py-2 px-4 font-medium">Installment</th>
+            <th className="py-2 px-4 font-medium text-right">Amount</th>
+            <th className="py-2 px-4 font-medium text-right">Penalty</th>
+            <th className="py-2 px-4 font-medium text-right">Total received</th>
+            <th className="py-2 px-4 font-medium">Method</th>
+            <th className="py-2 px-4 font-medium">Status</th>
+            <th className="py-2 px-4 font-medium">Paid on</th>
+            <th className="py-2 px-4 font-medium text-right">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {payments.map((p) => (
-            <tr key={p.id} className="border-b border-[#F1EFE8] last:border-0">
-              <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{p.receiptNumber}</td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">{p.loan.loanNumber}</td>
-              <td className="py-3 pr-4">
-                <p className="text-[#2C2C2A]">{p.loan.customer.name}</p>
-                <p className="text-xs text-[#888780]">
+            <tr key={p.id} className="border-b border-[#E5E7EB] last:border-0">
+              <td className="py-3 px-4 text-[#1A1A18] font-medium">{p.receiptNumber}</td>
+              <td className="py-3 px-4 text-[#45443E]">{p.loan.loanNumber}</td>
+              <td className="py-3 px-4">
+                <p className="text-[#1A1A18]">{p.loan.customer.name}</p>
+                <p className="text-xs text-[#6B6A62]">
                   {p.loan.customer.customerCode} · {p.loan.customer.phone}
                 </p>
               </td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">
+              <td className="py-3 px-4 text-[#45443E]">
                 {p.loan.partner ? `${p.loan.partner.partnerCode} · ${p.loan.partner.name}` : "—"}
               </td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">#{p.installmentNumber}</td>
-              <td className="py-3 pr-4 text-[#2C2C2A]">{formatCurrency(p.amount)}</td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">{formatCurrency(p.penalty)}</td>
-              <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{formatCurrency(p.totalReceived)}</td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">{p.paymentMethod.replace("_", " ")}</td>
-              <td className="py-3 pr-4"><StatusBadge status={p.paymentStatus} /></td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
-              <td className="py-3 pr-4 text-right">
+              <td className="py-3 px-4 text-[#45443E]">#{p.installmentNumber}</td>
+              <td className="py-3 px-4 text-[#1A1A18] text-right">{formatCurrency(p.amount)}</td>
+              <td className="py-3 px-4 text-[#45443E] text-right">{formatCurrency(p.penalty)}</td>
+              <td className="py-3 px-4 text-[#1A1A18] font-medium text-right">{formatCurrency(p.totalReceived)}</td>
+              <td className="py-3 px-4 text-[#45443E]">{p.paymentMethod.replace("_", " ")}</td>
+              <td className="py-3 px-4"><StatusBadge status={p.paymentStatus} /></td>
+              <td className="py-3 px-4 text-[#45443E]">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
+              <td className="py-3 px-4 text-right">
                 <a
                   href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/${p.id}/receipt`}
                   target="_blank"

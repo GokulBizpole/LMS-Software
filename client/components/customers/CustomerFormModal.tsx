@@ -157,14 +157,14 @@ export default function CustomerFormModal({
             type="submit"
             form="customer-form"
             disabled={submitting}
-            className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+            className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {submitting ? "Saving..." : isEdit ? "Save changes" : "Save customer"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] hover:bg-[#F1EFE8]"
+            className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
           >
             Cancel
           </button>
@@ -180,12 +180,12 @@ export default function CustomerFormModal({
       <form id="customer-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#2C2C2A]">Personal details</h3>
+            <h3 className="text-sm font-semibold text-[#1A1A18]">Personal details</h3>
             {isEdit && (
               <select
                 value={form.status}
                 onChange={(e) => handleChange("status", e.target.value)}
-                className="rounded-lg border border-[#B4B2A9] px-3 py-1.5 text-sm text-[#2C2C2A]"
+                className="rounded-lg border border-[#9C9A8D] px-3 py-1.5 text-sm text-[#1A1A18]"
               >
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="BLOCKED">BLOCKED</option>
@@ -216,7 +216,7 @@ export default function CustomerFormModal({
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-[#2C2C2A] mb-4">Guarantor</h3>
+          <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Guarantor</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <TextField label="Guarantor name" name="guarantorName" value={form.guarantorName} onChange={handleChange} />
             <TextField label="Guarantor phone" name="guarantorPhone" value={form.guarantorPhone} onChange={handleChange} />

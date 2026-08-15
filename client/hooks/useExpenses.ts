@@ -10,6 +10,7 @@ export function useExpenses() {
   const [total, setTotal] = useState(0);
   const [totalAmount, setTotalAmount] = useState<string | number>(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ExpenseCategory | "all">("all");
@@ -25,7 +26,7 @@ export function useExpenses() {
       setError(null);
       const result = await getExpenses({
         page,
-        limit: 10,
+        limit: pageSize,
         search,
         category: category === "all" ? undefined : category,
         partnerId: partnerId === "all" ? undefined : partnerId,
@@ -42,11 +43,15 @@ export function useExpenses() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, category, partnerId, startDate, endDate]);
+  }, [page, pageSize, search, category, partnerId, startDate, endDate]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, search, category, partnerId, startDate, endDate]);
 
   return {
     expenses,
@@ -54,6 +59,8 @@ export function useExpenses() {
     totalAmount,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

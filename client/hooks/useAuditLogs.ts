@@ -9,6 +9,7 @@ export function useAuditLogs() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [action, setAction] = useState<string>("all");
   const [tableName, setTableName] = useState<string>("all");
@@ -21,7 +22,7 @@ export function useAuditLogs() {
       setError(null);
       const result = await getAuditLogs({
         page,
-        limit: 10,
+        limit: pageSize,
         action: action === "all" ? undefined : action,
         tableName: tableName === "all" ? undefined : tableName,
       });
@@ -34,17 +35,23 @@ export function useAuditLogs() {
     } finally {
       setLoading(false);
     }
-  }, [page, action, tableName]);
+  }, [page, pageSize, action, tableName]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, action, tableName]);
 
   return {
     logs,
     total,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     action,
     setAction,

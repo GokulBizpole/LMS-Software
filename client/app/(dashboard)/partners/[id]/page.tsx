@@ -13,7 +13,7 @@ import { formatDate } from "@/utils/formatDate";
 function StatusBadge({ status }: { status: Partner["status"] }) {
   const map: Record<Partner["status"], { bg: string; text: string }> = {
     ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-    INACTIVE: { bg: "#F1EFE8", text: "#5F5E5A" },
+    INACTIVE: { bg: "#ECE9DF", text: "#45443E" },
   };
   const c = map[status] ?? map.INACTIVE;
   return (
@@ -30,7 +30,7 @@ const LOAN_STATUS_STYLES: Record<PartnerLoanSummary["status"], { bg: string; tex
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-  CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
+  CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
   REJECTED: { bg: "#FAECE7", text: "#993C1D" },
 };
@@ -49,9 +49,9 @@ function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[#E8E6DF] bg-[#F1EFE8] p-5">
-      <p className="text-xs text-[#5F5E5A] mb-1">{label}</p>
-      <p className="text-xl font-semibold text-[#2C2C2A]">{value}</p>
+    <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-5">
+      <p className="text-xs text-[#45443E] mb-1">{label}</p>
+      <p className="text-xl font-bold text-[#1A1A18]">{value}</p>
     </div>
   );
 }
@@ -59,8 +59,8 @@ function StatTile({ label, value }: { label: string; value: string }) {
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm text-[#2C2C2A]">{value || "—"}</p>
+      <p className="text-xs text-[#6B6A62] mb-1">{label}</p>
+      <p className="text-sm text-[#1A1A18]">{value || "—"}</p>
     </div>
   );
 }
@@ -85,7 +85,7 @@ export default function PartnerDetailPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="h-40 bg-[#F1EFE8] rounded-2xl animate-pulse" />;
+    return <div className="h-40 bg-[#ECE9DF] rounded-2xl animate-pulse" />;
   }
 
   if (error || !partner) {
@@ -113,17 +113,17 @@ export default function PartnerDetailPage() {
       </button>
 
       {/* Profile header */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 flex items-center justify-between">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-lg font-semibold">
             {initials}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-[#2C2C2A]">{partner.name}</h1>
+              <h1 className="text-lg font-semibold text-[#1A1A18]">{partner.name}</h1>
               <StatusBadge status={partner.status} />
             </div>
-            <p className="text-sm text-[#5F5E5A]">
+            <p className="text-sm text-[#45443E]">
               {partner.partnerCode} · {partner.phone}
               {partner.address ? ` · ${partner.address}` : ""}
             </p>
@@ -131,7 +131,7 @@ export default function PartnerDetailPage() {
         </div>
         <button
           onClick={() => setShowEdit(true)}
-          className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A]"
+          className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E]"
         >
           Edit
         </button>
@@ -148,8 +148,8 @@ export default function PartnerDetailPage() {
       </div>
 
       {/* Contact details */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Contact details</h2>
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Contact details</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
           <Field label="Phone" value={partner.phone} />
           <Field label="Email" value={partner.email} />
@@ -157,7 +157,7 @@ export default function PartnerDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-[#F1EFE8] p-6">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
         <div className="grid grid-cols-2 gap-6">
           <Field label="Joined" value={formatDate(partner.createdAt)} />
           <Field label="Last updated" value={formatDate(partner.updatedAt)} />
@@ -165,20 +165,20 @@ export default function PartnerDetailPage() {
       </div>
 
       {/* Borrowers */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">
           Customers who received loans through this partner
         </h2>
 
         {!partner.loans || partner.loans.length === 0 ? (
-          <div className="flex items-center justify-center h-[100px] text-sm text-[#888780]">
+          <div className="flex items-center justify-center h-[100px] text-sm text-[#6B6A62]">
             No loans given yet.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[#888780] text-xs border-b border-[#E8E6DF]">
+                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#DAD7CA]">
                   <th className="py-2 pr-4 font-medium">Loan no</th>
                   <th className="py-2 pr-4 font-medium">Customer</th>
                   <th className="py-2 pr-4 font-medium">Principal</th>
@@ -192,19 +192,19 @@ export default function PartnerDetailPage() {
               </thead>
               <tbody>
                 {partner.loans.map((loan) => (
-                  <tr key={loan.id} className="border-b border-[#F1EFE8] last:border-0">
-                    <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{loan.loanNumber}</td>
+                  <tr key={loan.id} className="border-b border-[#ECE9DF] last:border-0">
+                    <td className="py-3 pr-4 text-[#1A1A18] font-medium">{loan.loanNumber}</td>
                     <td className="py-3 pr-4">
-                      <p className="text-[#2C2C2A]">{loan.customer.name}</p>
-                      <p className="text-xs text-[#888780]">
+                      <p className="text-[#1A1A18]">{loan.customer.name}</p>
+                      <p className="text-xs text-[#6B6A62]">
                         {loan.customer.customerCode} · {loan.customer.phone}
                       </p>
                     </td>
-                    <td className="py-3 pr-4 text-[#2C2C2A]">{formatCurrency(loan.principalAmount)}</td>
-                    <td className="py-3 pr-4 text-[#5F5E5A]">{loan.interestPercentage}%</td>
-                    <td className="py-3 pr-4 text-[#5F5E5A]">{loan.duration} mo</td>
-                    <td className="py-3 pr-4 text-[#2C2C2A]">{formatCurrency(loan.installmentAmount)}</td>
-                    <td className="py-3 pr-4 text-[#5F5E5A]">
+                    <td className="py-3 pr-4 text-[#1A1A18]">{formatCurrency(loan.principalAmount)}</td>
+                    <td className="py-3 pr-4 text-[#45443E]">{loan.interestPercentage}%</td>
+                    <td className="py-3 pr-4 text-[#45443E]">{loan.duration} mo</td>
+                    <td className="py-3 pr-4 text-[#1A1A18]">{formatCurrency(loan.installmentAmount)}</td>
+                    <td className="py-3 pr-4 text-[#45443E]">
                       {loan.paidInstallments} / {loan.totalInstallments} paid
                     </td>
                     <td className="py-3 pr-4">
