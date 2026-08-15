@@ -137,14 +137,14 @@ export default function PartnerFormModal({
             type="submit"
             form="partner-form"
             disabled={submitting}
-            className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+            className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {submitting ? "Saving..." : isEdit ? "Save changes" : "Save partner"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] hover:bg-[#F1EFE8]"
+            className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
           >
             Cancel
           </button>
@@ -160,12 +160,12 @@ export default function PartnerFormModal({
       <form id="partner-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#2C2C2A]">Partner details</h3>
+            <h3 className="text-sm font-semibold text-[#1A1A18]">Partner details</h3>
             {isEdit && (
               <select
                 value={form.status}
                 onChange={(e) => handleChange("status", e.target.value)}
-                className="rounded-lg border border-[#B4B2A9] px-3 py-1.5 text-sm text-[#2C2C2A]"
+                className="rounded-lg border border-[#9C9A8D] px-3 py-1.5 text-sm text-[#1A1A18]"
               >
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="INACTIVE">INACTIVE</option>
@@ -190,8 +190,8 @@ export default function PartnerFormModal({
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-[#2C2C2A] mb-1">Partner login</h3>
-          <p className="text-xs text-[#888780] mb-4">
+          <h3 className="text-sm font-semibold text-[#1A1A18] mb-1">Partner login</h3>
+          <p className="text-xs text-[#6B6A62] mb-4">
             {isEdit
               ? "Leave blank to keep the current password unchanged."
               : "Optional. Set a password so this partner can sign in with the email above."}
@@ -208,7 +208,7 @@ export default function PartnerFormModal({
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-[#2C2C2A] mb-4">Investment</h3>
+          <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Investment</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <TextField
               label="Investment amount"
@@ -227,7 +227,7 @@ export default function PartnerFormModal({
             />
           </div>
           {!isEdit && (
-            <p className="text-xs text-[#888780] mt-3">
+            <p className="text-xs text-[#6B6A62] mt-3">
               Leave current balance empty to default it to the investment amount.
             </p>
           )}

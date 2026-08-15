@@ -66,15 +66,15 @@ export default function ProfitLossReportPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-[#2C2C2A]">Profit &amp; Loss Report</h1>
-          <p className="text-sm text-[#5F5E5A]">
+          <h1 className="text-xl font-bold text-[#1A1A18]">Profit &amp; Loss Report</h1>
+          <p className="text-sm text-[#45443E]">
             {mode === "range" ? `${startDate} to ${endDate}` : "All-time snapshot"}
           </p>
         </div>
         <button
           onClick={handleDownload}
           disabled={loading || !summary}
-          className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
         >
           Download PDF
         </button>
@@ -92,7 +92,7 @@ export default function ProfitLossReportPage() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-27.5 bg-[#F1EFE8] rounded-2xl animate-pulse" />
+            <div key={i} className="h-27.5 bg-[#ECE9DF] rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : error ? (
@@ -112,34 +112,34 @@ export default function ProfitLossReportPage() {
             <StatCard title="Net profit" value={formatCurrency(summary.netProfit)} icon={TrendingUp} iconBg="#EAF3DE" iconColor="#3B6D11" />
           </div>
 
-          <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">
+          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[#888780] text-xs border-b border-[#E8E6DF]">
+                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#DAD7CA]">
                   <th className="py-2 pr-4 font-medium">Line item</th>
                   <th className="py-2 pr-4 font-medium text-right">Amount</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-[#F1EFE8]">
-                  <td className="py-3 pr-4 text-[#5F5E5A]">Total loan amount disbursed</td>
-                  <td className="py-3 pr-4 text-[#2C2C2A] text-right">{formatCurrency(summary.totalLoanAmount)}</td>
+                <tr className="border-b border-[#ECE9DF]">
+                  <td className="py-3 pr-4 text-[#45443E]">Total loan amount disbursed</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] text-right">{formatCurrency(summary.totalLoanAmount)}</td>
                 </tr>
-                <tr className="border-b border-[#F1EFE8]">
-                  <td className="py-3 pr-4 text-[#5F5E5A]">Total collection (income)</td>
-                  <td className="py-3 pr-4 text-[#2C2C2A] text-right">{formatCurrency(summary.totalCollection)}</td>
+                <tr className="border-b border-[#ECE9DF]">
+                  <td className="py-3 pr-4 text-[#45443E]">Total collection (income)</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] text-right">{formatCurrency(summary.totalCollection)}</td>
                 </tr>
-                <tr className="border-b border-[#F1EFE8]">
-                  <td className="py-3 pr-4 text-[#5F5E5A]">Total expense</td>
-                  <td className="py-3 pr-4 text-[#2C2C2A] text-right">{formatCurrency(summary.totalExpense)}</td>
+                <tr className="border-b border-[#ECE9DF]">
+                  <td className="py-3 pr-4 text-[#45443E]">Total expense</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] text-right">{formatCurrency(summary.totalExpense)}</td>
                 </tr>
-                <tr className="border-b border-[#F1EFE8]">
-                  <td className="py-3 pr-4 text-[#5F5E5A]">Outstanding amount</td>
-                  <td className="py-3 pr-4 text-[#2C2C2A] text-right">{formatCurrency(summary.outstandingAmount)}</td>
+                <tr className="border-b border-[#ECE9DF]">
+                  <td className="py-3 pr-4 text-[#45443E]">Outstanding amount</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] text-right">{formatCurrency(summary.outstandingAmount)}</td>
                 </tr>
                 <tr>
-                  <td className="py-3 pr-4 text-[#2C2C2A] font-semibold">Net profit</td>
-                  <td className="py-3 pr-4 text-[#2C2C2A] font-semibold text-right">{formatCurrency(summary.netProfit)}</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] font-semibold">Net profit</td>
+                  <td className="py-3 pr-4 text-[#1A1A18] font-semibold text-right">{formatCurrency(summary.netProfit)}</td>
                 </tr>
               </tbody>
             </table>

@@ -5,8 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getCustomers } from "@/services/customer.service";
 import type { Customer } from "@/types/customer";
 
-const PAGE_SIZE = 10;
-
 export function useCustomerReport() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +13,7 @@ export function useCustomerReport() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<Customer["status"] | "all">("all");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const load = useCallback(async () => {
     try {
@@ -36,7 +35,7 @@ export function useCustomerReport() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, status]);
+  }, [pageSize, search, status]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -64,8 +63,8 @@ export function useCustomerReport() {
     );
   }, [filtered]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return {
     customers: paginated,
@@ -73,6 +72,8 @@ export function useCustomerReport() {
     summary,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     search,
     setSearch,

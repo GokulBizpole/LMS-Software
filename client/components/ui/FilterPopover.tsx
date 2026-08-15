@@ -85,7 +85,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-lg border border-[#B4B2A9] px-4 py-2 text-sm font-medium text-[#2C2C2A] hover:bg-[#F1EFE8]"
+        className="flex items-center gap-2 rounded-lg border border-[#9C9A8D] px-4 py-2 text-sm font-medium text-[#1A1A18] hover:bg-[#ECE9DF]"
       >
         Filter
         {visibleKeys.length > 0 && (
@@ -96,9 +96,9 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
       </button>
 
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-[340px] rounded-2xl border border-[#E8E6DF] bg-white p-5 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-[340px] rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#2C2C2A]">
+            <h3 className="text-sm font-semibold text-[#1A1A18]">
               Filters{visibleKeys.length > 0 ? ` (${visibleKeys.length})` : ""}
             </h3>
 
@@ -112,13 +112,13 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
                   + Add filter
                 </button>
                 {addMenuOpen && (
-                  <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border border-[#E8E6DF] bg-white py-1 shadow-lg">
+                  <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border border-[#DAD7CA] bg-white py-1 shadow-lg">
                     {hiddenFields.map((f) => (
                       <button
                         key={f.key}
                         type="button"
                         onClick={() => handleAdd(f)}
-                        className="block w-full text-left px-3 py-1.5 text-sm text-[#2C2C2A] hover:bg-[#F1EFE8]"
+                        className="block w-full text-left px-3 py-1.5 text-sm text-[#1A1A18] hover:bg-[#ECE9DF]"
                       >
                         {f.label}
                       </button>
@@ -130,23 +130,23 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
           </div>
 
           {visibleFields.length === 0 ? (
-            <p className="text-sm text-[#888780] mb-4">No filters added yet.</p>
+            <p className="text-sm text-[#6B6A62] mb-4">No filters added yet.</p>
           ) : (
             <div className="space-y-3 mb-4">
               {visibleFields.map((field, i) => (
                 <div
                   key={field.key}
-                  className="rounded-lg border border-[#E8E6DF] bg-[#FAFAF7] p-3"
+                  className="rounded-lg border border-[#DAD7CA] bg-[#FAFAF7] p-3"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-medium tracking-wide text-[#888780]">
+                    <span className="text-[11px] font-medium tracking-wide text-[#6B6A62]">
                       FILTER {i + 1} · {field.label.toUpperCase()}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemove(field)}
                       aria-label={`Remove ${field.label} filter`}
-                      className="text-[#888780] hover:text-[#2C2C2A]"
+                      className="text-[#6B6A62] hover:text-[#1A1A18]"
                     >
                       ×
                     </button>
@@ -156,7 +156,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
                     <select
                       value={field.value}
                       onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+                      className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
                     >
                       {field.options.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -167,22 +167,22 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
                   ) : (
                     <div className="flex items-center gap-2">
                       <div className="flex-1">
-                        <label className="block text-[10px] text-[#888780] mb-1">From</label>
+                        <label className="block text-[10px] text-[#6B6A62] mb-1">From</label>
                         <input
                           type="date"
                           value={field.startValue}
                           onChange={(e) => field.onStartChange(e.target.value)}
-                          className="w-full rounded-lg border border-[#B4B2A9] px-2 py-1.5 text-sm text-[#2C2C2A]"
+                          className="w-full rounded-lg border border-[#9C9A8D] px-2 py-1.5 text-sm text-[#1A1A18]"
                         />
                       </div>
-                      <span className="text-[#888780] mt-4">→</span>
+                      <span className="text-[#6B6A62] mt-4">→</span>
                       <div className="flex-1">
-                        <label className="block text-[10px] text-[#888780] mb-1">To</label>
+                        <label className="block text-[10px] text-[#6B6A62] mb-1">To</label>
                         <input
                           type="date"
                           value={field.endValue}
                           onChange={(e) => field.onEndChange(e.target.value)}
-                          className="w-full rounded-lg border border-[#B4B2A9] px-2 py-1.5 text-sm text-[#2C2C2A]"
+                          className="w-full rounded-lg border border-[#9C9A8D] px-2 py-1.5 text-sm text-[#1A1A18]"
                         />
                       </div>
                     </div>
@@ -192,7 +192,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-3 border-t border-[#F1EFE8]">
+          <div className="flex items-center justify-between pt-3 border-t border-[#ECE9DF]">
             <button
               type="button"
               onClick={handleClearAll}

@@ -29,17 +29,17 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-55 shrink-0 bg-[#F1EFE8] border-r border-[#D3D1C7] min-h-screen flex flex-col p-4">
+    <aside className="w-55 shrink-0 bg-[#ECE9DF] border-r border-[#C4C1B3] min-h-screen flex flex-col p-4">
       <div className="flex items-center gap-2 mb-3 px-1">
-        <div className="w-8 h-8 rounded-lg bg-[#2C2C2A] flex items-center justify-center text-white text-sm font-semibold">
+        <div className="w-8 h-8 rounded-lg bg-[#1A1A18] flex items-center justify-center text-white text-sm font-semibold">
           ₹
         </div>
-        <span className="text-[15px] font-semibold text-[#2C2C2A]">
+        <span className="text-[15px] font-semibold text-[#1A1A18]">
           FinLoan
         </span>
       </div>
 
-      <span className="self-start mb-6 px-2 py-0.5 rounded-md bg-[#2C2C2A] text-white text-[10px] font-semibold tracking-wide">
+      <span className="self-start mb-6 px-2 py-0.5 rounded-md bg-[#1A1A18] text-white text-[10px] font-semibold tracking-wide">
         ADMIN
       </span>
 
@@ -54,7 +54,7 @@ export default function Sidebar() {
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
                   ? "bg-[#E6F1FB] text-[#185FA5] font-medium"
-                  : "text-[#5F5E5A] hover:bg-white"
+                  : "text-[#45443E] hover:bg-white"
               }`}
             >
               <Icon size={16} />

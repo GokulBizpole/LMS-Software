@@ -20,7 +20,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-  CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
+  CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
   REJECTED: { bg: "#FAECE7", text: "#993C1D" },
 };
@@ -40,8 +40,8 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm font-semibold text-[#2C2C2A]">{value}</p>
+      <p className="text-xs text-[#6B6A62] mb-1">{label}</p>
+      <p className="text-sm font-semibold text-[#1A1A18]">{value}</p>
     </div>
   );
 }
@@ -60,13 +60,13 @@ function LoanCard({ loan }: { loan: Loan }) {
 
   return (
     <div
-      className={`rounded-2xl border border-[#E8E6DF] bg-white p-5 ${borderAccent}`}
+      className={`rounded-2xl border border-[#DAD7CA] bg-white p-5 ${borderAccent}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div className="flex items-start gap-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-semibold text-[#2C2C2A]">{loan.loanNumber}</span>
+              <span className="text-sm font-semibold text-[#1A1A18]">{loan.loanNumber}</span>
               <StatusBadge status={loan.status} />
             </div>
             <div className="flex items-center gap-2">
@@ -74,8 +74,8 @@ function LoanCard({ loan }: { loan: Loan }) {
                 {initials}
               </div>
               <div>
-                <p className="text-sm font-medium text-[#2C2C2A]">{loan.customer?.name ?? "—"}</p>
-                <p className="text-xs text-[#888780]">
+                <p className="text-sm font-medium text-[#1A1A18]">{loan.customer?.name ?? "—"}</p>
+                <p className="text-xs text-[#6B6A62]">
                   {loan.customer?.customerCode} · {loan.customer?.phone}
                 </p>
               </div>
@@ -85,15 +85,15 @@ function LoanCard({ loan }: { loan: Loan }) {
 
         {isPending && (
           <div className="text-left sm:text-right">
-            <p className="text-xs text-[#888780] mb-1">Submitted by partner</p>
-            <p className="text-sm font-medium text-[#2C2C2A]">
+            <p className="text-xs text-[#6B6A62] mb-1">Submitted by partner</p>
+            <p className="text-sm font-medium text-[#1A1A18]">
               {loan.partner?.partnerCode} - {loan.partner?.name}
             </p>
           </div>
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-6 border-t border-[#F1EFE8] pt-4">
+      <div className="flex flex-wrap items-center gap-6 border-t border-[#ECE9DF] pt-4">
         {isPending ? (
           <>
             <Stat label="Principal" value={formatCurrency(loan.principalAmount)} />
@@ -116,8 +116,8 @@ function LoanCard({ loan }: { loan: Loan }) {
           href={`/loans/${loan.id}`}
           className={`ml-auto text-sm font-medium px-4 py-2 rounded-lg ${
             isPending
-              ? "bg-[#2C2C2A] text-white"
-              : "border border-[#B4B2A9] text-[#5F5E5A] hover:bg-[#F1EFE8]"
+              ? "bg-[#1A1A18] text-white"
+              : "border border-[#9C9A8D] text-[#45443E] hover:bg-[#ECE9DF]"
           }`}
         >
           {isPending ? "Review" : "View details"}
@@ -125,7 +125,7 @@ function LoanCard({ loan }: { loan: Loan }) {
       </div>
 
       {loan.remarks && (
-        <p className="text-xs text-[#888780] mt-3">
+        <p className="text-xs text-[#6B6A62] mt-3">
           Remarks: &quot;{loan.remarks}&quot;
         </p>
       )}
@@ -150,8 +150,8 @@ export default function LoansPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-[#2C2C2A]">Loans</h1>
-        <p className="text-sm text-[#5F5E5A]">
+        <h1 className="text-xl font-bold text-[#1A1A18]">Loans</h1>
+        <p className="text-sm text-[#45443E]">
           {pendingCount} pending approval - submitted by partners
         </p>
       </div>
@@ -167,7 +167,7 @@ export default function LoansPage() {
               className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
                 isActive
                   ? "bg-[#FAEEDA] text-[#854F0B] font-medium"
-                  : "text-[#5F5E5A] hover:bg-[#F1EFE8]"
+                  : "text-[#45443E] hover:bg-[#ECE9DF]"
               }`}
             >
               {t.label}
@@ -180,7 +180,7 @@ export default function LoansPage() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-32 bg-[#F1EFE8] rounded-2xl animate-pulse" />
+            <div key={i} className="h-32 bg-[#ECE9DF] rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : error ? (
@@ -191,7 +191,7 @@ export default function LoansPage() {
           </button>
         </div>
       ) : filteredLoans.length === 0 ? (
-        <div className="rounded-2xl border border-[#E8E6DF] bg-white p-10 text-center text-sm text-[#888780]">
+        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-10 text-center text-sm text-[#6B6A62]">
           No loans found for this filter.
         </div>
       ) : (

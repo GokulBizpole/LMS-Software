@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --background: #FFFFFF;
-  --sidebar-bg: #F1EFE8;
+  --sidebar-bg: #ECE9DF;
   --card-bg: #FFFFFF;
-  --border: #D3D1C7;
-  --input-border: #B4B2A9;
-  --divider: #F1EFE8;
-  --text-primary: #2C2C2A;
-  --text-secondary: #5F5E5A;
-  --text-muted: #888780;
-  --placeholder: #B4B2A9;
-  --primary: #2C2C2A;
-  --primary-hover: #1F1F1D;
+  --border: #C4C1B3;
+  --input-border: #9C9A8D;
+  --divider: #ECE9DF;
+  --text-primary: #1A1A18;
+  --text-secondary: #45443E;
+  --text-muted: #6B6A62;
+  --placeholder: #9C9A8D;
+  --primary: #1A1A18;
+  --primary-hover: #000000;
   --accent: #378ADD;
   --accent-bg: #E6F1FB;
   --accent-text: #185FA5;
@@ -22,8 +23,14 @@
   --warning-text: #854F0B;
   --danger-bg: #FAECE7;
   --danger-text: #993C1D;
-  --neutral-bg: #F1EFE8;
-  --neutral-text: #5F5E5A;
+  --neutral-bg: #ECE9DF;
+  --neutral-text: #45443E;
   --purple-bg: #EEEDFE;
   --purple-text: #534AB7;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--background);
 }

@@ -13,7 +13,7 @@ const CATEGORY_STYLES: Record<ExpenseCategory, { bg: string; text: string }> = {
   PETROL: { bg: "#FAEEDA", text: "#854F0B" },
   ELECTRICITY: { bg: "#FAECE7", text: "#993C1D" },
   RENT: { bg: "#EEEDFE", text: "#534AB7" },
-  OTHER: { bg: "#F1EFE8", text: "#5F5E5A" },
+  OTHER: { bg: "#ECE9DF", text: "#45443E" },
 };
 
 function CategoryBadge({ category }: { category: ExpenseCategory }) {
@@ -53,38 +53,38 @@ export default function ExpenseTable({
 
   if (expenses.length === 0) {
     return (
-      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
         No expenses found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-[#888780] text-xs border-b border-[#E8E6DF]">
-            <th className="py-2 pr-4 font-medium">Date</th>
-            <th className="py-2 pr-4 font-medium">Category</th>
-            <th className="py-2 pr-4 font-medium">Partner</th>
-            <th className="py-2 pr-4 font-medium">Description</th>
-            <th className="py-2 pr-4 font-medium">Amount</th>
-            <th className="py-2 pr-4 font-medium text-right">Actions</th>
+          <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
+            <th className="py-2 px-4 font-medium">Date</th>
+            <th className="py-2 px-4 font-medium">Category</th>
+            <th className="py-2 px-4 font-medium">Partner</th>
+            <th className="py-2 px-4 font-medium">Description</th>
+            <th className="py-2 px-4 font-medium text-right">Amount</th>
+            <th className="py-2 px-4 font-medium text-right">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {expenses.map((e) => (
-            <tr key={e.id} className="border-b border-[#F1EFE8] last:border-0">
-              <td className="py-3 pr-4 text-[#5F5E5A]">{formatDate(e.expenseDate)}</td>
-              <td className="py-3 pr-4"><CategoryBadge category={e.category} /></td>
-              <td className="py-3 pr-4 text-[#2C2C2A]">
+            <tr key={e.id} className="border-b border-[#E5E7EB] last:border-0">
+              <td className="py-3 px-4 text-[#45443E]">{formatDate(e.expenseDate)}</td>
+              <td className="py-3 px-4"><CategoryBadge category={e.category} /></td>
+              <td className="py-3 px-4 text-[#1A1A18]">
                 {e.partner ? `${e.partner.partnerCode} · ${e.partner.name}` : "—"}
               </td>
-              <td className="py-3 pr-4 text-[#5F5E5A] max-w-60 truncate">
+              <td className="py-3 px-4 text-[#45443E] max-w-60 truncate">
                 {e.description || "—"}
               </td>
-              <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{formatCurrency(e.amount)}</td>
-              <td className="py-3 pr-4 text-right">
+              <td className="py-3 px-4 text-[#1A1A18] font-medium text-right">{formatCurrency(e.amount)}</td>
+              <td className="py-3 px-4 text-right">
                 <button
                   onClick={() => handleDelete(e.id)}
                   disabled={deletingId === e.id}

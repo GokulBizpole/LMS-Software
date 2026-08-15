@@ -12,11 +12,20 @@ import {
   XCircle,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
+import CompactStatCard from "@/components/dashboard/CompactStatCard";
+import RecentActivityTable from "@/components/dashboard/RecentActivityTable";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useRecentActivity } from "@/hooks/useRecentActivity";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 export default function DashboardPage() {
   const { data, loading, error, errorType, refetch } = useDashboard();
+  const {
+    items: activityItems,
+    loading: activityLoading,
+    error: activityError,
+    refetch: refetchActivity,
+  } = useRecentActivity();
 
   if (loading) {
     return (
@@ -24,10 +33,10 @@ export default function DashboardPage() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-2xl border border-[#E8E6DF] bg-white p-5 min-h-[110px] animate-pulse"
+            className="rounded-2xl bg-[#ECE9DF] p-5 min-h-27.5 animate-pulse"
           >
-            <div className="h-3 w-24 bg-[#F1EFE8] rounded mb-4" />
-            <div className="h-6 w-32 bg-[#F1EFE8] rounded" />
+            <div className="h-3 w-24 bg-[#ECE9DF] rounded mb-4" />
+            <div className="h-6 w-32 bg-[#ECE9DF] rounded" />
           </div>
         ))}
       </div>
@@ -52,7 +61,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-[#2C2C2A]">Dashboard</h1>
+      <h1 className="text-xl font-bold text-[#1A1A18]">Dashboard</h1>
 
       {/* Row 1 — headline money stats (directly from API) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -71,36 +80,45 @@ export default function DashboardPage() {
       </div>
 
       {/* Row 3 — loan status breakdown (counts only — API gives no per-loan list) */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">
-        <h3 className="text-sm font-semibold text-[#2C2C2A] mb-4">Loan status</h3>
+      {/* <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
+        <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Loan status</h3>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <LoanStatusPill label="Active" count={data.activeLoans} color="#3B6D11" bg="#EAF3DE" icon={CheckCircle2} />
           <LoanStatusPill label="Pending" count={data.pendingLoans} color="#854F0B" bg="#FAEEDA" icon={Clock} />
           <LoanStatusPill label="Approved" count={data.approvedLoans} color="#185FA5" bg="#E6F1FB" icon={CheckCircle2} />
           <LoanStatusPill label="Rejected" count={data.rejectedLoans} color="#993C1D" bg="#FAECE7" icon={XCircle} />
-          <LoanStatusPill label="Closed" count={data.closedLoans} color="#5F5E5A" bg="#F1EFE8" icon={CheckCircle2} />
+          <LoanStatusPill label="Closed" count={data.closedLoans} color="#45443E" bg="#ECE9DF" icon={CheckCircle2} />
         </div>
-      </div>
+      </div> */}
 
       {/* Row 4 — customers & partners */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Customers" value={String(data.totalCustomers)} icon={Users} iconBg="#F1EFE8" iconColor="#5F5E5A" />
-        <StatCard title="Total Partners" value={String(data.totalPartners)} icon={Handshake} iconBg="#F1EFE8" iconColor="#5F5E5A" />
-        <StatCard title="Active Partners" value={String(data.activePartners)} icon={Handshake} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <StatCard title="Inactive Partners" value={String(data.inactivePartners)} icon={Handshake} iconBg="#F1EFE8" iconColor="#5F5E5A" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <CompactStatCard title="Total Customers" value={String(data.totalCustomers)} icon={Users} bg="#EEEDFE" iconColor="#534AB7" />
+        <CompactStatCard title="Total Partners" value={String(data.totalPartners)} icon={Handshake} bg="#E6F1FB" iconColor="#185FA5" />
+        <CompactStatCard title="Active Partners" value={String(data.activePartners)} icon={Handshake} bg="#EAF3DE" iconColor="#3B6D11" />
+        <CompactStatCard title="Inactive Partners" value={String(data.inactivePartners)} icon={Handshake} bg="#ECE9DF" iconColor="#45443E" />
       </div>
 
-      {/*
-        NOTE: Recent Payments, Overdue Loans, Collection chart, and
-        Recent Activity sections are NOT shown here — the /api/dashboard
-        endpoint does not return that data (confirmed via Postman).
-        To add them back, either:
-          1) Call the existing GET /api/payments, GET /api/loans,
-             GET /api/audit-logs endpoints separately and build those
-             sections from their responses, or
-          2) Update the backend dashboard.service.ts to also return
-             recentPayments[], overdueLoans[], collectionOverview[].
-      */}
+      {/* Row 5 — recent activity (last 10 payments + expenses, merged client-side) */}
+      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
+        <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Recent activity</h3>
+        {activityLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-10 bg-[#ECE9DF] rounded animate-pulse" />
+            ))}
+          </div>
+        ) : activityError ? (
+          <div className="text-center py-6">
+            <p className="text-[#993C1D] text-sm mb-2">{activityError}</p>
+            <button onClick={refetchActivity} className="text-sm font-semibold text-[#993C1D] underline">
+              Try again
+            </button>
+          </div>
+        ) : (
+          <RecentActivityTable items={activityItems} />
+        )}
+      </div>
     </div>
   );
 }
@@ -122,7 +140,7 @@ function LoanStatusPill({
     <div className="flex flex-col items-center gap-2 rounded-xl p-3" style={{ backgroundColor: bg }}>
       <Icon size={18} style={{ color }} />
       <span className="text-lg font-bold" style={{ color }}>{count}</span>
-      <span className="text-[11px] text-[#5F5E5A]">{label}</span>
+      <span className="text-[11px] text-[#45443E]">{label}</span>
     </div>
   );
 }

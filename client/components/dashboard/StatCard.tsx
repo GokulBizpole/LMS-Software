@@ -17,20 +17,20 @@ export default function StatCard({
   iconColor,
 }: Props) {
   return (
-    <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 flex flex-col justify-between min-h-27.5 transition-shadow duration-200 hover:shadow-sm">
+    <div
+      className="rounded-2xl p-5 flex flex-col justify-between min-h-27.5 transition-shadow duration-200 hover:shadow-sm"
+      style={{ backgroundColor: iconBg }}
+    >
       <div className="flex items-start justify-between">
-        <p className="text-[13px] text-[#888780] font-medium">
+        <p className="text-sm text-[#1A1A18] font-semibold">
           {title}
         </p>
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ backgroundColor: iconBg }}
-        >
+        <div className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center shrink-0">
           <Icon size={16} style={{ color: iconColor }} />
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-[#2C2C2A] mt-2 tracking-tight">
+      <h2 className="text-2 font-bold text-[#1A1A18] mt-2 tracking-tight">
         {value}
       </h2>
     </div>

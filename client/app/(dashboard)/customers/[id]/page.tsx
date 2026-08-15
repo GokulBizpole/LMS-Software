@@ -13,7 +13,7 @@ function StatusBadge({ status }: { status: Customer["status"] }) {
   const map: Record<Customer["status"], { bg: string; text: string }> = {
     ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
     BLOCKED: { bg: "#FAEEDA", text: "#854F0B" },
-    CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
+    CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   };
   const c = map[status] ?? map.CLOSED;
   return (
@@ -29,8 +29,8 @@ function StatusBadge({ status }: { status: Customer["status"] }) {
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-[#888780] mb-1">{label}</p>
-      <p className="text-sm text-[#2C2C2A] wrap-break-word">{value || "—"}</p>
+      <p className="text-xs text-[#6B6A62] mb-1">{label}</p>
+      <p className="text-sm text-[#1A1A18] wrap-break-word">{value || "—"}</p>
     </div>
   );
 }
@@ -38,19 +38,19 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 function DetailSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-4 w-32 bg-[#F1EFE8] rounded" />
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-[#F1EFE8]" />
+      <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full bg-[#ECE9DF]" />
         <div className="space-y-2">
-          <div className="h-4 w-40 bg-[#F1EFE8] rounded" />
-          <div className="h-3 w-56 bg-[#F1EFE8] rounded" />
+          <div className="h-4 w-40 bg-[#ECE9DF] rounded" />
+          <div className="h-3 w-56 bg-[#ECE9DF] rounded" />
         </div>
       </div>
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 space-y-4">
-        <div className="h-3 w-28 bg-[#F1EFE8] rounded" />
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 space-y-4">
+        <div className="h-3 w-28 bg-[#ECE9DF] rounded" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-8 bg-[#F1EFE8] rounded" />
+            <div key={i} className="h-8 bg-[#ECE9DF] rounded" />
           ))}
         </div>
       </div>
@@ -133,27 +133,27 @@ export default function CustomerDetailPage() {
       </button>
 
       {/* Profile header */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-lg font-semibold">
             {initials}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-lg font-semibold text-[#2C2C2A]">{customer.name}</h1>
+              <h1 className="text-lg font-semibold text-[#1A1A18]">{customer.name}</h1>
               <StatusBadge status={customer.status} />
             </div>
-            <p className="text-sm text-[#5F5E5A] flex items-center gap-1 flex-wrap">
+            <p className="text-sm text-[#45443E] flex items-center gap-1 flex-wrap">
               <button
                 onClick={handleCopyCode}
                 title="Copy customer code"
-                className="hover:text-[#2C2C2A] hover:underline"
+                className="hover:text-[#1A1A18] hover:underline"
               >
                 {customer.customerCode}
               </button>
               {copied && <span className="text-xs text-[#3B6D11]">Copied</span>}
               <span>·</span>
-              <a href={`tel:${customer.phone}`} className="hover:text-[#2C2C2A] hover:underline">
+              <a href={`tel:${customer.phone}`} className="hover:text-[#1A1A18] hover:underline">
                 {customer.phone}
               </a>
               {customer.city && (
@@ -170,15 +170,15 @@ export default function CustomerDetailPage() {
         </div>
         <button
           onClick={() => setShowEdit(true)}
-          className="border border-[#B4B2A9] text-sm font-medium px-4 py-2 rounded-lg text-[#5F5E5A] text-center hover:bg-[#F1EFE8]"
+          className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] text-center hover:bg-[#ECE9DF]"
         >
           Edit
         </button>
       </div>
 
       {/* Details */}
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Personal details</h2>
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Personal details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Field label="Phone" value={customer.phone} />
           <Field label="Alternate phone" value={customer.alternatePhone} />
@@ -191,15 +191,15 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-6">
-        <h2 className="text-sm font-semibold text-[#2C2C2A] mb-4">Guarantor</h2>
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Guarantor</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Field label="Guarantor name" value={customer.guarantorName} />
           <Field label="Guarantor phone" value={customer.guarantorPhone} />
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-[#F1EFE8] p-6">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <Field label="Registered" value={formatDate(customer.createdAt)} />
           <Field label="Last updated" value={formatDate(customer.updatedAt)} />

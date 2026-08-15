@@ -20,7 +20,7 @@ export function TextField({
 }) {
   return (
     <div className={colSpan}>
-      <label className="block text-xs text-[#888780] mb-1">
+      <label className="block text-xs text-[#6B6A62] mb-1">
         {label}
         {required ? " *" : ""}
       </label>
@@ -29,7 +29,7 @@ export function TextField({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         required={required}
-        className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+        className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
       />
     </div>
   );
@@ -56,7 +56,7 @@ export function SelectField({
 }) {
   return (
     <div className={colSpan}>
-      <label className="block text-xs text-[#888780] mb-1">
+      <label className="block text-xs text-[#6B6A62] mb-1">
         {label}
         {required ? " *" : ""}
       </label>
@@ -64,7 +64,7 @@ export function SelectField({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         required={required}
-        className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+        className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => (
@@ -96,7 +96,7 @@ export function TextareaField({
 }) {
   return (
     <div className={colSpan}>
-      <label className="block text-xs text-[#888780] mb-1">
+      <label className="block text-xs text-[#6B6A62] mb-1">
         {label}
         {required ? " *" : ""}
       </label>
@@ -105,7 +105,7 @@ export function TextareaField({
         onChange={(e) => onChange(name, e.target.value)}
         required={required}
         rows={rows}
-        className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+        className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
       />
     </div>
   );

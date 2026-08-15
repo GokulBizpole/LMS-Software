@@ -8,7 +8,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-  CLOSED: { bg: "#F1EFE8", text: "#5F5E5A" },
+  CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
   REJECTED: { bg: "#FAECE7", text: "#993C1D" },
 };
@@ -28,47 +28,47 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 export default function LoanTable({ loans }: { loans: Loan[] }) {
   if (loans.length === 0) {
     return (
-      <div className="flex items-center justify-center h-40 text-sm text-[#888780]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
         No loans found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-[#888780] text-xs border-b border-[#E8E6DF]">
-            <th className="py-2 pr-4 font-medium">Loan number</th>
-            <th className="py-2 pr-4 font-medium">Customer</th>
-            <th className="py-2 pr-4 font-medium">Partner</th>
-            <th className="py-2 pr-4 font-medium">Principal</th>
-            <th className="py-2 pr-4 font-medium">Total payable</th>
-            <th className="py-2 pr-4 font-medium">Balance</th>
-            <th className="py-2 pr-4 font-medium">Status</th>
-            <th className="py-2 pr-4 font-medium">Created</th>
-            <th className="py-2 pr-4 font-medium text-right">Actions</th>
+          <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
+            <th className="py-2 px-4 font-medium">Loan number</th>
+            <th className="py-2 px-4 font-medium">Customer</th>
+            <th className="py-2 px-4 font-medium">Partner</th>
+            <th className="py-2 px-4 font-medium text-right">Principal</th>
+            <th className="py-2 px-4 font-medium text-right">Total payable</th>
+            <th className="py-2 px-4 font-medium text-right">Balance</th>
+            <th className="py-2 px-4 font-medium">Status</th>
+            <th className="py-2 px-4 font-medium">Created</th>
+            <th className="py-2 px-4 font-medium text-right">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {loans.map((l) => (
-            <tr key={l.id} className="border-b border-[#F1EFE8] last:border-0">
-              <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{l.loanNumber}</td>
-              <td className="py-3 pr-4">
-                <p className="text-[#2C2C2A]">{l.customer?.name ?? "—"}</p>
-                <p className="text-xs text-[#888780]">
+            <tr key={l.id} className="border-b border-[#E5E7EB] last:border-0">
+              <td className="py-3 px-4 text-[#1A1A18] font-medium">{l.loanNumber}</td>
+              <td className="py-3 px-4">
+                <p className="text-[#1A1A18]">{l.customer?.name ?? "—"}</p>
+                <p className="text-xs text-[#6B6A62]">
                   {l.customer?.customerCode} · {l.customer?.phone}
                 </p>
               </td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">
+              <td className="py-3 px-4 text-[#45443E]">
                 {l.partner ? `${l.partner.partnerCode} · ${l.partner.name}` : "—"}
               </td>
-              <td className="py-3 pr-4 text-[#2C2C2A]">{formatCurrency(l.principalAmount)}</td>
-              <td className="py-3 pr-4 text-[#2C2C2A]">{formatCurrency(l.totalPayable)}</td>
-              <td className="py-3 pr-4 text-[#2C2C2A] font-medium">{formatCurrency(l.balanceAmount)}</td>
-              <td className="py-3 pr-4"><StatusBadge status={l.status} /></td>
-              <td className="py-3 pr-4 text-[#5F5E5A]">{formatDate(l.createdAt)}</td>
-              <td className="py-3 pr-4 text-right">
+              <td className="py-3 px-4 text-[#1A1A18] text-right">{formatCurrency(l.principalAmount)}</td>
+              <td className="py-3 px-4 text-[#1A1A18] text-right">{formatCurrency(l.totalPayable)}</td>
+              <td className="py-3 px-4 text-[#1A1A18] font-medium text-right">{formatCurrency(l.balanceAmount)}</td>
+              <td className="py-3 px-4"><StatusBadge status={l.status} /></td>
+              <td className="py-3 px-4 text-[#45443E]">{formatDate(l.createdAt)}</td>
+              <td className="py-3 px-4 text-right">
                 <Link
                   href={`/loans/${l.id}`}
                   className="text-[#185FA5] font-medium hover:underline"

@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuditLogs } from "@/hooks/useAuditLogs";
 import AuditLogTable from "@/components/tables/AuditLogTable";
+import Pagination from "@/components/ui/Pagination";
 import type { UpdateSettingData } from "@/types/setting";
 
 const TABLE_NAMES = ["CUSTOMER", "PARTNER", "LOAN", "PAYMENT", "EXPENSE"];
@@ -64,7 +65,7 @@ function GeneralSettingsTab() {
     return (
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-10 bg-[#F1EFE8] rounded animate-pulse" />
+          <div key={i} className="h-10 bg-[#ECE9DF] rounded animate-pulse" />
         ))}
       </div>
     );
@@ -77,10 +78,10 @@ function GeneralSettingsTab() {
   return (
     <div className="space-y-6">
       {user && (
-        <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">
-          <h2 className="text-sm font-semibold text-[#2C2C2A] mb-3">Signed in as</h2>
-          <p className="text-sm text-[#2C2C2A]">{user.name}</p>
-          <p className="text-xs text-[#888780]">
+        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+          <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Signed in as</h2>
+          <p className="text-sm text-[#1A1A18]">{user.name}</p>
+          <p className="text-xs text-[#6B6A62]">
             {user.email} · {user.role}
           </p>
         </div>
@@ -88,66 +89,66 @@ function GeneralSettingsTab() {
 
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4"
+        className="rounded-2xl border border-[#DAD7CA] bg-white p-5 space-y-4"
       >
-        <h2 className="text-sm font-semibold text-[#2C2C2A]">Company details</h2>
+        <h2 className="text-sm font-semibold text-[#1A1A18]">Company details</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-[#888780] mb-1">Company name</label>
+            <label className="block text-xs text-[#6B6A62] mb-1">Company name</label>
             <input
               type="text"
               required
               value={form.companyName}
               onChange={(e) => setForm((f) => ({ ...f, companyName: e.target.value }))}
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-[#888780] mb-1">Phone</label>
+            <label className="block text-xs text-[#6B6A62] mb-1">Phone</label>
             <input
               type="text"
               required
               value={form.companyPhone}
               onChange={(e) => setForm((f) => ({ ...f, companyPhone: e.target.value }))}
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-[#888780] mb-1">Email</label>
+            <label className="block text-xs text-[#6B6A62] mb-1">Email</label>
             <input
               type="email"
               value={form.companyEmail}
               onChange={(e) => setForm((f) => ({ ...f, companyEmail: e.target.value }))}
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-[#888780] mb-1">Receipt prefix</label>
+            <label className="block text-xs text-[#6B6A62] mb-1">Receipt prefix</label>
             <input
               type="text"
               required
               value={form.receiptPrefix}
               onChange={(e) => setForm((f) => ({ ...f, receiptPrefix: e.target.value }))}
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-xs text-[#888780] mb-1">Address</label>
+            <label className="block text-xs text-[#6B6A62] mb-1">Address</label>
             <textarea
               value={form.companyAddress}
               onChange={(e) => setForm((f) => ({ ...f, companyAddress: e.target.value }))}
               rows={2}
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-[#888780] mb-1">
+            <label className="block text-xs text-[#6B6A62] mb-1">
               Default interest %
             </label>
             <input
@@ -162,12 +163,12 @@ function GeneralSettingsTab() {
                   defaultInterestPercentage: Number(e.target.value),
                 }))
               }
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-[#888780] mb-1">
+            <label className="block text-xs text-[#6B6A62] mb-1">
               Default penalty %
             </label>
             <input
@@ -182,7 +183,7 @@ function GeneralSettingsTab() {
                   defaultPenaltyPercentage: Number(e.target.value),
                 }))
               }
-              className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
             />
           </div>
         </div>
@@ -193,7 +194,7 @@ function GeneralSettingsTab() {
         <button
           type="submit"
           disabled={saving}
-          className="bg-[#2C2C2A] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save changes"}
         </button>
@@ -208,6 +209,8 @@ function AuditLogTab() {
     total,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     action,
     setAction,
@@ -220,9 +223,9 @@ function AuditLogTab() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5 space-y-4">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-[#5F5E5A]">
+          <p className="text-sm text-[#45443E]">
             {total} log{total !== 1 ? "s" : ""}
           </p>
         </div>
@@ -234,7 +237,7 @@ function AuditLogTab() {
               setAction(e.target.value);
               setPage(1);
             }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+            className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
           >
             <option value="all">All actions</option>
             {ACTIONS.map((a) => (
@@ -250,7 +253,7 @@ function AuditLogTab() {
               setTableName(e.target.value);
               setPage(1);
             }}
-            className="w-full rounded-lg border border-[#B4B2A9] px-3 py-2 text-sm text-[#2C2C2A]"
+            className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
           >
             <option value="all">All tables</option>
             {TABLE_NAMES.map((t) => (
@@ -262,11 +265,11 @@ function AuditLogTab() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E6DF] bg-white p-5">
+      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 bg-[#F1EFE8] rounded animate-pulse" />
+              <div key={i} className="h-10 bg-[#ECE9DF] rounded animate-pulse" />
             ))}
           </div>
         ) : error ? (
@@ -280,29 +283,14 @@ function AuditLogTab() {
           <>
             <AuditLogTable logs={logs} />
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#F1EFE8]">
-                <p className="text-xs text-[#888780]">
-                  Page {page} of {totalPages}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="w-8 h-8 rounded-lg border border-[#D3D1C7] text-sm disabled:opacity-40"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="w-8 h-8 rounded-lg border border-[#D3D1C7] text-sm disabled:opacity-40"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
           </>
         )}
       </div>
@@ -316,21 +304,21 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-[#2C2C2A]">Settings</h1>
-        <p className="text-sm text-[#5F5E5A]">
+        <h1 className="text-xl font-bold text-[#1A1A18]">Settings</h1>
+        <p className="text-sm text-[#45443E]">
           Manage company details and review the audit trail.
         </p>
       </div>
 
-      <div className="flex gap-1 border-b border-[#E8E6DF]">
+      <div className="flex gap-1 border-b border-[#DAD7CA]">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
               tab === t.key
-                ? "border-[#2C2C2A] text-[#2C2C2A]"
-                : "border-transparent text-[#888780] hover:text-[#5F5E5A]"
+                ? "border-[#1A1A18] text-[#1A1A18]"
+                : "border-transparent text-[#6B6A62] hover:text-[#45443E]"
             }`}
           >
             {t.label}
