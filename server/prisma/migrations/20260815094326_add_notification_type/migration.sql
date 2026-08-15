@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `notification` ADD COLUMN `type` ENUM('INFO', 'SUCCESS', 'WARNING', 'ERROR') NOT NULL DEFAULT 'INFO';

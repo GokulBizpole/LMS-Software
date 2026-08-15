@@ -1,5 +1,6 @@
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
+import { notifyCustomerCreated } from "./notification.service";
 
 interface CreateCustomerData {
   customerCode: string;
@@ -66,6 +67,8 @@ await createAuditLog({
   recordId: customer.id,
   ipAddress,
 });
+
+await notifyCustomerCreated(customer);
 
 return customer;
 };
