@@ -1,5 +1,6 @@
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
+import { notifyPaymentReceived, notifyLoanClosed } from "./notification.service";
 
 interface CreatePaymentData {
   loanId: string;
@@ -21,6 +22,7 @@ export const createPayment = async (
   where: {
     id: data.loanId,
   },
+  include: { customer: true },
 });
 
 if (!loan) {
@@ -65,7 +67,7 @@ if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
   const receiptNumber =
     "RCP" + String(receiptCount + 1).padStart(6, "0");
 
-  const payment = await prisma.$transaction(async (tx) => {
+  const { payment, loanClosed } = await prisma.$transaction(async (tx) => {
     const createdPayment = await tx.payment.create({
       data: {
         receiptNumber,
@@ -107,6 +109,8 @@ if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
       },
     });
 
+    let loanClosed = false;
+
     if (Number(updatedLoan.balanceAmount) <= 0) {
       await tx.loan.update({
         where: {
@@ -117,9 +121,10 @@ if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
           status: "CLOSED",
         },
       });
+      loanClosed = true;
     }
 
-    return createdPayment;
+    return { payment: createdPayment, loanClosed };
   });
 
   await createAuditLog({
@@ -129,6 +134,12 @@ if (loan.status !== "APPROVED" && loan.status !== "ACTIVE") {
     recordId: payment.id,
     ipAddress,
   });
+
+  await notifyPaymentReceived({ amount: Number(payment.amount) }, loan, loan.customer);
+
+  if (loanClosed) {
+    await notifyLoanClosed(loan, loan.customer);
+  }
 
   return payment;
 };

@@ -1,21 +1,23 @@
 import { Request, Response } from "express";
 import {
   getNotifications,
+  getUnreadNotificationCount,
   markNotificationRead,
+  markAllNotificationsRead,
   deleteNotification,
 } from "../services/notification.service";
 
-export const getAllNotifications = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllNotifications = async (req: Request, res: Response) => {
   try {
-    const notifications = await getNotifications();
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 20;
+    const unreadOnly = String(req.query.unreadOnly || "") === "true";
+
+    const data = await getNotifications(page, limit, unreadOnly);
 
     return res.status(200).json({
       success: true,
-      count: notifications.length,
-      data: notifications,
+      ...data,
     });
   } catch (error) {
     return res.status(500).json({
@@ -25,14 +27,25 @@ export const getAllNotifications = async (
   }
 };
 
-export const readNotification = async (
-  req: Request,
-  res: Response
-) => {
+export const getUnreadCount = async (_req: Request, res: Response) => {
   try {
-    const notification = await markNotificationRead(
-      String(req.params.id)
-    );
+    const count = await getUnreadNotificationCount();
+
+    return res.status(200).json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const readNotification = async (req: Request, res: Response) => {
+  try {
+    const notification = await markNotificationRead(String(req.params.id));
 
     return res.status(200).json({
       success: true,
@@ -46,10 +59,23 @@ export const readNotification = async (
   }
 };
 
-export const removeNotification = async (
-  req: Request,
-  res: Response
-) => {
+export const readAllNotifications = async (_req: Request, res: Response) => {
+  try {
+    const count = await markAllNotificationsRead();
+
+    return res.status(200).json({
+      success: true,
+      message: `${count} notification(s) marked as read`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const removeNotification = async (req: Request, res: Response) => {
   try {
     await deleteNotification(String(req.params.id));
 

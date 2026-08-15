@@ -398,6 +398,8 @@ model Notification {
   title   String
   message String
 
+  type NotificationType @default(INFO)
+
   adminId String?
   admin   Admin?  @relation(fields: [adminId], references: [id])
 

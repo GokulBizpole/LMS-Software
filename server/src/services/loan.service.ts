@@ -1,5 +1,11 @@
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
+import {
+  notifyLoanSubmitted,
+  notifyLoanApproved,
+  notifyLoanRejected,
+  notifyLoanClosed,
+} from "./notification.service";
 
 interface CreateLoanData {
   loanNumber: string;
@@ -95,7 +101,11 @@ await createAuditLog({
   ipAddress,
 });
 
-
+await notifyLoanSubmitted(
+  { id: loan.id, loanNumber: loan.loanNumber, principalAmount: Number(loan.principalAmount) },
+  partner,
+  customer
+);
 
 const schedules: {
   loanId: string;
@@ -304,6 +314,7 @@ export const closeLoanById = async (
 ) => {
   const loan = await prisma.loan.findUnique({
     where: { id },
+    include: { customer: true },
   });
 
   if (!loan) {
@@ -331,6 +342,8 @@ export const closeLoanById = async (
     ipAddress,
   });
 
+  await notifyLoanClosed(closedLoan, loan.customer);
+
   return closedLoan;
 };
 
@@ -341,6 +354,7 @@ export const approveLoanById = async (
 ) => {
   const loan = await prisma.loan.findUnique({
     where: { id },
+    include: { customer: true },
   });
 
   if (!loan) {
@@ -368,6 +382,8 @@ export const approveLoanById = async (
     ipAddress,
   });
 
+  await notifyLoanApproved(approvedLoan, loan.customer);
+
   return approvedLoan;
 };
 
@@ -383,6 +399,7 @@ export const rejectLoanById = async (
 
   const loan = await prisma.loan.findUnique({
     where: { id },
+    include: { customer: true },
   });
 
   if (!loan) {
@@ -410,6 +427,8 @@ export const rejectLoanById = async (
     recordId: rejectedLoan.id,
     ipAddress,
   });
+
+  await notifyLoanRejected(rejectedLoan, loan.customer, reason);
 
   return rejectedLoan;
 };

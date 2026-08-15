@@ -1,6 +1,12 @@
 import bcrypt from "bcrypt";
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
+import {
+  notifyPartnerCreated,
+  notifyPartnerInvestmentReceived,
+  notifyPartnerInvestmentUpdated,
+  notifyPartnerStatusChanged,
+} from "./notification.service";
 
 interface CreatePartnerData {
   partnerCode: string;
@@ -75,6 +81,12 @@ export const createPartner = async (
     recordId: partner.id,
     ipAddress,
   });
+
+  await notifyPartnerCreated(partner);
+
+  if (Number(partner.investmentAmount) > 0) {
+    await notifyPartnerInvestmentReceived(partner, Number(partner.investmentAmount));
+  }
 
   return sanitizePartner(partner);
 };
@@ -246,6 +258,24 @@ export const updatePartnerById = async (
     ipAddress,
   });
 
+  if (
+    data.investmentAmount !== undefined &&
+    Number(data.investmentAmount) !== Number(existingPartner.investmentAmount)
+  ) {
+    if (Number(data.investmentAmount) > Number(existingPartner.investmentAmount)) {
+      await notifyPartnerInvestmentReceived(
+        partner,
+        Number(data.investmentAmount) - Number(existingPartner.investmentAmount)
+      );
+    } else {
+      await notifyPartnerInvestmentUpdated(partner, Number(data.investmentAmount));
+    }
+  }
+
+  if (data.status && data.status !== existingPartner.status) {
+    await notifyPartnerStatusChanged(partner);
+  }
+
   return sanitizePartner(partner);
 };
 
@@ -278,6 +308,10 @@ export const deletePartnerById = async (
     recordId: deletedPartner.id,
     ipAddress,
   });
+
+  if (partner.status !== "INACTIVE") {
+    await notifyPartnerStatusChanged(deletedPartner);
+  }
 
   return sanitizePartner(deletedPartner);
 };
