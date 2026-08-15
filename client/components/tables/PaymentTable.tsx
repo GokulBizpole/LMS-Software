@@ -23,7 +23,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
 export default function PaymentTable({ payments }: { payments: Payment[] }) {
   if (payments.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[160px] text-sm text-[#6B6A62]">
+      <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
         No payments found.
       </div>
     );
