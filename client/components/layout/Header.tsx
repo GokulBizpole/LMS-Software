@@ -8,8 +8,9 @@ import { useUnreadNotificationCount } from "@/hooks/useUnreadNotificationCount";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function Header() {
-  const { user, logout } = useAuth();
-  const { count: unreadCount, refetch: refetchUnreadCount } = useUnreadNotificationCount();
+  const { user, loading, logout } = useAuth();
+  const isPartner = user?.role === "PARTNER";
+  const { count: unreadCount, refetch: refetchUnreadCount } = useUnreadNotificationCount(!loading && !isPartner);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
@@ -40,28 +41,30 @@ export default function Header() {
 
   return (
     <header className="h-16 border-b border-[#C4C1B3] bg-white flex items-center justify-end gap-4 px-6">
-      <div className="relative" ref={notificationsRef}>
-        <button
-          type="button"
-          onClick={() => setShowNotifications((v) => !v)}
-          className="relative w-9 h-9 rounded-full border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
-          aria-label="Notifications"
-        >
-          <Bell size={16} />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 px-1 rounded-full bg-[#993C1D] text-white text-[10px] font-semibold flex items-center justify-center">
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </span>
-          )}
-        </button>
+      {!isPartner && (
+        <div className="relative" ref={notificationsRef}>
+          <button
+            type="button"
+            onClick={() => setShowNotifications((v) => !v)}
+            className="relative w-9 h-9 rounded-full border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
+            aria-label="Notifications"
+          >
+            <Bell size={16} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 px-1 rounded-full bg-[#993C1D] text-white text-[10px] font-semibold flex items-center justify-center">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </button>
 
-        {showNotifications && (
-          <NotificationDropdown
-            onClose={() => setShowNotifications(false)}
-            onRead={refetchUnreadCount}
-          />
-        )}
-      </div>
+          {showNotifications && (
+            <NotificationDropdown
+              onClose={() => setShowNotifications(false)}
+              onRead={refetchUnreadCount}
+            />
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold">

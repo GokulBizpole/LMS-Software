@@ -111,6 +111,8 @@ model Partner {
 
   loans Loan[]
 
+  customers Customer[]
+
   expenses Expense[]
 
   notifications Notification[]
@@ -153,6 +155,10 @@ model Customer {
 
   status CustomerStatus @default(ACTIVE)
 
+  partnerId String?
+
+  partner Partner? @relation(fields: [partnerId], references: [id])
+
   loans Loan[]
 
   notifications Notification[]
@@ -164,6 +170,7 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@index([phone])
+  @@index([partnerId])
   @@map("customers")
 }
 

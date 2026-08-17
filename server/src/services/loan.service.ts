@@ -7,6 +7,11 @@ import {
   notifyLoanClosed,
 } from "./notification.service";
 
+export const generateLoanNumber = async () => {
+  const count = await prisma.loan.count();
+  return "LN" + String(count + 1).padStart(6, "0");
+};
+
 interface CreateLoanData {
   loanNumber: string;
   customerId: string;
@@ -73,7 +78,12 @@ export const createLoan = async (
   const installmentAmount =
     totalPayable / data.duration;
 
-  const endDate = new Date(data.startDate);
+  // data.startDate arrives as a plain "YYYY-MM-DD" string from the request
+  // body (the `Date` type above is aspirational, not enforced at runtime) —
+  // Prisma's DateTime fields reject that without an explicit conversion.
+  const startDate = new Date(data.startDate);
+
+  const endDate = new Date(startDate);
 
   if (data.paymentFrequency === "MONTHLY") {
     endDate.setMonth(endDate.getMonth() + data.duration);
@@ -84,6 +94,7 @@ export const createLoan = async (
 const loan = await prisma.loan.create({
   data: {
     ...data,
+    startDate,
     interestAmount,
     totalPayable,
     balanceAmount: totalPayable,
@@ -117,7 +128,7 @@ const schedules: {
 }[] = [];
 
 for (let i = 1; i <= data.duration; i++) {
-  const dueDate = new Date(data.startDate);
+  const dueDate = new Date(startDate);
 
   if (data.paymentFrequency === "MONTHLY") {
     dueDate.setMonth(dueDate.getMonth() + i);
