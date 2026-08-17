@@ -164,13 +164,20 @@ const getPeriodRange = (period?: "day" | "week" | "month") => {
   return { gte: from, lte: to };
 };
 
+interface GetAllPaymentsFilters {
+  partnerId?: string;
+  customerId?: string;
+  loanId?: string;
+}
+
 export const getAllPayments = async (
   page = 1,
   limit = 10,
   search = "",
   sortBy = "paidAt",
   order: "asc" | "desc" = "desc",
-  period?: "day" | "week" | "month"
+  period?: "day" | "week" | "month",
+  filters: GetAllPaymentsFilters = {}
 ) => {
   const skip = (page - 1) * limit;
 
@@ -178,6 +185,15 @@ export const getAllPayments = async (
 
   const where = {
     ...(paidAtRange ? { paidAt: paidAtRange } : {}),
+    ...(filters.loanId ? { loanId: filters.loanId } : {}),
+    ...(filters.partnerId || filters.customerId
+      ? {
+          loan: {
+            ...(filters.partnerId ? { partnerId: filters.partnerId } : {}),
+            ...(filters.customerId ? { customerId: filters.customerId } : {}),
+          },
+        }
+      : {}),
     ...(search
       ? {
           OR: [

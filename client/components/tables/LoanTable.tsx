@@ -25,7 +25,13 @@ function StatusBadge({ status }: { status: LoanStatus }) {
   );
 }
 
-export default function LoanTable({ loans }: { loans: Loan[] }) {
+export default function LoanTable({
+  loans,
+  linkPrefix = "/loans",
+}: {
+  loans: Loan[];
+  linkPrefix?: string;
+}) {
   if (loans.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
@@ -70,7 +76,7 @@ export default function LoanTable({ loans }: { loans: Loan[] }) {
               <td className="py-3 px-4 text-[#45443E]">{formatDate(l.createdAt)}</td>
               <td className="py-3 px-4 text-right">
                 <Link
-                  href={`/loans/${l.id}`}
+                  href={`${linkPrefix}/${l.id}`}
                   className="text-[#185FA5] font-medium hover:underline"
                 >
                   View

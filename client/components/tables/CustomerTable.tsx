@@ -27,8 +27,10 @@ function maskAadhaar(value?: string | null) {
 
 export default function CustomerTable({
   customers,
+  linkPrefix = "/customers",
 }: {
   customers: Customer[];
+  linkPrefix?: string;
 }) {
   if (customers.length === 0) {
     return (
@@ -80,7 +82,7 @@ export default function CustomerTable({
                 <td className="py-3 px-4 text-[#45443E]">{formatDate(c.createdAt)}</td>
                 <td className="py-3 px-4 text-right">
                   <Link
-                    href={`/customers/${c.id}`}
+                    href={`${linkPrefix}/${c.id}`}
                     className="text-[#185FA5] font-medium hover:underline"
                   >
                     View

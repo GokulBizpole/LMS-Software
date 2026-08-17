@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "./Header";
+import PartnerSidebar from "./PartnerSidebar";
 
 export default function PartnerLayout({
   children,
@@ -48,6 +49,7 @@ export default function PartnerLayout({
 
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">
+      <PartnerSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
         <main className="flex-1 p-6 overflow-y-auto">{children}</main>
