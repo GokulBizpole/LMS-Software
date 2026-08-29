@@ -4,3 +4,5 @@ dist
 build
 .next
 coverage
+migrate-mysql-to-neon.cjs
+prisma/migrations_mysql_backup/

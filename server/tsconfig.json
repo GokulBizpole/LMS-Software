@@ -5,7 +5,7 @@
     "outDir": "./dist",
 
     "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "target": "ES2022",
 
     "types": ["node"],
