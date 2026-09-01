@@ -4,8 +4,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getCustomerById } from "@/services/customer.service";
+import { Trash2 } from "lucide-react";
+import { deleteCustomer, getCustomerById } from "@/services/customer.service";
 import CustomerFormModal from "@/components/customers/CustomerFormModal";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 import { formatDate } from "@/utils/formatDate";
 
@@ -66,6 +70,9 @@ export default function CustomerDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const toast = useToast();
 
   const load = () => {
     if (!id) return;
@@ -123,6 +130,19 @@ export default function CustomerDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const { message } = await deleteCustomer(customer.id);
+      toast.success(message);
+      router.push("/customers");
+    } catch (err: any) {
+      toast.error(getErrorMessage(err, "Could not delete customer. Please try again."));
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <button
@@ -168,12 +188,22 @@ export default function CustomerDetailPage() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowEdit(true)}
-          className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] text-center hover:bg-[#ECE9DF]"
-        >
-          Edit
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            onClick={() => setShowEdit(true)}
+            className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] text-center hover:bg-[#ECE9DF]"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={deleting}
+            className="flex items-center gap-2 border border-[#993C1D] text-sm font-medium px-4 py-2 rounded-lg text-[#993C1D] hover:bg-[#FAECE7] disabled:opacity-50"
+          >
+            <Trash2 size={16} />
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+        </div>
       </div>
 
       {/* Details */}
@@ -220,6 +250,15 @@ export default function CustomerDetailPage() {
           setCustomer(updated);
           setShowEdit(false);
         }}
+      />
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete customer"
+        message="Delete this customer? This cannot be undone."
+        confirming={deleting}
       />
     </div>
   );

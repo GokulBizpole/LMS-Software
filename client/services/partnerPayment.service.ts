@@ -39,7 +39,7 @@ interface CreateMyPaymentResponse {
 
 export async function createMyPayment(
   payload: CreateMyPaymentData
-): Promise<Payment> {
+): Promise<{ data: Payment; message: string }> {
   const { data } = await api.post<CreateMyPaymentResponse>(
     "/partners/me/payments",
     payload
@@ -49,7 +49,7 @@ export async function createMyPayment(
     throw new Error(data.message || "Failed to collect payment");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 // Receipt downloads need the auth header, so a plain <a href> won't work —

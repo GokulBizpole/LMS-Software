@@ -3,23 +3,24 @@
 
 import { useState, type SubmitEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
     try {
       await login(email, password);
       // AuthContext redirects to /dashboard (admin) or /partner/dashboard (partner)
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Login failed");
+      toast.error(getErrorMessage(err, "Login failed"));
     } finally {
       setLoading(false);
     }
@@ -37,12 +38,6 @@ export default function LoginPage() {
         <p className="text-sm text-[#6B6A62] mb-6">
           Sign in with your admin or partner account.
         </p>
-
-        {error && (
-          <div className="mb-4 rounded-lg bg-[#FAECE7] text-[#993C1D] text-sm px-3 py-2">
-            {error}
-          </div>
-        )}
 
         <label className="block text-sm text-[#45443E] mb-1">Email</label>
         <input

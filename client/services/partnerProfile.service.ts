@@ -31,7 +31,7 @@ interface UpdateMyProfileResponse {
 
 export async function updateMyProfile(
   payload: UpdateMyProfileData
-): Promise<Partner> {
+): Promise<{ data: Partner; message: string }> {
   const { data } = await api.put<UpdateMyProfileResponse>(
     "/partners/me",
     payload
@@ -41,13 +41,13 @@ export async function updateMyProfile(
     throw new Error(data.message || "Failed to update profile");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 export async function changeMyPassword(
   currentPassword: string,
   newPassword: string
-): Promise<void> {
+): Promise<{ message: string }> {
   const { data } = await api.put<{ success: boolean; message: string }>(
     "/partners/me/password",
     { currentPassword, newPassword }
@@ -56,4 +56,6 @@ export async function changeMyPassword(
   if (!data.success) {
     throw new Error(data.message || "Failed to change password");
   }
+
+  return { message: data.message };
 }

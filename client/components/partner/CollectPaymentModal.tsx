@@ -7,6 +7,8 @@ import { TextField, SelectField, TextareaField } from "@/components/ui/FormField
 import { createMyPayment, type CreateMyPaymentData } from "@/services/partnerPayment.service";
 import { getMyLoans, getMyLoanById } from "@/services/partnerLoan.service";
 import { getMyCustomers } from "@/services/partnerCustomer.service";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 import type { Loan, LoanScheduleEntry } from "@/types/loan";
 import type { Payment } from "@/types/payment";
@@ -33,11 +35,10 @@ export default function CollectPaymentModal({
   const [remarks, setRemarks] = useState("");
   const [loadingLoan, setLoadingLoan] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     setCustomerId("");
     setLoanId(initialLoanId ?? "");
     setNextInstallment(null);
@@ -92,14 +93,13 @@ export default function CollectPaymentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     if (!loanId) {
-      setError("Please select a loan.");
+      toast.error("Please select a loan.");
       return;
     }
     if (!nextInstallment) {
-      setError("This loan has no pending installments.");
+      toast.error("This loan has no pending installments.");
       return;
     }
 
@@ -112,10 +112,11 @@ export default function CollectPaymentModal({
         paymentMethod,
         remarks: remarks || undefined,
       };
-      const payment = await createMyPayment(payload);
+      const { data: payment, message } = await createMyPayment(payload);
+      toast.success(message);
       onSaved(payment);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not collect payment.");
+      toast.error(getErrorMessage(err, "Could not collect payment."));
     } finally {
       setSubmitting(false);
     }
@@ -147,12 +148,6 @@ export default function CollectPaymentModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="partner-collect-payment-form" onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <SelectField

@@ -10,6 +10,8 @@ import {
   type CreateMyCustomerData,
 } from "@/services/partnerCustomer.service";
 import { suggestNextCode } from "@/utils/generateCode";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 
 interface FormState {
@@ -53,11 +55,10 @@ export default function PartnerCustomerFormModal({
 }) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     setForm(emptyForm);
     getMyCustomers({ limit: 100 })
       .then((res) => {
@@ -74,7 +75,6 @@ export default function PartnerCustomerFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setSubmitting(true);
 
     try {
@@ -92,10 +92,11 @@ export default function PartnerCustomerFormModal({
         guarantorName: form.guarantorName || undefined,
         guarantorPhone: form.guarantorPhone || undefined,
       };
-      const created = await createMyCustomer(payload);
+      const { data: created, message } = await createMyCustomer(payload);
+      toast.success(message);
       onSaved(created);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not save customer.");
+      toast.error(getErrorMessage(err, "Could not save customer."));
     } finally {
       setSubmitting(false);
     }
@@ -127,12 +128,6 @@ export default function PartnerCustomerFormModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="partner-customer-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Personal details</h3>

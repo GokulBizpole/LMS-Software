@@ -47,7 +47,7 @@ interface CreateMyCustomerResponse {
 
 export async function createMyCustomer(
   payload: CreateMyCustomerData
-): Promise<Customer> {
+): Promise<{ data: Customer; message: string }> {
   const { data } = await api.post<CreateMyCustomerResponse>(
     "/partners/me/customers",
     payload
@@ -57,7 +57,7 @@ export async function createMyCustomer(
     throw new Error(data.message || "Failed to create customer");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 interface MyCustomerDetailResponse {

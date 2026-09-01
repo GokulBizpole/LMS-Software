@@ -33,7 +33,7 @@ export function useSettings() {
     setSaving(true);
     try {
       const result = await updateSettings(payload);
-      setSettings(result);
+      setSettings(result.data);
       return result;
     } finally {
       setSaving(false);

@@ -12,14 +12,18 @@ export async function getSettings(): Promise<Setting> {
   return data.data;
 }
 
+interface UpdateSettingResponse extends SettingResponse {
+  message?: string;
+}
+
 export async function updateSettings(
   payload: UpdateSettingData
-): Promise<Setting> {
-  const { data } = await api.put<SettingResponse>("/settings", payload);
+): Promise<{ data: Setting; message: string }> {
+  const { data } = await api.put<UpdateSettingResponse>("/settings", payload);
 
   if (!data.success) {
     throw new Error("Failed to update settings");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message || "Settings saved." };
 }

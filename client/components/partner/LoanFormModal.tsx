@@ -6,6 +6,8 @@ import Modal from "@/components/ui/Modal";
 import { TextField, SelectField, TextareaField } from "@/components/ui/FormField";
 import { createMyLoan, type CreateMyLoanData } from "@/services/partnerLoan.service";
 import { getMyCustomers } from "@/services/partnerCustomer.service";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 import type { Loan } from "@/types/loan";
 
@@ -45,11 +47,10 @@ export default function LoanFormModal({
   const [form, setForm] = useState<FormState>(emptyForm());
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     setForm(emptyForm(initialCustomerId));
     getMyCustomers({ limit: 200 })
       .then((res) => setCustomers(res.customers))
@@ -62,10 +63,9 @@ export default function LoanFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     if (!form.customerId) {
-      setError("Please select a customer.");
+      toast.error("Please select a customer.");
       return;
     }
 
@@ -80,10 +80,11 @@ export default function LoanFormModal({
         startDate: form.startDate,
         remarks: form.remarks || undefined,
       };
-      const loan = await createMyLoan(payload);
+      const { data: loan, message } = await createMyLoan(payload);
+      toast.success(message);
       onSaved(loan);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not submit loan.");
+      toast.error(getErrorMessage(err, "Could not submit loan."));
     } finally {
       setSubmitting(false);
     }
@@ -115,12 +116,6 @@ export default function LoanFormModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="partner-loan-form" onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <SelectField

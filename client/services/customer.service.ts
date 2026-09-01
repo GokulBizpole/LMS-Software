@@ -61,7 +61,7 @@ export interface CreateCustomerResponse {
 
 export async function createCustomer(
   payload: CreateCustomerData
-): Promise<Customer> {
+): Promise<{ data: Customer; message: string }> {
   const { data } = await api.post<CreateCustomerResponse>(
     "/customers",
     payload
@@ -71,7 +71,7 @@ export async function createCustomer(
     throw new Error(data.message || "Failed to create customer");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 export interface UpdateCustomerData {
@@ -98,7 +98,7 @@ export interface UpdateCustomerResponse {
 export async function updateCustomer(
   id: string,
   payload: UpdateCustomerData
-): Promise<Customer> {
+): Promise<{ data: Customer; message: string }> {
   const { data } = await api.put<UpdateCustomerResponse>(
     `/customers/${id}`,
     payload
@@ -108,5 +108,20 @@ export async function updateCustomer(
     throw new Error(data.message || "Failed to update customer");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
+}
+
+export interface DeleteCustomerResponse {
+  success: boolean;
+  message: string;
+}
+
+export async function deleteCustomer(id: string): Promise<{ message: string }> {
+  const { data } = await api.delete<DeleteCustomerResponse>(`/customers/${id}`);
+
+  if (!data.success) {
+    throw new Error(data.message || "Failed to delete customer");
+  }
+
+  return { message: data.message };
 }

@@ -8,6 +8,8 @@ import {
   changeMyPassword,
 } from "@/services/partnerProfile.service";
 import { TextField } from "@/components/ui/FormField";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
@@ -30,15 +32,13 @@ export default function PartnerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const toast = useToast();
+
   const [profileForm, setProfileForm] = useState({ name: "", phone: "", address: "" });
   const [profileSaving, setProfileSaving] = useState(false);
-  const [profileMessage, setProfileMessage] = useState<string | null>(null);
-  const [profileError, setProfileError] = useState<string | null>(null);
 
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [passwordSaving, setPasswordSaving] = useState(false);
-  const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -65,15 +65,13 @@ export default function PartnerProfilePage() {
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setProfileError(null);
-    setProfileMessage(null);
     setProfileSaving(true);
     try {
-      const updated = await updateMyProfile(profileForm);
+      const { data: updated, message } = await updateMyProfile(profileForm);
       setPartner(updated);
-      setProfileMessage("Profile updated successfully.");
+      toast.success(message);
     } catch (err: any) {
-      setProfileError(err?.response?.data?.message || err.message || "Could not update profile.");
+      toast.error(getErrorMessage(err, "Could not update profile."));
     } finally {
       setProfileSaving(false);
     }
@@ -81,21 +79,19 @@ export default function PartnerProfilePage() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPasswordError(null);
-    setPasswordMessage(null);
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError("New passwords do not match.");
+      toast.error("New passwords do not match.");
       return;
     }
 
     setPasswordSaving(true);
     try {
-      await changeMyPassword(passwordForm.currentPassword, passwordForm.newPassword);
-      setPasswordMessage("Password changed successfully.");
+      const { message } = await changeMyPassword(passwordForm.currentPassword, passwordForm.newPassword);
+      toast.success(message);
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err: any) {
-      setPasswordError(err?.response?.data?.message || err.message || "Could not change password.");
+      toast.error(getErrorMessage(err, "Could not change password."));
     } finally {
       setPasswordSaving(false);
     }
@@ -150,17 +146,6 @@ export default function PartnerProfilePage() {
         <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
           <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Edit profile</h2>
 
-          {profileError && (
-            <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
-              {profileError}
-            </div>
-          )}
-          {profileMessage && (
-            <div className="rounded-lg border border-[#EAF3DE] bg-[#EAF3DE] p-3 text-sm text-[#3B6D11] mb-4">
-              {profileMessage}
-            </div>
-          )}
-
           <form onSubmit={handleProfileSubmit} className="space-y-4">
             <TextField label="Name" name="name" value={profileForm.name} onChange={handleProfileChange} required />
             <TextField label="Phone" name="phone" value={profileForm.phone} onChange={handleProfileChange} required />
@@ -177,17 +162,6 @@ export default function PartnerProfilePage() {
 
         <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
           <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Change password</h2>
-
-          {passwordError && (
-            <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
-              {passwordError}
-            </div>
-          )}
-          {passwordMessage && (
-            <div className="rounded-lg border border-[#EAF3DE] bg-[#EAF3DE] p-3 text-sm text-[#3B6D11] mb-4">
-              {passwordMessage}
-            </div>
-          )}
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <TextField

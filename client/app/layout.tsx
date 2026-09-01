@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AppToaster } from "@/components/ui/Toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable}>
       <body>
         <AuthProvider>{children}</AuthProvider>
+        <AppToaster />
       </body>
     </html>
   );
