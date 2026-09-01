@@ -59,7 +59,7 @@ export interface CreateExpenseResponse {
 
 export async function createExpense(
   payload: CreateExpenseData
-): Promise<Expense> {
+): Promise<{ data: Expense; message: string }> {
   const { data } = await api.post<CreateExpenseResponse>(
     "/expenses",
     payload
@@ -69,7 +69,7 @@ export async function createExpense(
     throw new Error(data.message || "Failed to create expense");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 export interface DeleteExpenseResponse {
@@ -77,10 +77,12 @@ export interface DeleteExpenseResponse {
   message: string;
 }
 
-export async function deleteExpense(id: string): Promise<void> {
+export async function deleteExpense(id: string): Promise<{ message: string }> {
   const { data } = await api.delete<DeleteExpenseResponse>(`/expenses/${id}`);
 
   if (!data.success) {
     throw new Error(data.message || "Failed to delete expense");
   }
+
+  return { message: data.message };
 }

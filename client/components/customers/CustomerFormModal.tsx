@@ -12,6 +12,8 @@ import {
   type UpdateCustomerData,
 } from "@/services/customer.service";
 import { suggestNextCode } from "@/utils/generateCode";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 
 interface FormState {
@@ -60,11 +62,10 @@ export default function CustomerFormModal({
   const isEdit = Boolean(customer);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     if (customer) {
       setForm({
         customerCode: customer.customerCode,
@@ -99,7 +100,6 @@ export default function CustomerFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setSubmitting(true);
 
     try {
@@ -118,7 +118,8 @@ export default function CustomerFormModal({
           guarantorPhone: form.guarantorPhone || undefined,
           status: form.status,
         };
-        const updated = await updateCustomer(customer.id, payload);
+        const { data: updated, message } = await updateCustomer(customer.id, payload);
+        toast.success(message);
         onSaved(updated);
       } else {
         const payload: CreateCustomerData = {
@@ -135,11 +136,12 @@ export default function CustomerFormModal({
           guarantorName: form.guarantorName || undefined,
           guarantorPhone: form.guarantorPhone || undefined,
         };
-        const created = await createCustomer(payload);
+        const { data: created, message } = await createCustomer(payload);
+        toast.success(message);
         onSaved(created);
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not save customer.");
+      toast.error(getErrorMessage(err, "Could not save customer."));
     } finally {
       setSubmitting(false);
     }
@@ -171,12 +173,6 @@ export default function CustomerFormModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="customer-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-4">

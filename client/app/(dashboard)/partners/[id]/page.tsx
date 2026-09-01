@@ -4,8 +4,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getPartnerById } from "@/services/partner.service";
+import { Trash2 } from "lucide-react";
+import { deletePartner, getPartnerById } from "@/services/partner.service";
 import PartnerFormModal from "@/components/partners/PartnerFormModal";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Partner, PartnerLoanSummary } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
@@ -72,6 +76,9 @@ export default function PartnerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -83,6 +90,19 @@ export default function PartnerDetailPage() {
       })
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const { message } = await deletePartner(id);
+      toast.success(message);
+      router.push("/partners");
+    } catch (err: any) {
+      toast.error(getErrorMessage(err, "Could not delete partner. Please try again."));
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
 
   if (loading) {
     return <div className="h-40 bg-[#ECE9DF] rounded-2xl animate-pulse" />;
@@ -129,12 +149,22 @@ export default function PartnerDetailPage() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowEdit(true)}
-          className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E]"
-        >
-          Edit
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            onClick={() => setShowEdit(true)}
+            className="border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E]"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={deleting}
+            className="flex items-center gap-2 border border-[#993C1D] text-sm font-medium px-4 py-2 rounded-lg text-[#993C1D] hover:bg-[#FAECE7] disabled:opacity-50"
+          >
+            <Trash2 size={16} />
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+        </div>
       </div>
 
       {/* Investment & loan stats */}
@@ -171,7 +201,7 @@ export default function PartnerDetailPage() {
         </h2>
 
         {!partner.loans || partner.loans.length === 0 ? (
-          <div className="flex items-center justify-center h-[100px] text-sm text-[#6B6A62]">
+          <div className="flex items-center justify-center h-25 text-sm text-[#6B6A62]">
             No loans given yet.
           </div>
         ) : (
@@ -234,6 +264,16 @@ export default function PartnerDetailPage() {
           setPartner(updated);
           setShowEdit(false);
         }}
+      />
+
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete partner"
+        message="Delete this partner? This cannot be undone."
+        confirming={deleting}
       />
     </div>
   );

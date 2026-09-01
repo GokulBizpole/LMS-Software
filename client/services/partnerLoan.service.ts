@@ -57,7 +57,9 @@ interface CreateMyLoanResponse {
   data: Loan;
 }
 
-export async function createMyLoan(payload: CreateMyLoanData): Promise<Loan> {
+export async function createMyLoan(
+  payload: CreateMyLoanData
+): Promise<{ data: Loan; message: string }> {
   const { data } = await api.post<CreateMyLoanResponse>(
     "/partners/me/loans",
     payload
@@ -67,5 +69,5 @@ export async function createMyLoan(payload: CreateMyLoanData): Promise<Loan> {
     throw new Error(data.message || "Failed to submit loan");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }

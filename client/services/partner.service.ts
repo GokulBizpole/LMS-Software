@@ -57,7 +57,7 @@ export interface CreatePartnerResponse {
 
 export async function createPartner(
   payload: CreatePartnerData
-): Promise<Partner> {
+): Promise<{ data: Partner; message: string }> {
   const { data } = await api.post<CreatePartnerResponse>(
     "/partners",
     payload
@@ -67,7 +67,7 @@ export async function createPartner(
     throw new Error(data.message || "Failed to create partner");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
 }
 
 export interface UpdatePartnerData {
@@ -90,7 +90,7 @@ export interface UpdatePartnerResponse {
 export async function updatePartner(
   id: string,
   payload: UpdatePartnerData
-): Promise<Partner> {
+): Promise<{ data: Partner; message: string }> {
   const { data } = await api.put<UpdatePartnerResponse>(
     `/partners/${id}`,
     payload
@@ -100,5 +100,20 @@ export async function updatePartner(
     throw new Error(data.message || "Failed to update partner");
   }
 
-  return data.data;
+  return { data: data.data, message: data.message };
+}
+
+export interface DeletePartnerResponse {
+  success: boolean;
+  message: string;
+}
+
+export async function deletePartner(id: string): Promise<{ message: string }> {
+  const { data } = await api.delete<DeletePartnerResponse>(`/partners/${id}`);
+
+  if (!data.success) {
+    throw new Error(data.message || "Failed to delete partner");
+  }
+
+  return { message: data.message };
 }
