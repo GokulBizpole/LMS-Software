@@ -10,7 +10,7 @@ import {
   Wallet,
   PiggyBank,
   BarChart3,
-  UserCircle,
+  UserCircle, 
 } from "lucide-react";
 
 const NAV_ITEMS = [
