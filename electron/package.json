@@ -1,22 +1,39 @@
 {
   "name": "electron",
   "version": "1.0.0",
-  "description": "",
+  "description": "FinLoan Desktop Application",
   "main": "dist/main.js",
+
   "scripts": {
-  "dev": "npm run build && electron .",
-  "build": "tsc",
-  "start": "npm run build && electron ."
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+    "dev": "npm run build && electron .",
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
+  },
+
   "dependencies": {
     "electron": "^43.4.0"
   },
+
   "devDependencies": {
     "@types/node": "^26.2.0",
+    "electron-builder": "^26.15.3",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
+  },
+
+  "build": {
+    "appId": "com.finloan.app",
+    "productName": "FinLoan",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
   }
 }

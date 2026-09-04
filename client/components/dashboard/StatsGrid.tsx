@@ -16,12 +16,12 @@ import {
 
 import StatCard from "./StatCard";
 import { formatCurrency } from "@/utils/formatCurrency";
-import type { DashboardStats } from "@/types/dashboard";
+import type { DashboardData } from "@/types/dashboard";
 
 export default function StatsGrid({
   stats,
 }: {
-  stats: DashboardStats | null | undefined;
+  stats: DashboardData | null | undefined;
 }) {
   // Prevent crash when API data is not loaded yet
   if (!stats) {
