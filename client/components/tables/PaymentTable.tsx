@@ -20,7 +20,13 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
   );
 }
 
-export default function PaymentTable({ payments }: { payments: Payment[] }) {
+export default function PaymentTable({
+  payments,
+  onDownloadReceipt,
+}: {
+  payments: Payment[];
+  onDownloadReceipt?: (paymentId: string) => void;
+}) {
   if (payments.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
@@ -31,7 +37,7 @@ export default function PaymentTable({ payments }: { payments: Payment[] }) {
 
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-300   text-sm">
         <thead>
           <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
             <th className="py-2 px-4 font-medium">Receipt</th>
@@ -70,14 +76,24 @@ export default function PaymentTable({ payments }: { payments: Payment[] }) {
               <td className="py-3 px-4"><StatusBadge status={p.paymentStatus} /></td>
               <td className="py-3 px-4 text-[#45443E]">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
               <td className="py-3 px-4 text-right">
-                <a
-                  href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/${p.id}/receipt`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#185FA5] font-medium hover:underline"
-                >
-                  Receipt
-                </a>
+                {onDownloadReceipt ? (
+                  <button
+                    type="button"
+                    onClick={() => onDownloadReceipt(p.id)}
+                    className="text-[#185FA5] font-medium hover:underline"
+                  >
+                    Receipt
+                  </button>
+                ) : (
+                  <a
+                    href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/${p.id}/receipt`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#185FA5] font-medium hover:underline"
+                  >
+                    Receipt
+                  </a>
+                )}
               </td>
             </tr>
           ))}

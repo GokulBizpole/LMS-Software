@@ -6,6 +6,7 @@ interface LoanReportFilter {
   status?: "PENDING" | "ACTIVE" | "CLOSED";
   from?: Date;
   to?: Date;
+  partnerId?: string;
 }
 
 export const getLoanReport = async (
@@ -15,6 +16,10 @@ export const getLoanReport = async (
     where: {
       ...(filter.status && {
         status: filter.status,
+      }),
+
+      ...(filter.partnerId && {
+        partnerId: filter.partnerId,
       }),
 
       ...(filter.from &&
@@ -48,8 +53,16 @@ export const getLoanReport = async (
   });
 };
 
-export const getCollectionReport = async () => {
+export const getCollectionReport = async (partnerId?: string) => {
   return await prisma.payment.findMany({
+    where: {
+      ...(partnerId && {
+        loan: {
+          partnerId,
+        },
+      }),
+    },
+
     include: {
       loan: {
         select: {
@@ -67,6 +80,37 @@ export const getCollectionReport = async () => {
 
     orderBy: {
       paidAt: "desc",
+    },
+  });
+};
+
+export const getOutstandingReport = async (partnerId?: string) => {
+  return await prisma.loan.findMany({
+    where: {
+      balanceAmount: {
+        gt: 0,
+      },
+      ...(partnerId && { partnerId }),
+    },
+
+    include: {
+      customer: {
+        select: {
+          customerCode: true,
+          name: true,
+          phone: true,
+        },
+      },
+      partner: {
+        select: {
+          partnerCode: true,
+          name: true,
+        },
+      },
+    },
+
+    orderBy: {
+      balanceAmount: "desc",
     },
   });
 };

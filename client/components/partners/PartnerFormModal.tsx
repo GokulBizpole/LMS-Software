@@ -12,6 +12,8 @@ import {
   type UpdatePartnerData,
 } from "@/services/partner.service";
 import { suggestNextCode } from "@/utils/generateCode";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Partner } from "@/types/partner";
 
 interface FormState {
@@ -52,11 +54,10 @@ export default function PartnerFormModal({
   const isEdit = Boolean(partner);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     if (partner) {
       setForm({
         partnerCode: partner.partnerCode,
@@ -87,7 +88,6 @@ export default function PartnerFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setSubmitting(true);
 
     try {
@@ -102,7 +102,8 @@ export default function PartnerFormModal({
           currentBalance: Number(form.currentBalance) || 0,
           status: form.status,
         };
-        const updated = await updatePartner(partner.id, payload);
+        const { data: updated, message } = await updatePartner(partner.id, payload);
+        toast.success(message);
         onSaved(updated);
       } else {
         const payload: CreatePartnerData = {
@@ -115,11 +116,12 @@ export default function PartnerFormModal({
           investmentAmount: Number(form.investmentAmount) || 0,
           currentBalance: Number(form.currentBalance || form.investmentAmount) || 0,
         };
-        const created = await createPartner(payload);
+        const { data: created, message } = await createPartner(payload);
+        toast.success(message);
         onSaved(created);
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not save partner.");
+      toast.error(getErrorMessage(err, "Could not save partner."));
     } finally {
       setSubmitting(false);
     }
@@ -151,12 +153,6 @@ export default function PartnerFormModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="partner-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-4">

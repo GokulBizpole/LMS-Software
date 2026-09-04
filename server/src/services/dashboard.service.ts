@@ -187,3 +187,89 @@ monthlyExpense:
 
 
 };
+
+export const getPartnerDashboardStats = async (partnerId: string) => {
+  const totalCustomers = await prisma.customer.count({
+    where: { partnerId },
+  });
+
+  const activeLoans = await prisma.loan.count({
+    where: { partnerId, status: "ACTIVE" },
+  });
+
+  const pendingLoans = await prisma.loan.count({
+    where: { partnerId, status: "PENDING" },
+  });
+
+  const closedLoans = await prisma.loan.count({
+    where: { partnerId, status: "CLOSED" },
+  });
+
+  const totalLoan = await prisma.loan.aggregate({
+    where: { partnerId },
+    _sum: { principalAmount: true },
+  });
+
+  const outstanding = await prisma.loan.aggregate({
+    where: { partnerId },
+    _sum: { balanceAmount: true },
+  });
+
+  const totalCollection = await prisma.payment.aggregate({
+    where: { loan: { partnerId } },
+    _sum: { totalReceived: true },
+  });
+
+  const todayCollection = await prisma.payment.aggregate({
+    where: {
+      loan: { partnerId },
+      paidAt: { gte: startOfDay, lt: endOfDay },
+    },
+    _sum: { totalReceived: true },
+  });
+
+  const [recentCustomers, recentLoans, recentPayments] = await Promise.all([
+    prisma.customer.findMany({
+      where: { partnerId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.loan.findMany({
+      where: { partnerId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        customer: {
+          select: { customerCode: true, name: true, phone: true },
+        },
+      },
+    }),
+    prisma.payment.findMany({
+      where: { loan: { partnerId } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        loan: {
+          select: {
+            loanNumber: true,
+            customer: { select: { customerCode: true, name: true, phone: true } },
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    totalCustomers,
+    activeLoans,
+    pendingLoans,
+    closedLoans,
+    totalLoanAmount: totalLoan._sum.principalAmount ?? 0,
+    outstandingAmount: outstanding._sum.balanceAmount ?? 0,
+    totalCollection: totalCollection._sum.totalReceived ?? 0,
+    todayCollection: todayCollection._sum.totalReceived ?? 0,
+    recentCustomers,
+    recentLoans,
+    recentPayments,
+  };
+};

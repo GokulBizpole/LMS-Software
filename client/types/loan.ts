@@ -22,6 +22,16 @@ export type LoanStatus =
   | "OVERDUE"
   | "REJECTED";
 
+export interface LoanScheduleEntry {
+  id: string;
+  installmentNo: number;
+  dueDate: string;
+  amount: string | number;
+  penalty: string | number;
+  isPaid: boolean;
+  paidDate?: string | null;
+}
+
 export interface Loan {
   id: string;
   loanNumber: string;
@@ -48,6 +58,7 @@ export interface Loan {
   endDate?: string | null;
   remarks?: string | null;
   rejectionReason?: string | null;
+  schedules?: LoanScheduleEntry[];
   createdAt: string;
   updatedAt: string;
 }

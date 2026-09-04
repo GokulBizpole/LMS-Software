@@ -15,6 +15,7 @@ interface CreateCustomerData {
   pincode?: string;
   guarantorName?: string;
   guarantorPhone?: string;
+  partnerId?: string;
 }
 
 interface UpdateCustomerData {
@@ -72,50 +73,63 @@ await notifyCustomerCreated(customer);
 
 return customer;
 };
+interface GetAllCustomersFilters {
+  partnerId?: string;
+}
+
 export const getAllCustomers = async (
   page = 1,
   limit = 10,
   search = "",
   sortBy = "createdAt",
-  order: "asc" | "desc" = "desc"
+  order: "asc" | "desc" = "desc",
+  filters: GetAllCustomersFilters = {}
 ) => {
   const skip = (page - 1) * limit;
 
-  // const where = search
-  //   ? {
-  //       OR: [
-  //         {
-  //           name: {
-  //             contains: search,
-  //             mode: "insensitive" as const,
-  //           },
-  //         },
-  //         {
-  //           phone: {
-  //             contains: search,
-  //           },
-  //         },
-  //         {
-  //           customerCode: {
-  //             contains: search,
-  //           },
-  //         },
-  //       ],
-  //     }
-  //   : {};
+  const where = {
+    ...(filters.partnerId ? { partnerId: filters.partnerId } : {}),
+    ...(search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: search,
+              },
+            },
+            {
+              phone: {
+                contains: search,
+              },
+            },
+            {
+              customerCode: {
+                contains: search,
+              },
+            },
+          ],
+        }
+      : {}),
+  };
+
+  const allowedSortFields = ["createdAt", "name", "customerCode"];
+
+  const finalSortBy = allowedSortFields.includes(sortBy)
+    ? sortBy
+    : "createdAt";
 
   const [customers, total] = await Promise.all([
     prisma.customer.findMany({
-      // where,
+      where,
       skip,
       take: limit,
       orderBy: {
-        createdAt: "desc",
+        [finalSortBy]: order,
       },
     }),
 
     prisma.customer.count({
-      // where,
+      where,
     }),
   ]);
 

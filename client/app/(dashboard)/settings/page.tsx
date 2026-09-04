@@ -7,6 +7,8 @@ import { useSettings } from "@/hooks/useSettings";
 import { useAuditLogs } from "@/hooks/useAuditLogs";
 import AuditLogTable from "@/components/tables/AuditLogTable";
 import Pagination from "@/components/ui/Pagination";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { UpdateSettingData } from "@/types/setting";
 
 const TABLE_NAMES = ["CUSTOMER", "PARTNER", "LOAN", "PAYMENT", "EXPENSE"];
@@ -32,8 +34,7 @@ function GeneralSettingsTab() {
     defaultPenaltyPercentage: 0,
     receiptPrefix: "RCP",
   });
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (!settings) return;
@@ -50,14 +51,11 @@ function GeneralSettingsTab() {
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    setSaveError(null);
-    setSaved(false);
     try {
-      await save(form);
-      setSaved(true);
+      const { message } = await save(form);
+      toast.success(message);
     } catch (err) {
-      console.error(err);
-      setSaveError("Could not save settings. Please try again.");
+      toast.error(getErrorMessage(err, "Could not save settings. Please try again."));
     }
   };
 
@@ -187,9 +185,6 @@ function GeneralSettingsTab() {
             />
           </div>
         </div>
-
-        {saveError && <p className="text-sm text-[#993C1D]">{saveError}</p>}
-        {saved && <p className="text-sm text-[#3B6D11]">Settings saved.</p>}
 
         <button
           type="submit"

@@ -279,6 +279,78 @@ export const updatePartnerById = async (
   return sanitizePartner(partner);
 };
 
+// ================= UPDATE MY PROFILE (self-service) =================
+
+interface UpdateMyProfileData {
+  name?: string;
+  phone?: string;
+  address?: string;
+}
+
+export const updateMyPartnerProfile = async (
+  id: string,
+  data: UpdateMyProfileData
+) => {
+  const existingPartner = await prisma.partner.findUnique({ where: { id } });
+
+  if (!existingPartner) {
+    throw new Error("Partner not found");
+  }
+
+  if (data.phone) {
+    const duplicatePartner = await prisma.partner.findFirst({
+      where: {
+        id: { not: id },
+        phone: data.phone,
+      },
+    });
+
+    if (duplicatePartner) {
+      throw new Error("Phone already in use");
+    }
+  }
+
+  const partner = await prisma.partner.update({
+    where: { id },
+    data: {
+      name: data.name,
+      phone: data.phone,
+      address: data.address,
+    },
+  });
+
+  return sanitizePartner(partner);
+};
+
+// ================= CHANGE MY PASSWORD (self-service) =================
+
+export const changeMyPartnerPassword = async (
+  id: string,
+  currentPassword: string,
+  newPassword: string
+) => {
+  const partner = await prisma.partner.findUnique({ where: { id } });
+
+  if (!partner || !partner.password) {
+    throw new Error("Password login is not set up for this account");
+  }
+
+  const isMatch = await bcrypt.compare(currentPassword, partner.password);
+
+  if (!isMatch) {
+    throw new Error("Current password is incorrect");
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await prisma.partner.update({
+    where: { id },
+    data: { password: hashedPassword },
+  });
+
+  return { message: "Password changed successfully" };
+};
+
 // ================= DELETE PARTNER (SOFT DELETE) =================
 
 export const deletePartnerById = async (

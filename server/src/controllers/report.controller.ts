@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getCollectionReport, getCustomerLedger, getDueReport, getExpenseReport, getLoanReport, getPartnerReport, getProfitLossReport } from "../services/report.service";
+import { getCollectionReport, getCustomerLedger, getDueReport, getExpenseReport, getLoanReport, getOutstandingReport, getPartnerReport, getProfitLossReport } from "../services/report.service";
 
 export const loanReport = async (
   req: Request,
@@ -147,6 +147,68 @@ export const dueReport = async (
     return res.status(200).json({
       success: true,
       count: data.length,
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+// ============================================================
+// ================= PARTNER SELF-SERVICE ======================
+// ============================================================
+
+export const myLoanReport = async (req: any, res: Response) => {
+  try {
+    const { status, from, to } = req.query;
+
+    const data = await getLoanReport({
+      status: status as "PENDING" | "ACTIVE" | "CLOSED" | undefined,
+      from: from ? new Date(String(from)) : undefined,
+      to: to ? new Date(String(to)) : undefined,
+      partnerId: req.user?.id,
+    });
+
+    return res.status(200).json({
+      success: true,
+      total: data.length,
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const myCollectionReport = async (req: any, res: Response) => {
+  try {
+    const data = await getCollectionReport(req.user?.id);
+
+    return res.status(200).json({
+      success: true,
+      total: data.length,
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const myOutstandingReport = async (req: any, res: Response) => {
+  try {
+    const data = await getOutstandingReport(req.user?.id);
+
+    return res.status(200).json({
+      success: true,
+      total: data.length,
       data,
     });
   } catch (error) {

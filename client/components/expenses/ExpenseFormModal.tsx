@@ -6,6 +6,8 @@ import Modal from "@/components/ui/Modal";
 import { SelectField, TextareaField, TextField } from "@/components/ui/FormField";
 import { createExpense, type CreateExpenseData } from "@/services/expense.service";
 import { getPartners } from "@/services/partner.service";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Partner } from "@/types/partner";
 import { EXPENSE_CATEGORIES, type Expense, type ExpenseCategory } from "@/types/expense";
 
@@ -37,11 +39,10 @@ export default function ExpenseFormModal({
   const [partners, setPartners] = useState<Partner[]>([]);
   const [form, setForm] = useState<FormState>(initialForm);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!open) return;
-    setError(null);
     setForm(initialForm);
     getPartners({ limit: 100 })
       .then((res) => setPartners(res.partners))
@@ -54,10 +55,9 @@ export default function ExpenseFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     if (!form.partnerId) {
-      setError("Please select a partner.");
+      toast.error("Please select a partner.");
       return;
     }
 
@@ -71,10 +71,11 @@ export default function ExpenseFormModal({
         expenseDate: form.expenseDate,
       };
 
-      const created = await createExpense(payload);
+      const { data: created, message } = await createExpense(payload);
+      toast.success(message);
       onSaved(created);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || "Could not create expense.");
+      toast.error(getErrorMessage(err, "Could not create expense."));
     } finally {
       setSubmitting(false);
     }
@@ -106,12 +107,6 @@ export default function ExpenseFormModal({
         </div>
       }
     >
-      {error && (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-4 text-sm text-[#993C1D] mb-4">
-          {error}
-        </div>
-      )}
-
       <form id="expense-form" onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <SelectField
