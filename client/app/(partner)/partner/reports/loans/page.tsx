@@ -166,13 +166,13 @@ export default function PartnerLoanReportPage() {
         <StatCard title="Outstanding balance" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search loan, customer..."
-          className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
+          className="flex-1 min-w-0 max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
         />
         <FilterPopover fields={filterFields} />
       </div>
