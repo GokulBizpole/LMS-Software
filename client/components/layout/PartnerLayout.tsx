@@ -13,6 +13,7 @@ export default function PartnerLayout({
 }) {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Auth check — token lives in localStorage (backend doesn't set a cookie),
   // so this has to run client-side rather than in middleware.ts.
@@ -49,10 +50,10 @@ export default function PartnerLayout({
 
   return (
     <div className="flex min-h-screen bg-[#FFFFFF]">
-      <PartnerSidebar />
+      <PartnerSidebar isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0">
-        <Header />
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <Header onMenuClick={() => setMobileNavOpen(true)} />
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );
