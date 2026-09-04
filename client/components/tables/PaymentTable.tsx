@@ -37,7 +37,7 @@ export default function PaymentTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[1200px] text-sm">
         <thead>
           <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
             <th className="py-2 px-4 font-medium">Receipt</th>
