@@ -10,7 +10,7 @@ import {
   Wallet,
   PiggyBank,
   BarChart3,
-  UserCircle,
+  UserCircle, 
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -23,11 +23,28 @@ const NAV_ITEMS = [
   { label: "Profile", href: "/partner/profile", icon: UserCircle },
 ];
 
-export default function PartnerSidebar() {
+export default function PartnerSidebar({
+  isOpen = false,
+  onClose,
+}: {
+  isOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-55 shrink-0 bg-[#ECE9DF] border-r border-[#C4C1B3] min-h-screen flex flex-col p-4">
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+      <aside
+        className={`w-55 shrink-0 bg-[#ECE9DF] border-r border-[#C4C1B3] min-h-screen flex flex-col p-4 fixed inset-y-0 left-0 z-40 transition-transform duration-200 lg:static lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
       <div className="flex items-center gap-2 mb-3 px-1">
         <div className="w-8 h-8 rounded-lg bg-[#1A1A18] flex items-center justify-center text-white text-sm font-semibold">
           ₹
@@ -49,6 +66,7 @@ export default function PartnerSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
                   ? "bg-[#E6F1FB] text-[#185FA5] font-medium"
@@ -61,6 +79,7 @@ export default function PartnerSidebar() {
           );
         })}
       </nav>
-    </aside>
+      </aside>
+    </>
   );
 }

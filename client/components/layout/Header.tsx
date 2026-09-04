@@ -2,12 +2,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadNotificationCount } from "@/hooks/useUnreadNotificationCount";
 import NotificationDropdown from "./NotificationDropdown";
 
-export default function Header() {
+export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {}) {
   const { user, loading, logout } = useAuth();
   const isPartner = user?.role === "PARTNER";
   const { count: unreadCount, refetch: refetchUnreadCount } = useUnreadNotificationCount(!loading && !isPartner);
@@ -41,6 +41,17 @@ export default function Header() {
 
   return (
     <header className="h-16 border-b border-[#C4C1B3] bg-white flex items-center justify-end gap-4 px-6">
+      {onMenuClick && (
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="mr-auto lg:hidden w-9 h-9 rounded-full border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
+          aria-label="Open menu"
+        >
+          <Menu size={18} />
+        </button>
+      )}
+
       {!isPartner && (
         <div className="relative" ref={notificationsRef}>
           <button
