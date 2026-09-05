@@ -96,7 +96,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
       </button>
 
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-[340px] rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-85 rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1A1A18]">
               Filters{visibleKeys.length > 0 ? ` (${visibleKeys.length})` : ""}

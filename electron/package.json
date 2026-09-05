@@ -1,6 +1,6 @@
 {
   "name": "finloan-electron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "FinLoan Desktop Application",
   "main": "dist/main.js",
   "scripts": {

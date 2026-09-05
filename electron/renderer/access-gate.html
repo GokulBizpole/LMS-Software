@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FinLoan</title>
+<style>
+  :root {
+    color-scheme: light;
+    --text-primary: #1A1A18;
+    --text-secondary: #45443E;
+    --text-muted: #6B6A62;
+    --border: #DAD7CA;
+    --border-strong: #9C9A8D;
+    --background: #ECE9DF;
+    --accent-bg: #E6F1FB;
+    --accent-text: #185FA5;
+    --danger-bg: #FAECE7;
+    --danger-text: #993C1D;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    color: var(--text-primary);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 380px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  .brand {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 20px;
+    line-height: 1.4;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  input[type="password"], input[type="text"] {
+    width: 100%;
+    font-size: 20px;
+    letter-spacing: 6px;
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    margin-bottom: 14px;
+    font-family: inherit;
+    color: var(--text-primary);
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--accent-text);
+  }
+
+  button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--text-primary);
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-strong);
+  }
+
+  .btn-link {
+    width: auto;
+    background: none;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-decoration: underline;
+    display: block;
+    margin: 14px auto 0;
+  }
+
+  .error {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .confirm-box {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+
+  .confirm-box p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+    line-height: 1.4;
+  }
+
+  .confirm-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .confirm-actions button {
+    flex: 1;
+  }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <p class="brand">FinLoan</p>
+
+  <!-- CREATE ACCESS CODE -->
+  <div id="view-create" class="hidden">
+    <h1>Create Access Code</h1>
+    <p class="subtitle">Set a 4–6 digit code to protect access to FinLoan on this device.</p>
+
+    <div id="create-error" class="error"></div>
+
+    <label for="create-code">Access code</label>
+    <input id="create-code" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••" />
+
+    <label for="create-code-confirm">Confirm access code</label>
+    <input id="create-code-confirm" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••" />
+
+    <button id="create-submit" class="btn-primary">Create access code</button>
+  </div>
+
+  <!-- ENTER ACCESS CODE -->
+  <div id="view-enter" class="hidden">
+    <h1>Enter Access Code</h1>
+    <p class="subtitle">Enter your access code to continue.</p>
+
+    <div id="enter-error" class="error"></div>
+
+    <label for="enter-code">Access code</label>
+    <input id="enter-code" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••" />
+
+    <button id="enter-submit" class="btn-primary">Unlock</button>
+    <button id="forgot-link" class="btn-link" type="button">Forgot access code?</button>
+
+    <div id="forgot-confirm" class="confirm-box hidden">
+      <p>Resetting will erase the current access code. You'll need to create a new one, and it will not recover the old code.</p>
+      <div class="confirm-actions">
+        <button id="forgot-cancel" class="btn-secondary">Cancel</button>
+        <button id="forgot-confirm-btn" class="btn-primary" style="margin-bottom:0;">Yes, reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const createView = document.getElementById("view-create");
+  const enterView = document.getElementById("view-enter");
+
+  const createCodeInput = document.getElementById("create-code");
+  const createCodeConfirmInput = document.getElementById("create-code-confirm");
+  const createError = document.getElementById("create-error");
+  const createSubmit = document.getElementById("create-submit");
+
+  const enterCodeInput = document.getElementById("enter-code");
+  const enterError = document.getElementById("enter-error");
+  const enterSubmit = document.getElementById("enter-submit");
+  const forgotLink = document.getElementById("forgot-link");
+  const forgotConfirm = document.getElementById("forgot-confirm");
+  const forgotCancel = document.getElementById("forgot-cancel");
+  const forgotConfirmBtn = document.getElementById("forgot-confirm-btn");
+
+  let lockoutTimer = null;
+
+  function digitsOnly(input) {
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/[^0-9]/g, "").slice(0, 6);
+    });
+  }
+  digitsOnly(createCodeInput);
+  digitsOnly(createCodeConfirmInput);
+  digitsOnly(enterCodeInput);
+
+  function showError(el, message) {
+    el.textContent = message;
+    el.style.display = message ? "block" : "none";
+  }
+
+  function showCreateView() {
+    enterView.classList.add("hidden");
+    createView.classList.remove("hidden");
+    createCodeInput.value = "";
+    createCodeConfirmInput.value = "";
+    showError(createError, "");
+    createCodeInput.focus();
+  }
+
+  function showEnterView() {
+    createView.classList.add("hidden");
+    enterView.classList.remove("hidden");
+    enterCodeInput.value = "";
+    showError(enterError, "");
+    forgotConfirm.classList.add("hidden");
+    enterCodeInput.focus();
+  }
+
+  async function handleCreateSubmit() {
+    const code = createCodeInput.value;
+    const confirmCode = createCodeConfirmInput.value;
+
+    if (!/^[0-9]{4,6}$/.test(code)) {
+      showError(createError, "Access code must be 4 to 6 digits.");
+      return;
+    }
+    if (code !== confirmCode) {
+      showError(createError, "Codes do not match.");
+      return;
+    }
+
+    createSubmit.disabled = true;
+    showError(createError, "");
+    try {
+      const result = await window.accessGate.createCode(code);
+      if (!result.success) {
+        showError(createError, result.error || "Could not create access code.");
+        createSubmit.disabled = false;
+      }
+      // on success the main process navigates the window away — nothing else to do here
+    } catch (err) {
+      showError(createError, "Something went wrong. Please try again.");
+      createSubmit.disabled = false;
+    }
+  }
+
+  function startLockoutCountdown(lockedUntil) {
+    if (lockoutTimer) clearInterval(lockoutTimer);
+
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((lockedUntil - Date.now()) / 1000));
+      if (remaining <= 0) {
+        clearInterval(lockoutTimer);
+        lockoutTimer = null;
+        showError(enterError, "");
+        enterSubmit.disabled = false;
+        return;
+      }
+      enterSubmit.disabled = true;
+      showError(enterError, `Too many attempts. Try again in ${remaining}s.`);
+    };
+
+    tick();
+    lockoutTimer = setInterval(tick, 1000);
+  }
+
+  async function handleEnterSubmit() {
+    if (enterSubmit.disabled) return;
+
+    const code = enterCodeInput.value;
+    if (!/^[0-9]{4,6}$/.test(code)) {
+      showError(enterError, "Invalid access code.");
+      return;
+    }
+
+    enterSubmit.disabled = true;
+    showError(enterError, "");
+    try {
+      const result = await window.accessGate.verifyCode(code);
+      if (!result.success) {
+        enterCodeInput.value = "";
+        enterCodeInput.focus();
+        if (result.lockedUntil) {
+          startLockoutCountdown(result.lockedUntil);
+        } else {
+          showError(enterError, result.error || "Invalid access code.");
+          enterSubmit.disabled = false;
+        }
+      }
+      // on success the main process navigates the window away — nothing else to do here
+    } catch (err) {
+      showError(enterError, "Something went wrong. Please try again.");
+      enterSubmit.disabled = false;
+    }
+  }
+
+  createSubmit.addEventListener("click", handleCreateSubmit);
+  createCodeConfirmInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleCreateSubmit();
+  });
+
+  enterSubmit.addEventListener("click", handleEnterSubmit);
+  enterCodeInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleEnterSubmit();
+  });
+
+  forgotLink.addEventListener("click", () => {
+    forgotConfirm.classList.remove("hidden");
+  });
+  forgotCancel.addEventListener("click", () => {
+    forgotConfirm.classList.add("hidden");
+  });
+  forgotConfirmBtn.addEventListener("click", async () => {
+    forgotConfirmBtn.disabled = true;
+    try {
+      await window.accessGate.resetCode();
+      if (lockoutTimer) {
+        clearInterval(lockoutTimer);
+        lockoutTimer = null;
+      }
+      showCreateView();
+    } finally {
+      forgotConfirmBtn.disabled = false;
+    }
+  });
+
+  // Decide initial screen
+  window.accessGate.hasCode().then((hasCode) => {
+    if (hasCode) {
+      showEnterView();
+    } else {
+      showCreateView();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
