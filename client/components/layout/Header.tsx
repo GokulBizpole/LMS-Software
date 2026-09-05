@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Bell, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadNotificationCount } from "@/hooks/useUnreadNotificationCount";
@@ -77,15 +78,30 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {
         </div>
       )}
 
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold">
-          {initials}
+      {isPartner ? (
+        <Link
+          href="/partner/profile"
+          className="flex items-center gap-2 rounded-lg px-2 py-1 -mx-2 -my-1 hover:bg-[#ECE9DF] transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold">
+            {initials}
+          </div>
+          <div className="text-sm leading-tight hidden sm:block">
+            <p className="font-medium text-[#1A1A18]">{user?.name ?? "Admin"}</p>
+            <p className="text-xs text-[#6B6A62]">{user?.role ?? ""}</p>
+          </div>
+        </Link>
+      ) : (
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold">
+            {initials}
+          </div>
+          <div className="text-sm leading-tight hidden sm:block">
+            <p className="font-medium text-[#1A1A18]">{user?.name ?? "Admin"}</p>
+            <p className="text-xs text-[#6B6A62]">{user?.role ?? ""}</p>
+          </div>
         </div>
-        <div className="text-sm leading-tight hidden sm:block">
-          <p className="font-medium text-[#1A1A18]">{user?.name ?? "Admin"}</p>
-          <p className="text-xs text-[#6B6A62]">{user?.role ?? ""}</p>
-        </div>
-      </div>
+      )}
 
       <button
         type="button"

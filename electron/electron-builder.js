@@ -10,7 +10,8 @@ module.exports = {
   },
 
   files: [
-    "dist/**/*"
+    "dist/**/*",
+    "renderer/**/*"
   ],
 
   buildDependenciesFromSource: false,
