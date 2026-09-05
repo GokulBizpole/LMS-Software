@@ -3,9 +3,7 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-const APP_URL = app.isPackaged
-  ? "https://lms-software-gamma.vercel.app/"
-  : "http://localhost:3000";
+const APP_URL = "https://lms-software-gamma.vercel.app/";
 
 const ACCESS_CODE_PATH = path.join(app.getPath("userData"), "access-code.json");
 const MAX_ATTEMPTS = 5;
