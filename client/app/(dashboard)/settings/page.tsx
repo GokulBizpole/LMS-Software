@@ -7,6 +7,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useAuditLogs } from "@/hooks/useAuditLogs";
 import AuditLogTable from "@/components/tables/AuditLogTable";
 import Pagination from "@/components/ui/Pagination";
+import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { UpdateSettingData } from "@/types/setting";
@@ -216,47 +217,45 @@ function AuditLogTab() {
     refetch,
   } = useAuditLogs();
 
+  const filterFields: FilterFieldSpec[] = [
+    {
+      key: "action",
+      label: "Action",
+      kind: "select",
+      value: action,
+      onChange: (v) => {
+        setAction(v);
+        setPage(1);
+      },
+      options: [
+        { value: "all", label: "All actions" },
+        ...ACTIONS.map((a) => ({ value: a, label: a })),
+      ],
+    },
+    {
+      key: "table",
+      label: "Table",
+      kind: "select",
+      value: tableName,
+      onChange: (v) => {
+        setTableName(v);
+        setPage(1);
+      },
+      options: [
+        { value: "all", label: "All tables" },
+        ...TABLE_NAMES.map((t) => ({ value: t, label: t })),
+      ],
+    },
+  ];
+
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5 space-y-4">
+      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
         <div className="flex items-center justify-between">
           <p className="text-sm text-[#45443E]">
             {total} log{total !== 1 ? "s" : ""}
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <select
-            value={action}
-            onChange={(e) => {
-              setAction(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
-          >
-            <option value="all">All actions</option>
-            {ACTIONS.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={tableName}
-            onChange={(e) => {
-              setTableName(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
-          >
-            <option value="all">All tables</option>
-            {TABLE_NAMES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
+          <FilterPopover fields={filterFields} />
         </div>
       </div>
 
