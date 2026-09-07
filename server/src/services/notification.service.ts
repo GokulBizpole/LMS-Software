@@ -175,6 +175,40 @@ export const notifyPaymentReceived = (
     customerId: customer.id,
   });
 
+export const notifyEodSubmitted = (
+  eod: { id: string; reportDate: Date; netRemittance: number | string },
+  partner: { id: string; partnerCode: string; name: string }
+) =>
+  createNotification({
+    title: "EOD Report Submitted",
+    message: `Partner ${partner.partnerCode} - ${partner.name} submitted an EOD report for ${new Date(eod.reportDate).toLocaleDateString("en-IN")}. Net remittance: ${formatCurrency(Number(eod.netRemittance))}.`,
+    type: "INFO",
+    partnerId: partner.id,
+  });
+
+export const notifyEodApproved = (
+  eod: { id: string; reportDate: Date },
+  partner: { id: string; name: string }
+) =>
+  createNotification({
+    title: "EOD Report Approved",
+    message: `EOD report for ${new Date(eod.reportDate).toLocaleDateString("en-IN")} has been approved and closed.`,
+    type: "SUCCESS",
+    partnerId: partner.id,
+  });
+
+export const notifyEodRejected = (
+  eod: { id: string; reportDate: Date },
+  partner: { id: string; name: string },
+  reason: string
+) =>
+  createNotification({
+    title: "EOD Report Rejected",
+    message: `EOD report for ${new Date(eod.reportDate).toLocaleDateString("en-IN")} was rejected. Reason: ${reason}`,
+    type: "ERROR",
+    partnerId: partner.id,
+  });
+
 // ================= QUERIES =================
 
 export const getNotifications = async (

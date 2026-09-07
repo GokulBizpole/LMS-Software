@@ -28,6 +28,7 @@ import {
   myLoanReport,
   myOutstandingReport,
 } from "../controllers/report.controller";
+import { myEodPreview, submitEod } from "../controllers/eod.controller";
 import { myDashboard } from "../controllers/dashboard.controller";
 import {
   getMyCustomerDocuments,
@@ -118,6 +119,9 @@ router.get(
   partnerOnly,
   myOutstandingReport
 );
+
+router.get("/me/eod/preview", authenticate, partnerOnly, myEodPreview);
+router.post("/me/eod", authenticate, partnerOnly, submitEod);
 
 // ============================================================
 // Admin management of partner records

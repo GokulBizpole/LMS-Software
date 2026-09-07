@@ -10,7 +10,8 @@ import {
   Wallet,
   PiggyBank,
   BarChart3,
-  UserCircle, 
+  UserCircle,
+  ClipboardCheck,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { label: "Loans", href: "/partner/loans", icon: FileText },
   { label: "Payments", href: "/partner/payments", icon: Wallet },
   { label: "Investments", href: "/partner/investments", icon: PiggyBank },
+  { label: "EOD", href: "/partner/eod", icon: ClipboardCheck },
   { label: "Reports", href: "/partner/reports", icon: BarChart3 },
   { label: "Profile", href: "/partner/profile", icon: UserCircle },
 ];

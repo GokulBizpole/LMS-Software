@@ -60,6 +60,12 @@ enum ExpenseCategory {
   OTHER
 }
 
+enum EodStatus {
+  PENDING
+  REJECTED
+  CLOSED
+}
+
 // ================= ADMIN =================
 
 model Admin {
@@ -114,6 +120,8 @@ model Partner {
   customers Customer[]
 
   expenses Expense[]
+
+  eodReports EodReport[]
 
   notifications Notification[]
 
@@ -301,6 +309,61 @@ model Expense {
   createdAt DateTime @default(now())
 
   @@map("expenses")
+}
+
+// ================= EOD REPORT =================
+
+model EodReport {
+  id String @id @default(uuid())
+
+  partnerId String
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  reportDate DateTime
+
+  totalCollection Decimal @db.Decimal(15, 2)
+
+  totalExpenses Decimal @db.Decimal(15, 2)
+
+  netRemittance Decimal @db.Decimal(15, 2)
+
+  status EodStatus @default(PENDING)
+
+  rejectionReason String? @db.Text
+
+  approvedBy String?
+
+  approvedAt DateTime?
+
+  expenses EodExpense[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([partnerId, reportDate])
+  @@index([partnerId])
+  @@map("eod_reports")
+}
+
+model EodExpense {
+  id String @id @default(uuid())
+
+  eodReportId String
+
+  eodReport EodReport @relation(fields: [eodReportId], references: [id], onDelete: Cascade)
+
+  category ExpenseCategory
+
+  amount Decimal @db.Decimal(15, 2)
+
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([eodReportId])
+  @@map("eod_expenses")
 }
 
 // ================= CUSTOMER DOCUMENT =================

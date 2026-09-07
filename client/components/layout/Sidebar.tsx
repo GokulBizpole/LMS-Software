@@ -12,6 +12,7 @@ import {
   Wallet,
   BarChart3,
   Settings,
+  ClipboardCheck,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { label: "Loans", href: "/loans", icon: FileText },
   { label: "Payments", href: "/payments", icon: Wallet },
   { label: "Expenses", href: "/expenses", icon: Receipt },
+  { label: "EOD Reports", href: "/eod", icon: ClipboardCheck },
   { label: "Reports", href: "/reports", icon: BarChart3 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
