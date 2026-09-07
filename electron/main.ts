@@ -1,9 +1,12 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { autoUpdater } from "electron-updater";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-const APP_URL = "https://lms-software-gamma.vercel.app/";
+const APP_URL = app.isPackaged
+  ? "https://lms-software-gamma.vercel.app/"
+  : "http://localhost:3000";
 
 const ACCESS_CODE_PATH = path.join(app.getPath("userData"), "access-code.json");
 const MAX_ATTEMPTS = 5;
@@ -132,8 +135,68 @@ ipcMain.handle("access-gate:reset-code", () => {
   return { success: true };
 });
 
+function setupAutoUpdater() {
+  // We drive the UI ourselves (Update Now/Later, progress, Restart & Install/Later)
+  // instead of the default silent auto-download behavior.
+  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = false;
+
+  autoUpdater.on("update-available", (info) => {
+    dialog
+      .showMessageBox(mainWindow!, {
+        type: "info",
+        title: "Update Available",
+        message: `A new version (${info.version}) is available.`,
+        detail: "Would you like to download it now?",
+        buttons: ["Update Now", "Later"],
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then(({ response }) => {
+        if (response === 0) {
+          autoUpdater.downloadUpdate();
+        }
+      });
+  });
+
+  autoUpdater.on("download-progress", (progress) => {
+    mainWindow?.setProgressBar(progress.percent / 100);
+  });
+
+  autoUpdater.on("update-downloaded", (info) => {
+    mainWindow?.setProgressBar(-1);
+    dialog
+      .showMessageBox(mainWindow!, {
+        type: "info",
+        title: "Update Ready",
+        message: `Version ${info.version} has been downloaded.`,
+        detail: "Restart the app now to install it?",
+        buttons: ["Restart & Install", "Later"],
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then(({ response }) => {
+        if (response === 0) {
+          autoUpdater.quitAndInstall();
+        }
+      });
+  });
+
+  autoUpdater.on("error", (error) => {
+    console.error("Auto-update error:", error);
+  });
+
+  autoUpdater.checkForUpdates();
+}
+
 app.whenReady().then(() => {
   createWindow();
+
+  // Auto-update only makes sense for a packaged install checking GitHub Releases —
+  // never in local/dev mode.
+  if (app.isPackaged) {
+    setupAutoUpdater();
+  }
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

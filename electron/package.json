@@ -1,19 +1,24 @@
 {
   "name": "finloan-electron",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "FinLoan Desktop Application",
   "main": "dist/main.js",
   "scripts": {
     "dev": "npm run build && electron .",
-    "build": "tsc",
+    "build": "tsc --noEmit && esbuild main.ts preload.ts --bundle --platform=node --target=node22 --outdir=dist --external:electron",
     "start": "npm run build && electron .",
-    "dist": "npm run build && electron-builder" 
+    "dist": "npm run build && electron-builder",
+    "release": "npm run build && electron-builder --publish always"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
     "electron": "^43.4.0",
     "electron-builder": "^26.0.12",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

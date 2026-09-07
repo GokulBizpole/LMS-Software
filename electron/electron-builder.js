@@ -19,6 +19,12 @@ module.exports = {
 
   beforeBuild: () => false,
 
+  publish: {
+    provider: "github",
+    owner: "GokulBizpole",
+    repo: "LMS-Software",
+  },
+
   win: {
     target: "nsis",
   },
