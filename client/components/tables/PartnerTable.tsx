@@ -1,6 +1,7 @@
 // components/tables/PartnerTable.tsx
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { partnerFileUrl } from "@/services/partner.service";
 
 function StatusBadge({ status }: { status: Partner["status"] }) {
   const map: Record<Partner["status"], { bg: string; text: string }> = {
@@ -62,8 +63,17 @@ export default function PartnerTable({
                 <td className="py-3 px-4 text-[#1A1A18] font-medium">{p.partnerCode}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-[11px] font-semibold">
-                      {initials}
+                    <div className="w-7 h-7 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-[11px] font-semibold overflow-hidden">
+                      {p.profilePicture ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={partnerFileUrl(p.profilePicture)}
+                          alt={p.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        initials
+                      )}
                     </div>
                     <span className="text-[#1A1A18]">{p.name}</span>
                   </div>

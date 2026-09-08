@@ -5,9 +5,12 @@ import {
   deletePartnerById,
   getAllPartners,
   getPartnerById,
+  removePartnerPhoto,
+  setPartnerPhoto,
   updateMyPartnerProfile,
   updatePartnerById,
 } from "../services/partner.service";
+import path from "path";
 
 // ================= CREATE PARTNER =================
 
@@ -170,6 +173,67 @@ export const updatePartner = async (
     return res.status(200).json({
       success: true,
       message: "Partner updated successfully",
+      data: partner,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+// ================= PROFILE PICTURE =================
+
+export const uploadPartnerPhoto = async (req: any, res: Response) => {
+  try {
+    const id = String(req.params.id);
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No photo uploaded",
+      });
+    }
+
+    const relativePath = path
+      .relative(process.cwd(), req.file.path)
+      .split(path.sep)
+      .join("/");
+
+    const partner = await setPartnerPhoto(
+      id,
+      relativePath,
+      req.user?.id,
+      req.ip
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile picture uploaded successfully",
+      data: partner,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const deletePartnerPhoto = async (req: any, res: Response) => {
+  try {
+    const id = String(req.params.id);
+
+    const partner = await removePartnerPhoto(
+      id,
+      req.user?.id,
+      req.ip
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile picture removed successfully",
       data: partner,
     });
   } catch (error) {

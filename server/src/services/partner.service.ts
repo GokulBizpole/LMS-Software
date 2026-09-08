@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import fs from "fs";
+import path from "path";
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
 import {
@@ -386,4 +388,75 @@ export const deletePartnerById = async (
   }
 
   return sanitizePartner(deletedPartner);
+};
+
+// ================= PROFILE PICTURE =================
+
+const deletePhotoFile = (relativePath?: string | null) => {
+  if (!relativePath) return;
+  try {
+    fs.unlinkSync(path.join(process.cwd(), relativePath));
+  } catch {
+    // file already gone — nothing to clean up
+  }
+};
+
+export const setPartnerPhoto = async (
+  id: string,
+  relativePath: string,
+  adminId?: string,
+  ipAddress?: string
+) => {
+  const partner = await prisma.partner.findUnique({ where: { id } });
+
+  if (!partner) {
+    throw new Error("Partner not found");
+  }
+
+  // Replacing an existing photo — remove the old file from disk.
+  deletePhotoFile(partner.profilePicture);
+
+  const updated = await prisma.partner.update({
+    where: { id },
+    data: { profilePicture: relativePath },
+  });
+
+  await createAuditLog({
+    adminId,
+    action: "UPDATE_PHOTO",
+    tableName: "PARTNER",
+    recordId: updated.id,
+    ipAddress,
+  });
+
+  return sanitizePartner(updated);
+};
+
+export const removePartnerPhoto = async (
+  id: string,
+  adminId?: string,
+  ipAddress?: string
+) => {
+  const partner = await prisma.partner.findUnique({ where: { id } });
+
+  if (!partner) {
+    throw new Error("Partner not found");
+  }
+
+  deletePhotoFile(partner.profilePicture);
+
+  const updated = await prisma.partner.update({
+    where: { id },
+    data: { profilePicture: null },
+  });
+
+  await createAuditLog({
+    adminId,
+    action: "REMOVE_PHOTO",
+    tableName: "PARTNER",
+    recordId: updated.id,
+    ipAddress,
+  });
+
+  return sanitizePartner(updated);
 };

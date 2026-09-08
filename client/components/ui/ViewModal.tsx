@@ -72,6 +72,7 @@ export function ViewModalSummary({
   initials,
   avatarBg,
   avatarColor,
+  photoUrl,
   name,
   badge,
   subtitle,
@@ -80,6 +81,7 @@ export function ViewModalSummary({
   initials: string;
   avatarBg: string;
   avatarColor: string;
+  photoUrl?: string | null;
   name: string;
   badge?: ReactNode;
   subtitle: ReactNode;
@@ -89,10 +91,15 @@ export function ViewModalSummary({
     <div className="flex items-center justify-between gap-4 px-6 py-4 bg-[#F8FAFC] border-b border-[#E5E7EB]">
       <div className="flex items-center gap-3 min-w-0">
         <div
-          className="w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold"
+          className="w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold overflow-hidden"
           style={{ backgroundColor: avatarBg, color: avatarColor }}
         >
-          {initials}
+          {photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            initials
+          )}
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">

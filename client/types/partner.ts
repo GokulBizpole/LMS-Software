@@ -36,6 +36,7 @@ export interface Partner {
   phone: string;
   email: string;
   address?: string | null;
+  profilePicture?: string | null;
   investmentAmount: string | number;
   currentBalance: string | number;
   status: "ACTIVE" | "INACTIVE";

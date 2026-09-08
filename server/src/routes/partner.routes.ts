@@ -3,11 +3,13 @@ import {
   addPartner,
   changeMyPassword,
   deletePartner,
+  deletePartnerPhoto,
   getMyPartnerProfile,
   getPartner,
   getPartners,
   updateMyProfile,
   updatePartner,
+  uploadPartnerPhoto,
 } from "../controllers/partner.controller";
 import {
   addMyCustomer,
@@ -38,7 +40,7 @@ import {
 
 import { authenticate } from "../middleware/auth.middleware";
 import { adminOnly, partnerOnly } from "../middleware/role.middleware";
-import { uploadCustomerDocument } from "../middleware/upload.middleware";
+import { uploadCustomerDocument, uploadPartnerPhoto as uploadPartnerPhotoMiddleware } from "../middleware/upload.middleware";
 
 const router = Router();
 
@@ -130,6 +132,16 @@ router.post("/me/eod", authenticate, partnerOnly, submitEod);
 router.get("/:id", authenticate, adminOnly, getPartner);
 
 router.put("/:id", authenticate, adminOnly, updatePartner);
+
+router.post(
+  "/:id/photo",
+  authenticate,
+  adminOnly,
+  uploadPartnerPhotoMiddleware,
+  uploadPartnerPhoto
+);
+
+router.delete("/:id/photo", authenticate, adminOnly, deletePartnerPhoto);
 
 router.delete("/:id", authenticate, adminOnly, deletePartner);
 

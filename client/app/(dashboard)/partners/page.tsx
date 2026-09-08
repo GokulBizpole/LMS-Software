@@ -9,6 +9,7 @@ import PartnerViewModal from "@/components/partners/PartnerViewModal";
 import Pagination from "@/components/ui/Pagination";
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { partnerFileUrl } from "@/services/partner.service";
 
 function StatusBadge({ status }: { status: Partner["status"] }) {
   const map: Record<Partner["status"], { bg: string; text: string }> = {
@@ -42,8 +43,17 @@ function PartnerSummaryCard({ partner, onView }: { partner: Partner; onView: (id
       className="text-left rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 shrink-0 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-sm font-semibold">
-          {initials}
+        <div className="w-10 h-10 shrink-0 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-sm font-semibold overflow-hidden">
+          {partner.profilePicture ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={partnerFileUrl(partner.profilePicture)}
+              alt={partner.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            initials
+          )}
         </div>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-[#1A1A18] truncate">{partner.name}</p>

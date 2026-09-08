@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Bell, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadNotificationCount } from "@/hooks/useUnreadNotificationCount";
+import { getMyProfile } from "@/services/partnerProfile.service";
+import { partnerFileUrl } from "@/services/partner.service";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {}) {
@@ -14,6 +16,21 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {
   const { count: unreadCount, refetch: refetchUnreadCount } = useUnreadNotificationCount(!loading && !isPartner);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // Read-only: the partner's own photo, managed exclusively by Admin via the
+  // Partner Create/Edit form — there is no partner-facing way to change it.
+  const [partnerPhotoUrl, setPartnerPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isPartner) return;
+
+    const load = () => {
+      getMyProfile()
+        .then((p) => setPartnerPhotoUrl(p.profilePicture ? partnerFileUrl(p.profilePicture) : null))
+        .catch(() => setPartnerPhotoUrl(null));
+    };
+    load();
+  }, [isPartner]);
 
   useEffect(() => {
     if (!showNotifications) return;
@@ -83,8 +100,13 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {
           href="/partner/profile"
           className="flex items-center gap-2 rounded-lg px-2 py-1 -mx-2 -my-1 hover:bg-[#ECE9DF] transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold">
-            {initials}
+          <div className="w-8 h-8 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-xs font-semibold overflow-hidden">
+            {partnerPhotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={partnerPhotoUrl} alt={user?.name ?? "Partner"} className="w-full h-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
           <div className="text-sm leading-tight hidden sm:block">
             <p className="font-medium text-[#1A1A18]">{user?.name ?? "Admin"}</p>

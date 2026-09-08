@@ -35,3 +35,36 @@ export const uploadCustomerDocument = multer({
     cb(null, true);
   },
 }).single("file");
+
+const PARTNER_PHOTO_UPLOAD_ROOT = path.join(process.cwd(), "uploads", "partners");
+
+const partnerPhotoStorage = multer.diskStorage({
+  destination: (req, _file, cb) => {
+    const partnerId = String(req.params.id);
+    const dir = path.join(PARTNER_PHOTO_UPLOAD_ROOT, partnerId);
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (_req, file, cb) => {
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+    cb(null, `${Date.now()}-${safeName}`);
+  },
+});
+
+const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+
+export const uploadPartnerPhoto = multer({
+  storage: partnerPhotoStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_IMAGE_MIME_TYPES.has(file.mimetype)) {
+      cb(new Error("Only JPG, PNG or WEBP images are allowed"));
+      return;
+    }
+    cb(null, true);
+  },
+}).single("photo");

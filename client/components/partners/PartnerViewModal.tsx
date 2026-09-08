@@ -12,7 +12,7 @@ import {
   ViewModalField,
   ViewModalFooterStrip,
 } from "@/components/ui/ViewModal";
-import { deletePartner, getPartnerById } from "@/services/partner.service";
+import { deletePartner, getPartnerById, partnerFileUrl } from "@/services/partner.service";
 import PartnerFormModal from "@/components/partners/PartnerFormModal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/hooks/useToast";
@@ -168,6 +168,7 @@ export default function PartnerViewModal({
               initials={initials}
               avatarBg="#EEEDFE"
               avatarColor="#534AB7"
+              photoUrl={partner.profilePicture ? partnerFileUrl(partner.profilePicture) : null}
               name={partner.name}
               badge={<StatusBadge status={partner.status} />}
               subtitle={`${partner.partnerCode} · ${partner.phone}`}
@@ -204,7 +205,7 @@ export default function PartnerViewModal({
                   </div>
                 ) : (
                   <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
-                    <table className="w-full min-w-[640px] text-sm">
+                    <table className="w-full min-w-160 text-sm">
                       <thead>
                         <tr className="text-left text-[#6B6A62] text-xs bg-[#F8FAFC] border-b border-[#E5E7EB]">
                           <th className="py-2 px-4 font-medium">Loan no</th>

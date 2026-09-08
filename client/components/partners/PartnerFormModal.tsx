@@ -1,13 +1,17 @@
 // components/partners/PartnerFormModal.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { User } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { TextField } from "@/components/ui/FormField";
 import {
   createPartner,
   getPartners,
+  partnerFileUrl,
+  removePartnerPhoto,
   updatePartner,
+  uploadPartnerPhoto,
   type CreatePartnerData,
   type UpdatePartnerData,
 } from "@/services/partner.service";
@@ -56,6 +60,15 @@ export default function PartnerFormModal({
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
 
+  // Profile picture — edit mode uploads/removes immediately against the
+  // existing partner; create mode just stages a file locally and uploads it
+  // right after the new partner is created (there's no id to attach to yet).
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [stagedPhotoFile, setStagedPhotoFile] = useState<File | null>(null);
+  const [stagedPhotoPreview, setStagedPhotoPreview] = useState<string | null>(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!open) return;
     if (partner) {
@@ -70,8 +83,10 @@ export default function PartnerFormModal({
         currentBalance: String(partner.currentBalance ?? ""),
         status: partner.status,
       });
+      setPhotoUrl(partner.profilePicture ? partnerFileUrl(partner.profilePicture) : null);
     } else {
       setForm(emptyForm);
+      setPhotoUrl(null);
       getPartners({ limit: 100 })
         .then((res) => {
           const codes = res.partners.map((p) => p.partnerCode).filter(Boolean);
@@ -80,10 +95,58 @@ export default function PartnerFormModal({
         })
         .catch(() => {});
     }
+    setStagedPhotoFile(null);
+    setStagedPhotoPreview(null);
   }, [open, partner]);
+
+  // Revoke the staged-preview object URL once it's no longer needed.
+  useEffect(() => {
+    return () => {
+      if (stagedPhotoPreview) URL.revokeObjectURL(stagedPhotoPreview);
+    };
+  }, [stagedPhotoPreview]);
 
   const handleChange = (name: string, value: string) => {
     setForm((prev) => ({ ...prev, [name as keyof FormState]: value }));
+  };
+
+  const handlePhotoSelected = async (file: File) => {
+    if (isEdit && partner) {
+      setPhotoBusy(true);
+      try {
+        const { data: updated, message } = await uploadPartnerPhoto(partner.id, file);
+        setPhotoUrl(updated.profilePicture ? partnerFileUrl(updated.profilePicture) : null);
+        toast.success(message);
+      } catch (err) {
+        toast.error(getErrorMessage(err, "Could not upload profile picture."));
+      } finally {
+        setPhotoBusy(false);
+      }
+    } else {
+      if (stagedPhotoPreview) URL.revokeObjectURL(stagedPhotoPreview);
+      setStagedPhotoFile(file);
+      setStagedPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handlePhotoRemove = async () => {
+    if (isEdit && partner) {
+      setPhotoBusy(true);
+      try {
+        const { message } = await removePartnerPhoto(partner.id);
+        setPhotoUrl(null);
+        toast.success(message);
+      } catch (err) {
+        toast.error(getErrorMessage(err, "Could not remove profile picture."));
+      } finally {
+        setPhotoBusy(false);
+      }
+    } else {
+      if (stagedPhotoPreview) URL.revokeObjectURL(stagedPhotoPreview);
+      setStagedPhotoFile(null);
+      setStagedPhotoPreview(null);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,7 +181,18 @@ export default function PartnerFormModal({
         };
         const { data: created, message } = await createPartner(payload);
         toast.success(message);
-        onSaved(created);
+
+        if (stagedPhotoFile) {
+          try {
+            const { data: withPhoto } = await uploadPartnerPhoto(created.id, stagedPhotoFile);
+            onSaved(withPhoto);
+          } catch (photoErr) {
+            toast.error(getErrorMessage(photoErr, "Partner saved, but the profile picture could not be uploaded."));
+            onSaved(created);
+          }
+        } else {
+          onSaved(created);
+        }
       }
     } catch (err: any) {
       toast.error(getErrorMessage(err, "Could not save partner."));
@@ -154,6 +228,55 @@ export default function PartnerFormModal({
       }
     >
       <form id="partner-form" onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">Profile picture</h3>
+          <div className="flex items-center gap-4 mb-2">
+            <div className="w-16 h-16 shrink-0 rounded-full bg-[#EEEDFE] overflow-hidden flex items-center justify-center text-[#534AB7]">
+              {stagedPhotoPreview || photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={stagedPhotoPreview ?? photoUrl ?? undefined}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User size={24} />
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePhotoSelected(file);
+                }}
+              />
+              <button
+                type="button"
+                disabled={photoBusy}
+                onClick={() => fileInputRef.current?.click()}
+                className="border border-[#9C9A8D] text-sm font-medium px-3 py-1.5 rounded-lg text-[#45443E] hover:bg-[#ECE9DF] disabled:opacity-50"
+              >
+                {photoUrl || stagedPhotoPreview ? "Change" : "Upload"}
+              </button>
+              {(photoUrl || stagedPhotoPreview) && (
+                <button
+                  type="button"
+                  disabled={photoBusy}
+                  onClick={handlePhotoRemove}
+                  className="text-sm font-medium text-[#993C1D] hover:underline disabled:opacity-50"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="text-xs text-[#6B6A62]">JPG, PNG or WEBP, up to 5MB.</p>
+        </div>
+
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1A1A18]">Partner details</h3>

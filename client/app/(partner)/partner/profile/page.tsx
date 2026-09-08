@@ -7,6 +7,7 @@ import {
   updateMyProfile,
   changeMyPassword,
 } from "@/services/partnerProfile.service";
+import { partnerFileUrl } from "@/services/partner.service";
 import { TextField } from "@/components/ui/FormField";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
@@ -128,8 +129,17 @@ export default function PartnerProfilePage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center gap-4">
-        <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-lg font-semibold">
-          {initials}
+        <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-lg font-semibold overflow-hidden">
+          {partner.profilePicture ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={partnerFileUrl(partner.profilePicture)}
+              alt={partner.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            initials
+          )}
         </div>
         <div>
           <div className="flex items-center gap-2 flex-wrap">

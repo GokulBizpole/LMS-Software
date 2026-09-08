@@ -117,3 +117,43 @@ export async function deletePartner(id: string): Promise<{ message: string }> {
 
   return { message: data.message };
 }
+
+export interface PartnerPhotoResponse {
+  success: boolean;
+  message: string;
+  data: Partner;
+}
+
+export async function uploadPartnerPhoto(id: string, file: File): Promise<{ data: Partner; message: string }> {
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  const { data } = await api.post<PartnerPhotoResponse>(
+    `/partners/${id}/photo`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+
+  if (!data.success) {
+    throw new Error(data.message || "Failed to upload profile picture");
+  }
+
+  return { data: data.data, message: data.message };
+}
+
+export async function removePartnerPhoto(id: string): Promise<{ data: Partner; message: string }> {
+  const { data } = await api.delete<PartnerPhotoResponse>(`/partners/${id}/photo`);
+
+  if (!data.success) {
+    throw new Error(data.message || "Failed to remove profile picture");
+  }
+
+  return { data: data.data, message: data.message };
+}
+
+// Builds a fully-qualified URL for a relative file path returned by the server
+// (e.g. Partner.profilePicture) — reuses the same convention as document files.
+export function partnerFileUrl(relativePath: string): string {
+  const base = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/api\/?$/, "");
+  return `${base}/${relativePath}`;
+}
