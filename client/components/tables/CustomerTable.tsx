@@ -28,9 +28,11 @@ function maskAadhaar(value?: string | null) {
 export default function CustomerTable({
   customers,
   linkPrefix = "/customers",
+  onView,
 }: {
   customers: Customer[];
   linkPrefix?: string;
+  onView?: (id: string) => void;
 }) {
   if (customers.length === 0) {
     return (
@@ -81,12 +83,22 @@ export default function CustomerTable({
                 <td className="py-3 px-4"><StatusBadge status={c.status} /></td>
                 <td className="py-3 px-4 text-[#45443E]">{formatDate(c.createdAt)}</td>
                 <td className="py-3 px-4 text-right">
-                  <Link
-                    href={`${linkPrefix}/${c.id}`}
-                    className="text-[#185FA5] font-medium hover:underline"
-                  >
-                    View
-                  </Link>
+                  {onView ? (
+                    <button
+                      type="button"
+                      onClick={() => onView(c.id)}
+                      className="text-[#185FA5] font-medium hover:underline"
+                    >
+                      View
+                    </button>
+                  ) : (
+                    <Link
+                      href={`${linkPrefix}/${c.id}`}
+                      className="text-[#185FA5] font-medium hover:underline"
+                    >
+                      View
+                    </Link>
+                  )}
                 </td>
               </tr>
             );

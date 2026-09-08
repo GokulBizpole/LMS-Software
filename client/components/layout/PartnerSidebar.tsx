@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -48,11 +49,9 @@ export default function PartnerSidebar({
         }`}
       >
       <div className="flex items-center gap-2 mb-3 px-1">
-        <div className="w-8 h-8 rounded-lg bg-[#1A1A18] flex items-center justify-center text-white text-sm font-semibold">
-          ₹
-        </div>
+        <Image src="/logo.svg" alt="SKA Trust" width={32} height={32} />
         <span className="text-[15px] font-semibold text-[#1A1A18]">
-          FinLoan
+          SKA Trust
         </span>
       </div>
 

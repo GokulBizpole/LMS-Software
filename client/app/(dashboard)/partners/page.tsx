@@ -2,10 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePartners } from "@/hooks/usePartners";
 import PartnerTable from "@/components/tables/PartnerTable";
 import PartnerFormModal from "@/components/partners/PartnerFormModal";
+import PartnerViewModal from "@/components/partners/PartnerViewModal";
 import Pagination from "@/components/ui/Pagination";
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -26,7 +26,7 @@ function StatusBadge({ status }: { status: Partner["status"] }) {
   );
 }
 
-function PartnerSummaryCard({ partner }: { partner: Partner }) {
+function PartnerSummaryCard({ partner, onView }: { partner: Partner; onView: (id: string) => void }) {
   const initials = partner.name
     .split(" ")
     .filter(Boolean)
@@ -36,9 +36,10 @@ function PartnerSummaryCard({ partner }: { partner: Partner }) {
     .toUpperCase();
 
   return (
-    <Link
-      href={`/partners/${partner.id}`}
-      className="rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
+    <button
+      type="button"
+      onClick={() => onView(partner.id)}
+      className="text-left rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
     >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 shrink-0 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-sm font-semibold">
@@ -69,7 +70,7 @@ function PartnerSummaryCard({ partner }: { partner: Partner }) {
       </div>
 
       <StatusBadge status={partner.status} />
-    </Link>
+    </button>
   );
 }
 
@@ -90,6 +91,7 @@ export default function PartnersPage() {
   } = usePartners();
 
   const [showCreate, setShowCreate] = useState(false);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
@@ -117,7 +119,7 @@ export default function PartnersPage() {
       {!loading && !error && partners.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {partners.slice(0, 3).map((partner) => (
-            <PartnerSummaryCard key={partner.id} partner={partner} />
+            <PartnerSummaryCard key={partner.id} partner={partner} onView={setViewingId} />
           ))}
         </div>
       )}
@@ -138,7 +140,7 @@ export default function PartnersPage() {
           </div>
         ) : (
           <>
-            <PartnerTable partners={partners} />
+            <PartnerTable partners={partners} onView={setViewingId} />
 
             <Pagination
               page={page}
@@ -159,6 +161,13 @@ export default function PartnersPage() {
           setShowCreate(false);
           refetch();
         }}
+      />
+
+      <PartnerViewModal
+        open={viewingId !== null}
+        partnerId={viewingId}
+        onClose={() => setViewingId(null)}
+        onChanged={refetch}
       />
     </div>
   );

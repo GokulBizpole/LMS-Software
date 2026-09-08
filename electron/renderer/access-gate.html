@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FinLoan</title>
+<title>SKA Trust</title>
 <style>
   :root {
     color-scheme: light;
@@ -41,10 +41,22 @@
     padding: 32px;
   }
 
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px;
+  }
+
+  .brand-row img {
+    width: 28px;
+    height: 28px;
+  }
+
   .brand {
     font-size: 15px;
     font-weight: 600;
-    margin: 0 0 4px;
+    margin: 0;
   }
 
   h1 {
@@ -164,12 +176,15 @@
 <body>
 
 <div class="card">
-  <p class="brand">FinLoan</p>
+  <div class="brand-row">
+    <img src="logo.svg" alt="SKA Trust" />
+    <p class="brand">SKA Trust</p>
+  </div>
 
   <!-- CREATE ACCESS CODE -->
   <div id="view-create" class="hidden">
     <h1>Create Access Code</h1>
-    <p class="subtitle">Set a 4–6 digit code to protect access to FinLoan on this device.</p>
+    <p class="subtitle">Set a 4–6 digit code to protect access to SKA Trust on this device.</p>
 
     <div id="create-error" class="error"></div>
 

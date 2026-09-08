@@ -28,9 +28,11 @@ function StatusBadge({ status }: { status: LoanStatus }) {
 export default function LoanTable({
   loans,
   linkPrefix = "/loans",
+  onView,
 }: {
   loans: Loan[];
   linkPrefix?: string;
+  onView?: (id: string) => void;
 }) {
   if (loans.length === 0) {
     return (
@@ -75,12 +77,22 @@ export default function LoanTable({
               <td className="py-3 px-4"><StatusBadge status={l.status} /></td>
               <td className="py-3 px-4 text-[#45443E]">{formatDate(l.createdAt)}</td>
               <td className="py-3 px-4 text-right">
-                <Link
-                  href={`${linkPrefix}/${l.id}`}
-                  className="text-[#185FA5] font-medium hover:underline"
-                >
-                  View
-                </Link>
+                {onView ? (
+                  <button
+                    type="button"
+                    onClick={() => onView(l.id)}
+                    className="text-[#185FA5] font-medium hover:underline"
+                  >
+                    View
+                  </button>
+                ) : (
+                  <Link
+                    href={`${linkPrefix}/${l.id}`}
+                    className="text-[#185FA5] font-medium hover:underline"
+                  >
+                    View
+                  </Link>
+                )}
               </td>
             </tr>
           ))}

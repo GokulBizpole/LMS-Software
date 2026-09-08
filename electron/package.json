@@ -1,7 +1,7 @@
 {
   "name": "finloan-electron",
-  "version": "1.0.3",
-  "description": "FinLoan Desktop Application",
+  "version": "1.0.4",
+  "description": "SKA Trust Desktop Application",
   "main": "dist/main.js",
   "scripts": {
     "dev": "npm run build && electron .",

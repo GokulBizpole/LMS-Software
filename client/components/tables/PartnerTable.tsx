@@ -1,5 +1,4 @@
 // components/tables/PartnerTable.tsx
-import Link from "next/link";
 import type { Partner } from "@/types/partner";
 import { formatCurrency } from "@/utils/formatCurrency";
 
@@ -19,7 +18,13 @@ function StatusBadge({ status }: { status: Partner["status"] }) {
   );
 }
 
-export default function PartnerTable({ partners }: { partners: Partner[] }) {
+export default function PartnerTable({
+  partners,
+  onView,
+}: {
+  partners: Partner[];
+  onView: (id: string) => void;
+}) {
   if (partners.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
@@ -69,12 +74,13 @@ export default function PartnerTable({ partners }: { partners: Partner[] }) {
                 <td className="py-3 px-4 text-[#1A1A18] text-right">{formatCurrency(p.currentBalance)}</td>
                 <td className="py-3 px-4"><StatusBadge status={p.status} /></td>
                 <td className="py-3 px-4 text-right">
-                  <Link
-                    href={`/partners/${p.id}`}
+                  <button
+                    type="button"
+                    onClick={() => onView(p.id)}
                     className="text-[#185FA5] font-medium hover:underline"
                   >
                     View
-                  </Link>
+                  </button>
                 </td>
               </tr>
             );

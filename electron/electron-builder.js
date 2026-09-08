@@ -3,7 +3,7 @@
  */
 module.exports = {
   appId: "com.finloan.app",
-  productName: "FinLoan",
+  productName: "SKA Trust",
 
   directories: {
     output: "C:\\FinLoanBuild",
@@ -37,6 +37,6 @@ module.exports = {
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
 
-    shortcutName: "FinLoan",
+    shortcutName: "SKA Trust",
   },
 };

@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useEodReports } from "@/hooks/useEodReports";
 import EodReportTable from "@/components/tables/EodReportTable";
+import EodReportViewModal from "@/components/tables/EodReportViewModal";
 import Pagination from "@/components/ui/Pagination";
 import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { getPartners } from "@/services/partner.service";
@@ -36,6 +37,7 @@ export default function EodReportsPage() {
   } = useEodReports();
 
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   useEffect(() => {
     getPartners({ limit: 100 })
@@ -120,7 +122,7 @@ export default function EodReportsPage() {
           </div>
         ) : (
           <>
-            <EodReportTable reports={reports} />
+            <EodReportTable reports={reports} onView={setViewingId} />
 
             <Pagination
               page={page}
@@ -133,6 +135,12 @@ export default function EodReportsPage() {
           </>
         )}
       </div>
+
+      <EodReportViewModal
+        open={viewingId !== null}
+        reportId={viewingId}
+        onClose={() => setViewingId(null)}
+      />
     </div>
   );
 }

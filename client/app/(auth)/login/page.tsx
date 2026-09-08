@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, type SubmitEvent } from "react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
@@ -32,9 +33,13 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-sm bg-white rounded-2xl border border-[#DAD7CA] p-8"
       >
+        <Image src="/logo.svg" alt="SKA Trust" width={48} height={48} className="mb-3" />
         <h1 className="text-lg font-semibold text-[#1A1A18] mb-1">
-          FinLoan
+          SKA Trust
         </h1>
+        <p className="text-[10px] tracking-wide text-[#6B6A62] uppercase mb-4">
+          Loans you can rely on
+        </p>
         <p className="text-sm text-[#6B6A62] mb-6">
           Sign in with your admin or partner account.
         </p>
@@ -46,7 +51,7 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full mb-4 rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
-          placeholder="you@finloan.com"
+          placeholder="you@skatrust.com"
         />
 
         <label className="block text-sm text-[#45443E] mb-1">Password</label>

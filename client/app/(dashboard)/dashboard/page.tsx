@@ -1,6 +1,7 @@
 // app/(dashboard)/dashboard/page.tsx
 "use client";
 
+import Image from "next/image";
 import {
   Wallet,
   Landmark,
@@ -18,6 +19,16 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { useRecentActivity } from "@/hooks/useRecentActivity";
 import { formatCurrency } from "@/utils/formatCurrency";
 
+function DashboardLoadingView() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-5 py-24">
+      <Image src="/logo.svg" alt="SKA Trust" width={64} height={64} />
+      <div className="w-8 h-8 rounded-full border-2 border-[#DAD7CA] border-t-[#185FA5] animate-spin" />
+      <p className="text-sm text-[#45443E]">Loading your workspace…</p>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { data, loading, error, errorType, refetch } = useDashboard();
   const {
@@ -28,19 +39,7 @@ export default function DashboardPage() {
   } = useRecentActivity();
 
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-2xl bg-[#ECE9DF] p-5 min-h-27.5 animate-pulse"
-          >
-            <div className="h-3 w-24 bg-[#ECE9DF] rounded mb-4" />
-            <div className="h-6 w-32 bg-[#ECE9DF] rounded" />
-          </div>
-        ))}
-      </div>
-    );
+    return <DashboardLoadingView />;
   }
 
   if (error || !data) {

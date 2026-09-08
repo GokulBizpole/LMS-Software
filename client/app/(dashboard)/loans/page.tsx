@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useLoans } from "@/hooks/useLoans";
+import LoanViewModal from "@/components/loans/LoanViewModal";
 import type { Loan, LoanStatus } from "@/types/loan";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
@@ -46,7 +47,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function LoanCard({ loan }: { loan: Loan }) {
+function LoanCard({ loan, onView }: { loan: Loan; onView: (id: string) => void }) {
   const isPending = loan.status === "PENDING";
   const initials = (loan.customer?.name ?? "?")
     .split(" ")
@@ -112,16 +113,22 @@ function LoanCard({ loan }: { loan: Loan }) {
           </>
         )}
 
-        <Link
-          href={`/loans/${loan.id}`}
-          className={`ml-auto text-sm font-medium px-4 py-2 rounded-lg ${
-            isPending
-              ? "bg-[#1A1A18] text-white"
-              : "border border-[#9C9A8D] text-[#45443E] hover:bg-[#ECE9DF]"
-          }`}
-        >
-          {isPending ? "Review" : "View details"}
-        </Link>
+        {isPending ? (
+          <Link
+            href={`/loans/${loan.id}`}
+            className="ml-auto text-sm font-medium px-4 py-2 rounded-lg bg-[#1A1A18] text-white"
+          >
+            Review
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onView(loan.id)}
+            className="ml-auto text-sm font-medium px-4 py-2 rounded-lg border border-[#9C9A8D] text-[#45443E] hover:bg-[#ECE9DF]"
+          >
+            View details
+          </button>
+        )}
       </div>
 
       {loan.remarks && (
@@ -136,6 +143,7 @@ function LoanCard({ loan }: { loan: Loan }) {
 export default function LoansPage() {
   const { loans, loading, error, refetch } = useLoans();
   const [tab, setTab] = useState<"ALL" | LoanStatus>("PENDING");
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   const pendingCount = useMemo(
     () => loans.filter((l) => l.status === "PENDING").length,
@@ -197,10 +205,16 @@ export default function LoansPage() {
       ) : (
         <div className="space-y-4">
           {filteredLoans.map((loan) => (
-            <LoanCard key={loan.id} loan={loan} />
+            <LoanCard key={loan.id} loan={loan} onView={setViewingId} />
           ))}
         </div>
       )}
+
+      <LoanViewModal
+        open={viewingId !== null}
+        loanId={viewingId}
+        onClose={() => setViewingId(null)}
+      />
     </div>
   );
 }

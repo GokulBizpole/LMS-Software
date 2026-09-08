@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useCustomers } from "@/hooks/useCustomers";
 import CustomerTable from "@/components/tables/CustomerTable";
 import CustomerFormModal from "@/components/customers/CustomerFormModal";
+import CustomerViewModal from "@/components/customers/CustomerViewModal";
 import Pagination from "@/components/ui/Pagination";
 
 export default function CustomersPage() {
@@ -24,6 +25,7 @@ export default function CustomersPage() {
   } = useCustomers();
 
   const [showCreate, setShowCreate] = useState(false);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
@@ -64,7 +66,7 @@ export default function CustomersPage() {
           </div>
         ) : (
           <>
-            <CustomerTable customers={customers} />
+            <CustomerTable customers={customers} onView={setViewingId} />
 
             <Pagination
               page={page}
@@ -85,6 +87,13 @@ export default function CustomersPage() {
           setShowCreate(false);
           refetch();
         }}
+      />
+
+      <CustomerViewModal
+        open={viewingId !== null}
+        customerId={viewingId}
+        onClose={() => setViewingId(null)}
+        onChanged={refetch}
       />
     </div>
   );

@@ -7,6 +7,7 @@ export interface GetPaymentsParams {
   limit?: number;
   search?: string;
   period?: "day" | "week" | "month";
+  customerId?: string;
 }
 
 export async function getPayments(

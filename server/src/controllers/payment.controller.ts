@@ -51,13 +51,18 @@ export const getPayments = async (
       (p) => p === rawPeriod
     );
 
+    const customerId = req.query.customerId
+      ? String(req.query.customerId)
+      : undefined;
+
     const data = await getAllPayments(
       page,
       limit,
       search,
       sortBy,
       order,
-      period
+      period,
+      { customerId }
     );
 
     return res.status(200).json({
