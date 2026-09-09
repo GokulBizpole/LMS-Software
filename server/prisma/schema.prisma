@@ -447,11 +447,42 @@ model Setting {
   companyPhone   String
   companyEmail   String?
   companyAddress String?
-
-  defaultInterestPercentage Decimal @db.Decimal(5, 2)
-  defaultPenaltyPercentage  Decimal @db.Decimal(5, 2)
+  website        String?
+  currency       String  @default("INR")
 
   receiptPrefix String @default("RCP")
+
+  // Legal & Compliance
+  businessType         String?
+  registrationNumber   String?
+  gstin                String?
+  pan                  String?
+  rbiLicenseNumber     String?
+  dateOfIncorporation  DateTime?
+
+  // Financial Settings
+  defaultInterestPercentage Decimal @db.Decimal(5, 2)
+  defaultPenaltyPercentage  Decimal @db.Decimal(5, 2)
+  financialYearStartMonth   Int     @default(4)
+  latePaymentGraceDays      Int     @default(0)
+
+  // Branch Details
+  branchName    String?
+  branchCode    String?
+  branchManager String?
+  branchPhone   String?
+
+  // Bank Details
+  bankAccountHolderName String?
+  bankName              String?
+  bankAccountNumber     String?
+  bankIfscCode          String?
+  bankBranchName        String?
+  upiId                 String?
+
+  // Branding
+  companyLogo String?
+  themeColor  String? @default("#0E6B4F")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

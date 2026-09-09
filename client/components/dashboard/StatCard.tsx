@@ -1,5 +1,6 @@
 // components/dashboard/StatCard.tsx
 import { type LucideIcon } from "lucide-react";
+import type { Trend } from "@/types/dashboard";
 
 interface Props {
   title: string;
@@ -7,6 +8,29 @@ interface Props {
   icon: LucideIcon;
   iconBg: string;
   iconColor: string;
+  trend?: Trend;
+  trendLabel?: string;
+  fallback?: string;
+}
+
+function TrendRow({ trend, trendLabel, fallback }: { trend: Trend; trendLabel: string; fallback?: string }) {
+  if (trend.percent === null) {
+    return <p className="text-xs text-[#6B6A62] mt-1">— {fallback ?? "no data yet"}</p>;
+  }
+
+  const isUp = trend.direction === "up";
+  const isFlat = trend.direction === "flat";
+  const color = isFlat ? "#6B6A62" : isUp ? "#3B6D11" : "#993C1D";
+  const arrow = isFlat ? "•" : isUp ? "▲" : "▼";
+
+  return (
+    <p className="text-xs mt-1">
+      <span className="font-medium" style={{ color }}>
+        {arrow} {Math.abs(trend.percent)}%
+      </span>
+      <span className="text-[#6B6A62]"> {trendLabel}</span>
+    </p>
+  );
 }
 
 export default function StatCard({
@@ -15,6 +39,9 @@ export default function StatCard({
   icon: Icon,
   iconBg,
   iconColor,
+  trend,
+  trendLabel = "vs last month",
+  fallback,
 }: Props) {
   return (
     <div
@@ -30,9 +57,12 @@ export default function StatCard({
         </div>
       </div>
 
-      <h2 className="text-2 font-bold text-[#1A1A18] mt-2 tracking-tight">
-        {value}
-      </h2>
+      <div className="mt-2">
+        <h2 className="text-2 font-bold text-[#1A1A18] tracking-tight">
+          {value}
+        </h2>
+        {trend && <TrendRow trend={trend} trendLabel={trendLabel} fallback={fallback} />}
+      </div>
     </div>
   );
 }
