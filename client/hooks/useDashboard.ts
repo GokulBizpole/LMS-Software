@@ -4,7 +4,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getDashboardData } from "@/services/dashboard.service";
-import type { DashboardData } from "@/types/dashboard";
+import type { DashboardData, DashboardPeriod } from "@/types/dashboard";
 
 type DashboardErrorType = "unauthorized" | "forbidden" | "network" | "unknown";
 
@@ -13,6 +13,8 @@ interface UseDashboardResult {
   loading: boolean;
   error: string | null;
   errorType: DashboardErrorType | null;
+  period: DashboardPeriod;
+  setPeriod: (period: DashboardPeriod) => void;
   refetch: () => void;
 }
 
@@ -23,6 +25,7 @@ export function useDashboard(): UseDashboardResult {
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<DashboardErrorType | null>(null);
   const [reloadFlag, setReloadFlag] = useState(0);
+  const [period, setPeriod] = useState<DashboardPeriod>("month");
 
   const load = useCallback(async () => {
     try {
@@ -30,7 +33,7 @@ export function useDashboard(): UseDashboardResult {
       setError(null);
       setErrorType(null);
 
-      const result = await getDashboardData();
+      const result = await getDashboardData(period);
       setData(result);
     } catch (err: any) {
       const status = err?.response?.status;
@@ -54,7 +57,7 @@ export function useDashboard(): UseDashboardResult {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, period]);
 
   useEffect(() => {
     load();
@@ -62,5 +65,5 @@ export function useDashboard(): UseDashboardResult {
 
   const refetch = () => setReloadFlag((f) => f + 1);
 
-  return { data, loading, error, errorType, refetch };
+  return { data, loading, error, errorType, period, setPeriod, refetch };
 }

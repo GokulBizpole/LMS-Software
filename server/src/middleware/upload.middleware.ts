@@ -68,3 +68,35 @@ export const uploadPartnerPhoto = multer({
     cb(null, true);
   },
 }).single("photo");
+
+const SETTINGS_LOGO_UPLOAD_ROOT = path.join(process.cwd(), "uploads", "settings");
+
+const settingsLogoStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    fs.mkdirSync(SETTINGS_LOGO_UPLOAD_ROOT, { recursive: true });
+    cb(null, SETTINGS_LOGO_UPLOAD_ROOT);
+  },
+  filename: (_req, file, cb) => {
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+    cb(null, `${Date.now()}-${safeName}`);
+  },
+});
+
+const ALLOWED_LOGO_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+]);
+
+export const uploadCompanyLogo = multer({
+  storage: settingsLogoStorage,
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_LOGO_MIME_TYPES.has(file.mimetype)) {
+      cb(new Error("Only PNG, SVG, JPG or WEBP images are allowed"));
+      return;
+    }
+    cb(null, true);
+  },
+}).single("logo");

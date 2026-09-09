@@ -1,12 +1,19 @@
 import { Request, Response } from "express";
-import { getDashboardStats, getPartnerDashboardStats } from "../services/dashboard.service";
+import { getDashboardStats, getPartnerDashboardStats, type DashboardPeriod } from "../services/dashboard.service";
+
+const VALID_PERIODS: DashboardPeriod[] = ["today", "week", "month", "year"];
 
 export const dashboard = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const data = await getDashboardStats();
+    const rawPeriod = String(req.query.period || "month");
+    const period = VALID_PERIODS.includes(rawPeriod as DashboardPeriod)
+      ? (rawPeriod as DashboardPeriod)
+      : "month";
+
+    const data = await getDashboardStats(period);
 
     return res.status(200).json({
       success: true,
