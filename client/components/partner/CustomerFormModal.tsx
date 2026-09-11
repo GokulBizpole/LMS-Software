@@ -6,16 +6,13 @@ import Modal from "@/components/ui/Modal";
 import { TextField } from "@/components/ui/FormField";
 import {
   createMyCustomer,
-  getMyCustomers,
   type CreateMyCustomerData,
 } from "@/services/partnerCustomer.service";
-import { suggestNextCode } from "@/utils/generateCode";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Customer } from "@/types/customer";
 
 interface FormState {
-  customerCode: string;
   name: string;
   phone: string;
   alternatePhone: string;
@@ -30,7 +27,6 @@ interface FormState {
 }
 
 const emptyForm: FormState = {
-  customerCode: "",
   name: "",
   phone: "",
   alternatePhone: "",
@@ -60,13 +56,6 @@ export default function PartnerCustomerFormModal({
   useEffect(() => {
     if (!open) return;
     setForm(emptyForm);
-    getMyCustomers({ limit: 100 })
-      .then((res) => {
-        const codes = res.customers.map((c) => c.customerCode).filter(Boolean);
-        const suggested = suggestNextCode(codes, "CUS001");
-        setForm((prev) => (prev.customerCode ? prev : { ...prev, customerCode: suggested }));
-      })
-      .catch(() => {});
   }, [open]);
 
   const handleChange = (name: string, value: string) => {
@@ -79,7 +68,6 @@ export default function PartnerCustomerFormModal({
 
     try {
       const payload: CreateMyCustomerData = {
-        customerCode: form.customerCode,
         name: form.name,
         phone: form.phone,
         alternatePhone: form.alternatePhone || undefined,
@@ -132,7 +120,6 @@ export default function PartnerCustomerFormModal({
         <div>
           <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Personal details</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <TextField label="Customer code" name="customerCode" value={form.customerCode} onChange={handleChange} required />
             <TextField label="Name" name="name" value={form.name} onChange={handleChange} required />
             <TextField label="Phone" name="phone" value={form.phone} onChange={handleChange} required />
             <TextField label="Alternate phone" name="alternatePhone" value={form.alternatePhone} onChange={handleChange} />

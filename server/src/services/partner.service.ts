@@ -19,6 +19,7 @@ interface CreatePartnerData {
   address?: string;
   investmentAmount: number;
   currentBalance: number;
+  customerCodePrefix?: string;
 }
 
 interface UpdatePartnerData {
@@ -30,6 +31,7 @@ interface UpdatePartnerData {
   investmentAmount?: number;
   currentBalance?: number;
   status?: "ACTIVE" | "INACTIVE";
+  customerCodePrefix?: string;
 }
 
 // Strips the password hash before a partner record is sent back to the client
@@ -59,6 +61,16 @@ export const createPartner = async (
 
   if (existingPartner) {
     throw new Error("Partner already exists");
+  }
+
+  if (data.customerCodePrefix) {
+    const existingPrefix = await prisma.partner.findFirst({
+      where: { customerCodePrefix: data.customerCodePrefix },
+    });
+
+    if (existingPrefix) {
+      throw new Error("This customer code prefix is already used by another partner");
+    }
   }
 
   if (data.password && !data.email) {
@@ -235,6 +247,19 @@ export const updatePartnerById = async (
 
     if (duplicatePartner) {
       throw new Error("Phone or email already exists");
+    }
+  }
+
+  if (data.customerCodePrefix) {
+    const duplicatePrefix = await prisma.partner.findFirst({
+      where: {
+        id: { not: id },
+        customerCodePrefix: data.customerCodePrefix,
+      },
+    });
+
+    if (duplicatePrefix) {
+      throw new Error("This customer code prefix is already used by another partner");
     }
   }
 

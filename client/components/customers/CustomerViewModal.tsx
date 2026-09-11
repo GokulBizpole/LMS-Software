@@ -52,11 +52,13 @@ export default function CustomerViewModal({
   customerId,
   onClose,
   onChanged,
+  onDeleted,
 }: {
   open: boolean;
   customerId: string | null;
   onClose: () => void;
   onChanged?: () => void;
+  onDeleted?: (id: string) => void;
 }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,6 +84,8 @@ export default function CustomerViewModal({
       setPayments(null);
       setLoading(true);
       setError(null);
+      setDeleting(false);
+      setShowDeleteConfirm(false);
       getCustomerById(customerId)
         .then(setCustomer)
         .catch((err) => {
@@ -117,15 +121,18 @@ export default function CustomerViewModal({
 
   const handleDelete = async () => {
     if (!customer) return;
+    const deletedId = customer.id;
     setDeleting(true);
     try {
-      const { message } = await deleteCustomer(customer.id);
+      const { message } = await deleteCustomer(deletedId);
       toast.success(message);
       setShowDeleteConfirm(false);
-      onClose();
+      onDeleted?.(deletedId);
       onChanged?.();
+      onClose();
     } catch (err) {
       toast.error(getErrorMessage(err, "Could not delete customer. Please try again."));
+    } finally {
       setDeleting(false);
     }
   };

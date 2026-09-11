@@ -22,3 +22,25 @@ export function suggestNextCode(existingCodes: string[], fallback: string): stri
   const nextNum = best.num + 1;
   return `${best.prefix}${String(nextNum).padStart(best.width, "0")}`;
 }
+
+// Derives a short, unique customer-code prefix from a partner's name (e.g.
+// "prakash" -> "P"), extending to more letters when the shorter candidate is
+// already taken by another partner (e.g. two "Kumar ..." partners -> "K"/"KU").
+export function suggestCustomerCodePrefix(
+  name: string,
+  existingPrefixes: string[]
+): string {
+  const normalized = name.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!normalized) return "";
+
+  const used = new Set(existingPrefixes.map((p) => p.toUpperCase()));
+
+  for (let len = 1; len <= normalized.length; len++) {
+    const candidate = normalized.slice(0, len);
+    if (!used.has(candidate)) return candidate;
+  }
+
+  let n = 2;
+  while (used.has(`${normalized}${n}`)) n++;
+  return `${normalized}${n}`;
+}

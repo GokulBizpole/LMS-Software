@@ -40,6 +40,7 @@ export async function getPartnerById(id: string): Promise<Partner> {
 
 export interface CreatePartnerData {
   partnerCode: string;
+  customerCodePrefix?: string;
   name: string;
   phone: string;
   email?: string;
@@ -79,6 +80,7 @@ export interface UpdatePartnerData {
   investmentAmount?: number;
   currentBalance?: number;
   status?: Partner["status"];
+  customerCodePrefix?: string;
 }
 
 export interface UpdatePartnerResponse {

@@ -22,6 +22,7 @@ export default function CustomersPage() {
     loading,
     error,
     refetch,
+    removeCustomer,
   } = useCustomers();
 
   const [showCreate, setShowCreate] = useState(false);
@@ -94,6 +95,7 @@ export default function CustomersPage() {
         customerId={viewingId}
         onClose={() => setViewingId(null)}
         onChanged={refetch}
+        onDeleted={removeCustomer}
       />
     </div>
   );

@@ -32,6 +32,7 @@ export interface PartnerStats {
 export interface Partner {
   id: string;
   partnerCode: string;
+  customerCodePrefix?: string | null;
   name: string;
   phone: string;
   email: string;

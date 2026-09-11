@@ -15,13 +15,16 @@ import {
   type CreatePartnerData,
   type UpdatePartnerData,
 } from "@/services/partner.service";
-import { suggestNextCode } from "@/utils/generateCode";
+import { suggestCustomerCodePrefix, suggestNextCode } from "@/utils/generateCode";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import type { Partner } from "@/types/partner";
 
 interface FormState {
   partnerCode: string;
+  // Empty means "not yet manually edited" — the create-mode field displays a
+  // live suggestion derived from `name` until the admin types their own value.
+  customerCodePrefix: string;
   name: string;
   phone: string;
   email: string;
@@ -34,6 +37,7 @@ interface FormState {
 
 const emptyForm: FormState = {
   partnerCode: "",
+  customerCodePrefix: "",
   name: "",
   phone: "",
   email: "",
@@ -69,11 +73,16 @@ export default function PartnerFormModal({
   const [photoBusy, setPhotoBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Existing partners' customer-code prefixes, used to live-suggest a unique
+  // one for a new partner as the admin types the name (create mode only).
+  const [existingPrefixes, setExistingPrefixes] = useState<string[]>([]);
+
   useEffect(() => {
     if (!open) return;
     if (partner) {
       setForm({
         partnerCode: partner.partnerCode,
+        customerCodePrefix: partner.customerCodePrefix ?? "",
         name: partner.name,
         phone: partner.phone,
         email: partner.email ?? "",
@@ -92,6 +101,9 @@ export default function PartnerFormModal({
           const codes = res.partners.map((p) => p.partnerCode).filter(Boolean);
           const suggested = suggestNextCode(codes, "PAR001");
           setForm((prev) => (prev.partnerCode ? prev : { ...prev, partnerCode: suggested }));
+          setExistingPrefixes(
+            res.partners.map((p) => p.customerCodePrefix).filter((p): p is string => Boolean(p))
+          );
         })
         .catch(() => {});
     }
@@ -149,6 +161,14 @@ export default function PartnerFormModal({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // Live-suggested prefix for a new partner, derived from the name as it's
+  // typed; stops applying the moment the admin edits the field themselves
+  // (once form.customerCodePrefix is non-empty, that value wins instead).
+  const suggestedPrefix = isEdit
+    ? ""
+    : suggestCustomerCodePrefix(form.name, existingPrefixes);
+  const effectivePrefix = form.customerCodePrefix || suggestedPrefix;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -164,6 +184,7 @@ export default function PartnerFormModal({
           investmentAmount: Number(form.investmentAmount) || 0,
           currentBalance: Number(form.currentBalance) || 0,
           status: form.status,
+          customerCodePrefix: form.customerCodePrefix || undefined,
         };
         const { data: updated, message } = await updatePartner(partner.id, payload);
         toast.success(message);
@@ -171,6 +192,7 @@ export default function PartnerFormModal({
       } else {
         const payload: CreatePartnerData = {
           partnerCode: form.partnerCode,
+          customerCodePrefix: effectivePrefix || undefined,
           name: form.name,
           phone: form.phone,
           email: form.email || undefined,
@@ -301,11 +323,21 @@ export default function PartnerFormModal({
                 required
               />
             )}
+            <TextField
+              label="Customer code prefix"
+              name="customerCodePrefix"
+              value={effectivePrefix}
+              onChange={handleChange}
+              required
+            />
             <TextField label="Name" name="name" value={form.name} onChange={handleChange} required />
             <TextField label="Phone" name="phone" value={form.phone} onChange={handleChange} required />
             <TextField label="Email" name="email" value={form.email} onChange={handleChange} type="email" />
             <TextField label="Address" name="address" value={form.address} onChange={handleChange} />
           </div>
+          <p className="text-xs text-[#6B6A62] mt-3">
+            Used to auto-generate this partner&apos;s customer codes, e.g. PCUS001, PCUS002...
+          </p>
         </div>
 
         <div>

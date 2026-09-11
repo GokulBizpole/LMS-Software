@@ -135,11 +135,12 @@ export default function CustomerDetailPage() {
     try {
       const { message } = await deleteCustomer(customer.id);
       toast.success(message);
+      setShowDeleteConfirm(false);
       router.push("/customers");
     } catch (err: any) {
       toast.error(getErrorMessage(err, "Could not delete customer. Please try again."));
+    } finally {
       setDeleting(false);
-      setShowDeleteConfirm(false);
     }
   };
 

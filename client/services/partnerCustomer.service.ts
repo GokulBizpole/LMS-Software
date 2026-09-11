@@ -25,7 +25,8 @@ export async function getMyCustomers(
 }
 
 export interface CreateMyCustomerData {
-  customerCode: string;
+  // No customerCode: the server auto-generates it from the partner's own
+  // customer-code prefix and sequence.
   name: string;
   phone: string;
   alternatePhone?: string;

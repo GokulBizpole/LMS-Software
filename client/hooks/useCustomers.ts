@@ -39,6 +39,11 @@ export function useCustomers() {
     setPage(1);
   }, [pageSize, search]);
 
+  const removeCustomer = useCallback((id: string) => {
+    setCustomers((prev) => prev.filter((c) => c.id !== id));
+    setTotal((prev) => Math.max(0, prev - 1));
+  }, []);
+
   return {
     customers,
     total,
@@ -52,5 +57,6 @@ export function useCustomers() {
     loading,
     error,
     refetch: load,
+    removeCustomer,
   };
 }

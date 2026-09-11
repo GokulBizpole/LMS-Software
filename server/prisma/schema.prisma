@@ -99,6 +99,13 @@ model Partner {
 
   partnerCode String @unique @db.VarChar(20)
 
+  // Prefix used to auto-generate this partner's own customer codes
+  // (e.g. "P" -> PCUS001, PCUS002, ...). nextCustomerSeq only ever
+  // increments, so a deleted/blocked customer's number is never reused.
+  customerCodePrefix String? @unique @db.VarChar(10)
+
+  nextCustomerSeq Int @default(1)
+
   name String @db.VarChar(100)
 
   phone String @unique @db.VarChar(15)
@@ -139,17 +146,21 @@ model Partner {
 model Customer {
   id String @id @default(uuid())
 
-  customerCode String @unique @db.VarChar(20)
+  // Uniqueness for customerCode/phone/aadhaarNumber/panNumber is enforced only
+  // among ACTIVE customers via partial unique indexes (see migration
+  // 20260911_customer_active_unique_indexes) rather than a blanket @unique,
+  // so a BLOCKED/CLOSED customer's identity fields can be reused.
+  customerCode String @db.VarChar(20)
 
   name String @db.VarChar(100)
 
-  phone String @unique @db.VarChar(15)
+  phone String @db.VarChar(15)
 
   alternatePhone String? @db.VarChar(15)
 
-  aadhaarNumber String? @unique @db.VarChar(20)
+  aadhaarNumber String? @db.VarChar(20)
 
-  panNumber String? @unique @db.VarChar(20)
+  panNumber String? @db.VarChar(20)
 
   address String? @db.Text
 
@@ -180,6 +191,9 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@index([phone])
+  @@index([customerCode])
+  @@index([aadhaarNumber])
+  @@index([panNumber])
   @@index([partnerId])
   @@map("customers")
 }
