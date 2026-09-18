@@ -1,88 +1,19 @@
-
 "use client";
 
 import { useState } from "react";
-import { usePartners } from "@/hooks/usePartners";
+import { Users, CheckCircle2, XCircle, Sparkles, Search, ArrowUpDown, MoreVertical, Download, Plus } from "lucide-react";
+import { usePartners, type PartnerStatusFilter } from "@/hooks/usePartners";
 import PartnerTable from "@/components/tables/PartnerTable";
 import PartnerFormModal from "@/components/partners/PartnerFormModal";
 import PartnerViewModal from "@/components/partners/PartnerViewModal";
+import ListStatCard from "@/components/ui/ListStatCard";
 import Pagination from "@/components/ui/Pagination";
-import type { Partner } from "@/types/partner";
-import { formatCurrency } from "@/utils/formatCurrency";
-import { partnerFileUrl } from "@/services/partner.service";
 
-function StatusBadge({ status }: { status: Partner["status"] }) {
-  const map: Record<Partner["status"], { bg: string; text: string }> = {
-    ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
-    INACTIVE: { bg: "#ECE9DF", text: "#45443E" },
-  };
-  const c = map[status] ?? map.INACTIVE;
-  return (
-    <span
-      className="text-[11px] font-medium px-2 py-1 rounded-md"
-      style={{ backgroundColor: c.bg, color: c.text }}
-    >
-      {status}
-    </span>
-  );
-}
-
-function PartnerSummaryCard({ partner, onView }: { partner: Partner; onView: (id: string) => void }) {
-  const initials = partner.name
-    .split(" ")
-    .filter(Boolean)
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <button
-      type="button"
-      onClick={() => onView(partner.id)}
-      className="text-left rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
-    >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 shrink-0 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-sm font-semibold overflow-hidden">
-          {partner.profilePicture ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={partnerFileUrl(partner.profilePicture)}
-              alt={partner.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            initials
-          )}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#1A1A18] truncate">{partner.name}</p>
-          <p className="text-xs text-[#6B6A62] truncate">
-            {partner.partnerCode}
-            {partner.address ? ` · ${partner.address}` : ""}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between border-t border-[#ECE9DF] pt-4 mb-4">
-        <div>
-          <p className="text-xs text-[#6B6A62] mb-1">Investment</p>
-          <p className="text-sm font-semibold text-[#1A1A18]">
-            {formatCurrency(partner.investmentAmount)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-[#6B6A62] mb-1">Balance</p>
-          <p className="text-sm font-semibold text-[#1A1A18]">
-            {formatCurrency(partner.currentBalance)}
-          </p>
-        </div>
-      </div>
-
-      <StatusBadge status={partner.status} />
-    </button>
-  );
-}
+const FILTER_PILLS: { key: PartnerStatusFilter; label: string }[] = [
+  { key: "ALL", label: "All" },
+  { key: "ACTIVE", label: "Active" },
+  { key: "INACTIVE", label: "Inactive" },
+];
 
 export default function PartnersPage() {
   const {
@@ -95,6 +26,9 @@ export default function PartnersPage() {
     totalPages,
     search,
     setSearch,
+    statusFilter,
+    setStatusFilter,
+    stats,
     loading,
     error,
     refetch,
@@ -105,34 +39,90 @@ export default function PartnersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-[#1A1A18]">Partners</h1>
-          <p className="text-sm text-[#45443E]">{total} partner{total !== 1 ? "s" : ""}</p>
+          <p className="text-sm text-[#45443E]">
+            {stats.total} total partner{stats.total !== 1 ? "s" : ""} · {stats.active} active
+          </p>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg"
-        >
-          + Add partner
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="flex items-center gap-2 border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
+          >
+            <Download size={15} />
+            Export
+          </button>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg"
+          >
+            <Plus size={15} />
+            Add partner
+          </button>
+        </div>
       </div>
 
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by name, phone, code..."
-        className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ListStatCard label="Total partners" value={stats.total} icon={Users} iconBg="#E6F1FB" iconColor="#185FA5" />
+        <ListStatCard label="Active" value={stats.active} icon={CheckCircle2} iconBg="#EAF3DE" iconColor="#3B6D11" />
+        <ListStatCard label="Inactive" value={stats.inactive} icon={XCircle} iconBg="#ECE9DF" iconColor="#6B6A62" />
+        <ListStatCard
+          label="Added this month"
+          value={stats.addedThisMonth}
+          icon={Sparkles}
+          iconBg="#EEEDFE"
+          iconColor="#534AB7"
+          badge="NEW"
+        />
+      </div>
 
-      {!loading && !error && partners.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {partners.slice(0, 3).map((partner) => (
-            <PartnerSummaryCard key={partner.id} partner={partner} onView={setViewingId} />
-          ))}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="relative w-full max-w-sm">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9C9A8D]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, phone, code..."
+            className="w-full rounded-lg border border-[#9C9A8D] pl-9 pr-3 py-2 text-sm"
+          />
         </div>
-      )}
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-lg border border-[#C4C1B3] p-0.5">
+            {FILTER_PILLS.map((pill) => (
+              <button
+                key={pill.key}
+                type="button"
+                onClick={() => setStatusFilter(pill.key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium ${
+                  statusFilter === pill.key
+                    ? "bg-[#1A1A18] text-white"
+                    : "text-[#45443E] hover:bg-[#ECE9DF]"
+                }`}
+              >
+                {pill.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            aria-label="Sort"
+            className="w-9 h-9 rounded-lg border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
+          >
+            <ArrowUpDown size={15} />
+          </button>
+          <button
+            type="button"
+            aria-label="More options"
+            className="w-9 h-9 rounded-lg border border-[#C4C1B3] flex items-center justify-center text-[#45443E] hover:bg-[#ECE9DF]"
+          >
+            <MoreVertical size={15} />
+          </button>
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
         {loading ? (

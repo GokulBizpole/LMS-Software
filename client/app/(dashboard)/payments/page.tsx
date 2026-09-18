@@ -1,8 +1,9 @@
 // app/(dashboard)/payments/page.tsx
 "use client";
 
+import { Search } from "lucide-react";
 import { usePayments, type PaymentPeriod } from "@/hooks/usePayments";
-import PaymentTable from "@/components/tables/PaymentTable";
+import AdminPaymentTable from "@/components/tables/AdminPaymentTable";
 import Pagination from "@/components/ui/Pagination";
 
 const PERIOD_TABS: { key: PaymentPeriod; label: string }[] = [
@@ -37,35 +38,40 @@ export default function PaymentsPage() {
         <p className="text-sm text-[#45443E]">{total} payment{total !== 1 ? "s" : ""}</p>
       </div>
 
-      <div className="flex items-center gap-1 flex-wrap">
-        {PERIOD_TABS.map((t) => {
-          const isActive = period === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => {
-                setPeriod(t.key);
-                setPage(1);
-              }}
-              className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
-                isActive
-                  ? "bg-[#FAEEDA] text-[#854F0B] font-medium"
-                  : "text-[#45443E] hover:bg-[#ECE9DF]"
-              }`}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="relative w-full max-w-sm">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9C9A8D]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by receipt no, loan no, customer name..."
+            className="w-full rounded-lg border border-[#9C9A8D] pl-9 pr-3 py-2 text-sm"
+          />
+        </div>
 
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by receipt no, loan no, customer name..."
-        className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
-      />
+        <div className="flex items-center rounded-lg border border-[#C4C1B3] p-0.5">
+          {PERIOD_TABS.map((t) => {
+            const isActive = period === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => {
+                  setPeriod(t.key);
+                  setPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium ${
+                  isActive
+                    ? "bg-[#1A1A18] text-white"
+                    : "text-[#45443E] hover:bg-[#ECE9DF]"
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
         {loading ? (
@@ -83,7 +89,7 @@ export default function PaymentsPage() {
           </div>
         ) : (
           <>
-            <PaymentTable payments={payments} />
+            <AdminPaymentTable payments={payments} />
 
             <Pagination
               page={page}

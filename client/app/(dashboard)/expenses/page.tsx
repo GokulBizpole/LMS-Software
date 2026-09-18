@@ -2,8 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import { useExpenses } from "@/hooks/useExpenses";
-import ExpenseTable from "@/components/tables/ExpenseTable";
+import AdminExpenseTable from "@/components/tables/AdminExpenseTable";
 import ExpenseFormModal from "@/components/expenses/ExpenseFormModal";
 import Pagination from "@/components/ui/Pagination";
 import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
@@ -110,16 +111,19 @@ export default function ExpensesPage() {
       </div>
 
       <div className="flex items-center gap-3">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          placeholder="Search description, partner..."
-          className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
-        />
+        <div className="relative w-full max-w-sm">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9C9A8D]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search description, partner..."
+            className="w-full rounded-lg border border-[#9C9A8D] pl-9 pr-3 py-2 text-sm"
+          />
+        </div>
         <FilterPopover fields={filterFields} />
       </div>
 
@@ -139,7 +143,7 @@ export default function ExpensesPage() {
           </div>
         ) : (
           <>
-            <ExpenseTable expenses={expenses} onChanged={refetch} />
+            <AdminExpenseTable expenses={expenses} onChanged={refetch} />
 
             <Pagination
               page={page}
