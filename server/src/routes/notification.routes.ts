@@ -5,12 +5,15 @@ import {
   readNotification,
   readAllNotifications,
   removeNotification,
+  streamAdminNotifications,
 } from "../controllers/notification.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
 import { adminOnly } from "../middleware/role.middleware";
 
 const router = Router();
+
+router.get("/stream", authenticate, adminOnly, streamAdminNotifications);
 
 router.get("/", authenticate, adminOnly, getAllNotifications);
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import path from "path";
 import fs from "fs";
@@ -134,6 +134,30 @@ ipcMain.handle("access-gate:reset-code", () => {
   }
   return { success: true };
 });
+
+ipcMain.handle(
+  "notification:show",
+  (_event, title: unknown, body: unknown) => {
+    if (typeof title !== "string" || typeof body !== "string") {
+      return { success: false };
+    }
+
+    if (!Notification.isSupported()) {
+      return {
+        success: false,
+        error: "Notifications are not supported.",
+      };
+    }
+
+    new Notification({
+      title,
+      body,
+      silent: false,
+    }).show();
+
+    return { success: true };
+  }
+);
 
 function setupAutoUpdater() {
   // We drive the UI ourselves (Update Now/Later, progress, Restart & Install/Later)

@@ -1,8 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("electronAPI", {
-  isElectron: true,
-});
+
+
 
 contextBridge.exposeInMainWorld("accessGate", {
   hasCode: () => ipcRenderer.invoke("access-gate:has-code"),
@@ -10,3 +9,11 @@ contextBridge.exposeInMainWorld("accessGate", {
   verifyCode: (code: string) => ipcRenderer.invoke("access-gate:verify-code", code),
   resetCode: () => ipcRenderer.invoke("access-gate:reset-code"),
 });
+contextBridge.exposeInMainWorld("electronAPI", {
+  isElectron: true,
+
+  showNotification: (title: string, body: string) =>
+    ipcRenderer.invoke("notification:show", title, body),
+});
+
+

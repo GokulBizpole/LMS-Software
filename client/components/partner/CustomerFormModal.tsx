@@ -10,6 +10,7 @@ import {
 } from "@/services/partnerCustomer.service";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { notifyDesktop } from "@/utils/electronNotify";
 import type { Customer } from "@/types/customer";
 
 interface FormState {
@@ -82,6 +83,7 @@ export default function PartnerCustomerFormModal({
       };
       const { data: created, message } = await createMyCustomer(payload);
       toast.success(message);
+      notifyDesktop("LMS Finance", `Partner created a new customer: ${created.name}`);
       onSaved(created);
     } catch (err: any) {
       toast.error(getErrorMessage(err, "Could not save customer."));

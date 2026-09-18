@@ -8,6 +8,7 @@ import { createMyLoan, type CreateMyLoanData } from "@/services/partnerLoan.serv
 import { getMyCustomers } from "@/services/partnerCustomer.service";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { notifyDesktop } from "@/utils/electronNotify";
 import type { Customer } from "@/types/customer";
 import type { Loan } from "@/types/loan";
 
@@ -82,6 +83,10 @@ export default function LoanFormModal({
       };
       const { data: loan, message } = await createMyLoan(payload);
       toast.success(message);
+      const customerName = customers.find((c) => c.id === form.customerId)?.name ?? loan.customer?.name;
+      if (customerName) {
+        notifyDesktop("LMS Finance", `Partner created a new loan for ${customerName}`);
+      }
       onSaved(loan);
     } catch (err: any) {
       toast.error(getErrorMessage(err, "Could not submit loan."));

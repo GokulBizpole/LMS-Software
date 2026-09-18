@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Bell, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadNotificationCount } from "@/hooks/useUnreadNotificationCount";
+import { useAdminPartnerActivityStream } from "@/hooks/useAdminPartnerActivityStream";
 import { getMyProfile } from "@/services/partnerProfile.service";
 import { partnerFileUrl } from "@/services/partner.service";
 import NotificationDropdown from "./NotificationDropdown";
@@ -14,6 +15,9 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void } = {
   const { user, loading, logout } = useAuth();
   const isPartner = user?.role === "PARTNER";
   const { count: unreadCount, refetch: refetchUnreadCount } = useUnreadNotificationCount(!loading && !isPartner);
+  // Native Windows notifications for partner activity — only ever connects
+  // for an admin session running inside the Electron shell (see the hook).
+  useAdminPartnerActivityStream(!loading && !isPartner);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
 

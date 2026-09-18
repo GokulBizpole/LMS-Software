@@ -1,6 +1,7 @@
 import prisma from "../config/db";
 import { createAuditLog } from "./audit.service";
 import { notifyCustomerCreated } from "./notification.service";
+import { emitPartnerActivity } from "./realtimeEvents.service";
 
 interface CreateCustomerData {
   // Required unless partnerId is set, in which case the code is generated
@@ -23,7 +24,8 @@ interface CreateCustomerData {
 // Claims the next customer code for a partner atomically (single UPDATE ...
 // SET nextCustomerSeq = nextCustomerSeq + 1), so concurrent creates by the
 // same partner never collide and a deleted customer's number is never
-// reused, since the counter only ever increases.
+// reused, since the counter only ever increases. Also returns the partner's
+// name, already fetched here, so callers don't need a second query for it.
 const generateCustomerCodeForPartner = async (partnerId: string) => {
   const partner = await prisma.partner.update({
     where: { id: partnerId },
@@ -37,7 +39,8 @@ const generateCustomerCodeForPartner = async (partnerId: string) => {
   }
 
   const claimedSeq = partner.nextCustomerSeq - 1;
-  return `${partner.customerCodePrefix}CUS${String(claimedSeq).padStart(3, "0")}`;
+  const code = `${partner.customerCodePrefix}CUS${String(claimedSeq).padStart(3, "0")}`;
+  return { code, partnerName: partner.name };
 };
 
 interface UpdateCustomerData {
@@ -63,9 +66,13 @@ export const createCustomer = async (
   // Partner-created customers always get an auto-generated code from their
   // partner's prefix + sequence; a manually-typed customerCode is only used
   // when there's no partner (the admin's own customer-creation form).
-  const customerCode = data.partnerId
-    ? await generateCustomerCodeForPartner(data.partnerId)
-    : data.customerCode;
+  let customerCode = data.customerCode;
+  let partnerName: string | undefined;
+  if (data.partnerId) {
+    const generated = await generateCustomerCodeForPartner(data.partnerId);
+    customerCode = generated.code;
+    partnerName = generated.partnerName;
+  }
 
   if (!customerCode) {
     throw new Error("Customer code is required");
@@ -118,6 +125,16 @@ await createAuditLog({
 });
 
 await notifyCustomerCreated(customer);
+
+// Real-time push to any connected Admin Electron app — only for a genuine
+// partner self-service creation (never when admin created the customer).
+if (!adminId && partnerName) {
+  emitPartnerActivity({
+    type: "customer_created",
+    partnerName,
+    customerName: customer.name,
+  });
+}
 
 return customer;
 };

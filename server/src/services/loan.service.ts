@@ -6,6 +6,7 @@ import {
   notifyLoanRejected,
   notifyLoanClosed,
 } from "./notification.service";
+import { emitPartnerActivity } from "./realtimeEvents.service";
 
 export const generateLoanNumber = async () => {
   const count = await prisma.loan.count();
@@ -117,6 +118,16 @@ await notifyLoanSubmitted(
   partner,
   customer
 );
+
+// Real-time push to any connected Admin Electron app — only for a genuine
+// partner self-service submission (never when admin created the loan).
+if (!adminId) {
+  emitPartnerActivity({
+    type: "loan_created",
+    partnerName: partner.name,
+    customerName: customer.name,
+  });
+}
 
 const schedules: {
   loanId: string;
