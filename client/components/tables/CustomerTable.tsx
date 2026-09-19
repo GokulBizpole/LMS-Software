@@ -71,7 +71,7 @@ export default function CustomerTable({
                 <td className="py-3 px-4 text-[#1A1A18] font-medium">{c.customerCode}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-[11px] font-semibold">
+                    <div className="w-7 h-7 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-[11px] font-semibold">
                       {initials}
                     </div>
                     <span className="text-[#1A1A18]">{c.name}</span>

@@ -107,7 +107,7 @@ export default function PartnerOutstandingReportPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <StatCard title="Loans with balance" value={String(summary.count)} icon={FileText} iconBg="#EEEDFE" iconColor="#534AB7" />
-        <StatCard title="Total outstanding" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
+        <StatCard title="Total outstanding" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
       </div>
 
       <input
@@ -127,8 +127,8 @@ export default function PartnerOutstandingReportPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={load} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={load} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

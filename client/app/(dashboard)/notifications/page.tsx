@@ -133,8 +133,8 @@ export default function NotificationsPage() {
           </div>
         ) : error ? (
           <div className="text-center py-10">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

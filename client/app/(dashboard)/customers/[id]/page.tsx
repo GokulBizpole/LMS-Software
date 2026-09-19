@@ -43,14 +43,14 @@ function DetailSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
       <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center gap-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-[#ECE9DF]" />
         <div className="space-y-2">
           <div className="h-4 w-40 bg-[#ECE9DF] rounded" />
           <div className="h-3 w-56 bg-[#ECE9DF] rounded" />
         </div>
       </div>
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 space-y-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 space-y-4">
         <div className="h-3 w-28 bg-[#ECE9DF] rounded" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -102,7 +102,7 @@ export default function CustomerDetailPage() {
         <Link href="/customers" className="text-sm text-[#185FA5]">
           ← Back to customers
         </Link>
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-3">{error ?? "Customer not found."}</p>
           <button onClick={load} className="text-sm font-semibold underline">
             Try again
@@ -154,9 +154,9 @@ export default function CustomerDetailPage() {
       </button>
 
       {/* Profile header */}
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-lg font-semibold">
+          <div className="w-14 h-14 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-lg font-semibold">
             {initials}
           </div>
           <div>
@@ -199,7 +199,7 @@ export default function CustomerDetailPage() {
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}
-            className="flex items-center gap-2 border border-[#993C1D] text-sm font-medium px-4 py-2 rounded-lg text-[#993C1D] hover:bg-[#FAECE7] disabled:opacity-50"
+            className="flex items-center gap-2 border border-[#E31E24] text-sm font-medium px-4 py-2 rounded-lg text-[#E31E24] hover:bg-[#FAECE7] disabled:opacity-50"
           >
             <Trash2 size={16} />
             {deleting ? "Deleting..." : "Delete"}
@@ -208,7 +208,7 @@ export default function CustomerDetailPage() {
       </div>
 
       {/* Details */}
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Personal details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Field label="Phone" value={customer.phone} />
@@ -222,7 +222,7 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Guarantor</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Field label="Guarantor name" value={customer.guarantorName} />
@@ -230,7 +230,7 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <Field label="Registered" value={formatDate(customer.createdAt)} />
           <Field label="Last updated" value={formatDate(customer.updatedAt)} />

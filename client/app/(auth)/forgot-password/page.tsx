@@ -6,7 +6,7 @@ import { KeyRound } from "lucide-react";
 export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#ECE9DF]">
-      <div className="w-full max-w-sm bg-white rounded-2xl border border-[#DAD7CA] p-8 text-center">
+      <div className="w-full max-w-sm bg-white rounded-2xl border border-[#E31E24] p-8 text-center">
         <div className="mb-4 flex h-14 w-14 mx-auto items-center justify-center rounded-full bg-[#ECE9DF]">
           <KeyRound className="h-6 w-6 text-[#45443E]" />
         </div>

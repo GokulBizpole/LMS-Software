@@ -24,7 +24,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: LoanStatus }) {
@@ -58,10 +58,10 @@ function LoanCard({ loan }: { loan: Loan }) {
     .toUpperCase();
 
   return (
-    <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+    <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-[11px] font-semibold">
+          <div className="w-7 h-7 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-[11px] font-semibold">
             {initials}
           </div>
           <div>
@@ -94,7 +94,7 @@ function LoanCard({ loan }: { loan: Loan }) {
       </div>
 
       {loan.status === "REJECTED" && loan.rejectionReason && (
-        <p className="text-xs text-[#993C1D] mt-3">
+        <p className="text-xs text-[#E31E24] mt-3">
           Rejected: &quot;{loan.rejectionReason}&quot;
         </p>
       )}
@@ -172,14 +172,14 @@ function PartnerLoansPageContent() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-2">{error}</p>
           <button onClick={refetch} className="text-sm font-semibold underline">
             Try again
           </button>
         </div>
       ) : filteredLoans.length === 0 ? (
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-10 text-center text-sm text-[#6B6A62]">
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-10 text-center text-sm text-[#6B6A62]">
           No loans found for this filter.
         </div>
       ) : (

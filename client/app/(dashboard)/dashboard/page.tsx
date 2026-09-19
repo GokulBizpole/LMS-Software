@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Wallet,
   Landmark,
@@ -28,7 +29,7 @@ function DashboardLoadingView() {
   return (
     <div className="flex flex-col items-center justify-center gap-5 py-24">
       <Image src="/logo.svg" alt="SKA Trust" width={64} height={64} />
-      <div className="w-8 h-8 rounded-full border-2 border-[#DAD7CA] border-t-[#185FA5] animate-spin" />
+      <div className="w-8 h-8 rounded-full border-2 border-[#E31E24] border-t-[#185FA5] animate-spin" />
       <p className="text-sm text-[#45443E]">Loading your workspace…</p>
     </div>
   );
@@ -57,7 +58,7 @@ function PeriodSelect({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-[#DAD7CA] bg-white shadow-lg py-1">
+          <div className="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-[#E31E24] bg-white shadow-lg py-1">
             {DASHBOARD_PERIOD_OPTIONS.map((o) => (
               <button
                 key={o.value}
@@ -98,9 +99,9 @@ export default function DashboardPage() {
     const canRetry = errorType !== "unauthorized";
     return (
       <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center">
-        <p className="text-[#993C1D] font-medium mb-2">{error ?? "No data available."}</p>
+        <p className="text-[#E31E24] font-medium mb-2">{error ?? "No data available."}</p>
         {canRetry && (
-          <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+          <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
             Try again
           </button>
         )}
@@ -189,7 +190,7 @@ export default function DashboardPage() {
           value={formatCurrency(data.todayExpense)}
           icon={Wallet}
           iconBg="#FAECE7"
-          iconColor="#993C1D"
+          iconColor="#E31E24"
           trend={data.trends.todayExpense}
           trendLabel="vs yesterday"
           fallback="no activity yet today"
@@ -199,7 +200,7 @@ export default function DashboardPage() {
           value={formatCurrency(data.monthlyExpense)}
           icon={Wallet}
           iconBg="#FAECE7"
-          iconColor="#993C1D"
+          iconColor="#E31E24"
           trend={data.trends.monthlyExpense}
           trendLabel="vs last month"
           fallback="no expense recorded"
@@ -219,9 +220,9 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 rounded-2xl border border-[#E5E7EB] bg-white p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1A1A18]">Recent activity</h3>
-            <a href="/reports" className="text-sm font-medium text-[#185FA5] hover:underline">
+            <Link href="/reports" className="text-sm font-medium text-[#E31E24] ">
               View all →
-            </a>
+            </Link>
           </div>
           {activityLoading ? (
             <div className="space-y-3">
@@ -231,8 +232,8 @@ export default function DashboardPage() {
             </div>
           ) : activityError ? (
             <div className="text-center py-6">
-              <p className="text-[#993C1D] text-sm mb-2">{activityError}</p>
-              <button onClick={refetchActivity} className="text-sm font-semibold text-[#993C1D] underline">
+              <p className="text-[#E31E24] text-sm mb-2">{activityError}</p>
+              <button onClick={refetchActivity} className="text-sm font-semibold text-[#E31E24] underline">
                 Try again
               </button>
             </div>

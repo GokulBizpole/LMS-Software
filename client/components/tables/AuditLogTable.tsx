@@ -8,7 +8,7 @@ import StatusDot from "@/components/ui/StatusDot";
 const ACTION_COLORS: Record<string, string> = {
   CREATE: "#3B6D11",
   UPDATE: "#185FA5",
-  DELETE: "#993C1D",
+  DELETE: "#E31E24",
 };
 
 function formatDateTime(dateStr: string): string {

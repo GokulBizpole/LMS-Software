@@ -289,7 +289,7 @@ export default function PartnerFormModal({
                   type="button"
                   disabled={photoBusy}
                   onClick={handlePhotoRemove}
-                  className="text-sm font-medium text-[#993C1D] hover:underline disabled:opacity-50"
+                  className="text-sm font-medium text-[#E31E24] hover:underline disabled:opacity-50"
                 >
                   Remove
                 </button>

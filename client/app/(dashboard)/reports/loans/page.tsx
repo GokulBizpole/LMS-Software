@@ -162,7 +162,7 @@ export default function LoanReportPage() {
         <StatCard title="Total loans" value={String(summary.count)} icon={FileText} iconBg="#EEEDFE" iconColor="#534AB7" />
         <StatCard title="Total principal" value={formatCurrency(summary.totalPrincipal)} icon={Wallet} iconBg="#E6F1FB" iconColor="#185FA5" />
         <StatCard title="Total payable" value={formatCurrency(summary.totalPayable)} icon={CheckCircle2} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <StatCard title="Outstanding balance" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
+        <StatCard title="Outstanding balance" value={formatCurrency(summary.totalBalance)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
       </div>
 
       <div className="flex items-center gap-3">
@@ -185,8 +185,8 @@ export default function LoanReportPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

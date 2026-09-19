@@ -7,7 +7,7 @@ function StatusBadge({ status }: { status: PaymentStatus }) {
   const map: Record<PaymentStatus, { bg: string; text: string }> = {
     PAID: { bg: "#EAF3DE", text: "#3B6D11" },
     PENDING: { bg: "#FAEEDA", text: "#854F0B" },
-    LATE: { bg: "#FAECE7", text: "#993C1D" },
+    LATE: { bg: "#FAECE7", text: "#E31E24" },
   };
   const c = map[status] ?? map.PENDING;
   return (

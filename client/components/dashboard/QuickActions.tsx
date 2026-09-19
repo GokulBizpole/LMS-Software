@@ -8,10 +8,10 @@ import CustomerFormModal from "@/components/customers/CustomerFormModal";
 import ExpenseFormModal from "@/components/expenses/ExpenseFormModal";
 
 const ACTIONS = [
-  { key: "customer", label: "Add new customer", icon: UserPlus },
-  { key: "loan", label: "Create new loan", icon: FilePlus },
-  { key: "payment", label: "Record a payment", icon: Wallet },
-  { key: "expense", label: "Log an expense", icon: Receipt },
+  { key: "customer", label: "Add new customer", icon: UserPlus, bg: "#FCE4E4", color: "#E31E24" },
+  { key: "loan", label: "Create new loan", icon: FilePlus, bg: "#FCE4E4", color: "#E31E24" },
+  { key: "payment", label: "Record a payment", icon: Wallet, bg: "#FCE4E4", color: "#E31E24" },
+  { key: "expense", label: "Log an expense", icon: Receipt, bg: "#FCE4E4", color: "#E31E24" },
 ] as const;
 
 export default function QuickActions() {
@@ -36,9 +36,14 @@ export default function QuickActions() {
             key={a.key}
             type="button"
             onClick={() => handleClick(a.key)}
-            className="w-full flex items-center gap-2 text-sm font-medium text-[#1A1A18] rounded-lg border border-[#E5E7EB] px-4 py-3 hover:bg-[#F8FAFC] transition-colors"
+            className="w-full flex items-center gap-3 text-sm font-medium text-[#1A1A18] rounded-lg border border-[#E5E7EB] px-3 py-2.5 hover:bg-[#F8FAFC] transition-colors"
           >
-            <a.icon size={16} className="text-[#45443E]" />
+            <span
+              className="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: a.bg, color: a.color }}
+            >
+              <a.icon size={15} />
+            </span>
             {a.label}
           </button>
         ))}

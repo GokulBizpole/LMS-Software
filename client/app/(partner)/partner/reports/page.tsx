@@ -27,7 +27,7 @@ const REPORTS = [
     description: "Loans with a pending balance, sorted by amount owed.",
     icon: AlertTriangle,
     iconBg: "#FAECE7",
-    iconColor: "#993C1D",
+    iconColor: "#E31E24",
   },
 ];
 
@@ -46,7 +46,7 @@ export default function PartnerReportsHubPage() {
             <Link
               key={r.href}
               href={r.href}
-              className="rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:shadow-sm transition-shadow"
+              className="rounded-2xl border border-[#E31E24] bg-white p-5 hover:shadow-sm transition-shadow"
             >
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center mb-4"

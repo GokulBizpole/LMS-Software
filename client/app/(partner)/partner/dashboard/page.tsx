@@ -34,9 +34,9 @@ export default function PartnerDashboardPage() {
     const canRetry = errorType !== "unauthorized";
     return (
       <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center">
-        <p className="text-[#993C1D] font-medium mb-2">{error ?? "No data available."}</p>
+        <p className="text-[#E31E24] font-medium mb-2">{error ?? "No data available."}</p>
         {canRetry && (
-          <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+          <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
             Try again
           </button>
         )}

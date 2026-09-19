@@ -47,7 +47,7 @@ export function ViewModalShell({
       <div
         className={`relative w-full ${maxWidth} max-h-[90vh] rounded-2xl bg-white shadow-xl flex flex-col`}
       >
-        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#DAD7CA] shrink-0">
+        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#E31E24] shrink-0">
           <h2 className="text-lg font-semibold text-[#1A1A18]">{title}</h2>
           <div className="flex items-center gap-3 shrink-0">
             {actions}
@@ -124,7 +124,7 @@ export function ViewModalTabs({
   onChange: (key: string) => void;
 }) {
   return (
-    <div className="flex gap-1 border-b border-[#DAD7CA] px-6">
+    <div className="flex gap-1 border-b border-[#E31E24] px-6">
       {tabs.map((t) => (
         <button
           key={t.key}

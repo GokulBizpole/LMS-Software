@@ -11,7 +11,7 @@ const VARIANT_STYLES: Record<
   { bg: string; text: string; Icon: typeof CheckCircle2 }
 > = {
   success: { bg: "#EAF3DE", text: "#3B6D11", Icon: CheckCircle2 },
-  error: { bg: "#FAECE7", text: "#993C1D", Icon: XCircle },
+  error: { bg: "#FAECE7", text: "#E31E24", Icon: XCircle },
   warning: { bg: "#FAEEDA", text: "#854F0B", Icon: AlertTriangle },
   info: { bg: "#E6F1FB", text: "#185FA5", Icon: Info },
 };

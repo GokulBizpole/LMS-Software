@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#ECE9DF]">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm bg-white rounded-2xl border border-[#DAD7CA] p-8"
+        className="w-full max-w-sm bg-white rounded-2xl border border-[#E31E24] p-8"
       >
         <Image src="/logo.svg" alt="SKA Trust" width={48} height={48} className="mb-3" />
         <h1 className="text-lg font-semibold text-[#1A1A18] mb-1">

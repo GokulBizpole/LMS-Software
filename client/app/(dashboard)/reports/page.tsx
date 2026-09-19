@@ -93,7 +93,7 @@ export default function ReportsDashboardPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-2">{error}</p>
           <button onClick={refetch} className="text-sm font-semibold underline">
             Try again
@@ -106,8 +106,8 @@ export default function ReportsDashboardPage() {
           <StatCard title="Active loans" value={String(data.activeLoans)} icon={FileText} iconBg="#EEEDFE" iconColor="#534AB7" />
           <StatCard title="Total loan amount" value={formatCurrency(data.totalLoanAmount)} icon={Wallet} iconBg="#E6F1FB" iconColor="#185FA5" />
           <StatCard title="Total collection" value={formatCurrency(data.totalCollection)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
-          <StatCard title="Outstanding amount" value={formatCurrency(data.outstandingAmount)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
-          <StatCard title="Total expense" value={formatCurrency(data.totalExpense)} icon={Receipt} iconBg="#FAECE7" iconColor="#993C1D" />
+          <StatCard title="Outstanding amount" value={formatCurrency(data.outstandingAmount)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
+          <StatCard title="Total expense" value={formatCurrency(data.totalExpense)} icon={Receipt} iconBg="#FAECE7" iconColor="#E31E24" />
           <StatCard title="Net profit" value={formatCurrency(netProfit)} icon={TrendingUp} iconBg="#EAF3DE" iconColor="#3B6D11" />
         </div>
       ) : null}
@@ -119,7 +119,7 @@ export default function ReportsDashboardPage() {
             <Link
               key={r.href}
               href={r.href}
-              className="rounded-2xl border border-[#DAD7CA] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
+              className="rounded-2xl border border-[#E31E24] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
             >
               <p className="text-sm font-semibold text-[#1A1A18] mb-1">{r.label}</p>
               <p className="text-xs text-[#6B6A62]">{r.description}</p>

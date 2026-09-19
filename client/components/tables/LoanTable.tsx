@@ -5,12 +5,12 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
 
 const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
-  PENDING: { bg: "#FAEEDA", text: "#854F0B" },
+  PENDING: { bg: "#FCE4E4", text: "#E31E24" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: LoanStatus }) {

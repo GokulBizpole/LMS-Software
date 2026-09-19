@@ -108,6 +108,6 @@ export const THEME_COLOR_OPTIONS = [
   "#0E6B4F",
   "#1A1A18",
   "#185FA5",
-  "#993C1D",
+  "#E31E24",
   "#534AB7",
 ];

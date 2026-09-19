@@ -161,7 +161,7 @@ function Section({
   edit: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+    <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-sm font-semibold text-[#1A1A18]">{title}</h2>
@@ -182,7 +182,7 @@ function Section({
         {isEditing ? (
           <form onSubmit={onSubmit}>
             {edit}
-            <div className="flex items-center justify-end gap-3 border-t border-[#DAD7CA] mt-6 pt-4">
+            <div className="flex items-center justify-end gap-3 border-t border-[#E31E24] mt-6 pt-4">
               <button
                 type="button"
                 onClick={onCancel}
@@ -294,7 +294,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="flex gap-1 border-b border-[#DAD7CA] flex-wrap">
+      <div className="flex gap-1 border-b border-[#E31E24] flex-wrap">
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -317,13 +317,13 @@ export default function SettingsPage() {
           ))}
         </div>
       ) : error ? (
-        <p className="text-sm text-[#993C1D]">{error}</p>
+        <p className="text-sm text-[#E31E24]">{error}</p>
       ) : tab === "audit" ? (
         <AuditLogTab />
       ) : (
         <div className="space-y-6">
           {user && (
-            <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+            <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
               <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Signed in as</h2>
               <p className="text-sm text-[#1A1A18]">{user.name}</p>
               <p className="text-xs text-[#6B6A62]">
@@ -687,7 +687,7 @@ export default function SettingsPage() {
                         type="button"
                         disabled={logoBusy}
                         onClick={handleLogoRemove}
-                        className="mt-2 text-xs font-medium text-[#993C1D] hover:underline disabled:opacity-50"
+                        className="mt-2 text-xs font-medium text-[#E31E24] hover:underline disabled:opacity-50"
                       >
                         Remove logo
                       </button>
@@ -772,7 +772,7 @@ function AuditLogTab() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
         <div className="flex items-center justify-between">
           <p className="text-sm text-[#45443E]">
             {total} log{total !== 1 ? "s" : ""}
@@ -790,8 +790,8 @@ function AuditLogTab() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

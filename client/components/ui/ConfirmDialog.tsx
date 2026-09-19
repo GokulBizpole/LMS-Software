@@ -32,7 +32,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={confirming}
-            className="bg-[#993C1D] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+            className="bg-[#E31E24] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {confirming ? "Deleting..." : confirmLabel}
           </button>

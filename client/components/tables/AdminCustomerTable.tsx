@@ -15,7 +15,7 @@ import StatusDot from "@/components/ui/StatusDot";
 
 const STATUS_STYLE: Record<Customer["status"], { color: string; label: string }> = {
   ACTIVE: { color: "#3B6D11", label: "Active" },
-  BLOCKED: { color: "#993C1D", label: "Blocked" },
+  BLOCKED: { color: "#E31E24", label: "Blocked" },
   CLOSED: { color: "#6B6A62", label: "Closed" },
 };
 
@@ -106,7 +106,7 @@ export default function AdminCustomerTable({
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-[11px] font-semibold">
+                    <div className="w-8 h-8 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-[11px] font-semibold">
                       {initials}
                     </div>
                     <div>

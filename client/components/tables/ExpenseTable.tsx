@@ -14,7 +14,7 @@ const CATEGORY_STYLES: Record<ExpenseCategory, { bg: string; text: string }> = {
   OFFICE: { bg: "#E6F1FB", text: "#185FA5" },
   SALARY: { bg: "#EAF3DE", text: "#3B6D11" },
   PETROL: { bg: "#FAEEDA", text: "#854F0B" },
-  ELECTRICITY: { bg: "#FAECE7", text: "#993C1D" },
+  ELECTRICITY: { bg: "#FAECE7", text: "#E31E24" },
   RENT: { bg: "#EEEDFE", text: "#534AB7" },
   OTHER: { bg: "#ECE9DF", text: "#45443E" },
 };
@@ -112,7 +112,7 @@ export default function ExpenseTable({
                   <button
                     onClick={() => setConfirmingId(e.id)}
                     disabled={deletingId === e.id}
-                    className="text-[#993C1D] font-medium hover:underline disabled:opacity-50"
+                    className="text-[#E31E24] font-medium hover:underline disabled:opacity-50"
                   >
                     {deletingId === e.id ? "Deleting..." : "Delete"}
                   </button>

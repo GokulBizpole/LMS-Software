@@ -12,7 +12,7 @@ import { formatDate } from "@/utils/formatDate";
 const STATUS_STYLES: Record<EodStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   CLOSED: { bg: "#EAF3DE", text: "#3B6D11" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: EodStatus }) {
@@ -41,7 +41,7 @@ function DetailSkeleton() {
     <div className="space-y-6 animate-pulse">
       <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
       <div className="h-6 w-56 bg-[#ECE9DF] rounded" />
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 space-y-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 space-y-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-10 bg-[#ECE9DF] rounded" />
@@ -92,7 +92,7 @@ export default function EodReportDetailPage() {
         <Link href="/eod" className="text-sm text-[#185FA5]">
           ← Back to EOD reports
         </Link>
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-3">{loadError ?? "EOD report not found."}</p>
           <button onClick={load} className="text-sm font-semibold underline">
             Try again
@@ -151,7 +151,7 @@ export default function EodReportDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
               <div>
                 <p className="text-xs text-[#6B6A62] mb-2">Partner</p>
@@ -176,12 +176,12 @@ export default function EodReportDetailPage() {
             {report.status === "REJECTED" && report.rejectionReason && (
               <div className="border-t border-[#ECE9DF] pt-4 mt-4">
                 <p className="text-xs text-[#6B6A62] mb-1">Rejection reason</p>
-                <p className="text-sm text-[#993C1D]">{report.rejectionReason}</p>
+                <p className="text-sm text-[#E31E24]">{report.rejectionReason}</p>
               </div>
             )}
           </div>
 
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
             <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">
               Expenses ({report.expenses.length})
             </h2>
@@ -207,11 +207,11 @@ export default function EodReportDetailPage() {
           </div>
 
           {isPending && (
-            <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+            <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
               <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Decision</h2>
 
               {actionError && (
-                <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
+                <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#E31E24] mb-4">
                   {actionError}
                 </div>
               )}
@@ -231,7 +231,7 @@ export default function EodReportDetailPage() {
                 <button
                   onClick={handleReject}
                   disabled={submitting !== null}
-                  className="flex-1 border border-[#993C1D] text-[#993C1D] text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+                  className="flex-1 border border-[#E31E24] text-[#E31E24] text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
                 >
                   {submitting === "reject" ? "Rejecting..." : "✕ Reject report"}
                 </button>
@@ -248,7 +248,7 @@ export default function EodReportDetailPage() {
         </div>
 
         {isPending && (
-          <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6 h-fit">
+          <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-6 h-fit">
             <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">What happens next</h2>
             <div className="space-y-4 text-sm text-[#45443E]">
               <div>

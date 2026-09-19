@@ -96,7 +96,7 @@ export default function ProfitLossReportPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-2">{error}</p>
           <button onClick={refetch} className="text-sm font-semibold underline">
             Try again
@@ -107,15 +107,15 @@ export default function ProfitLossReportPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <StatCard title="Total loan amount" value={formatCurrency(summary.totalLoanAmount)} icon={Wallet} iconBg="#E6F1FB" iconColor="#185FA5" />
             <StatCard title="Total collection" value={formatCurrency(summary.totalCollection)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
-            <StatCard title="Total expense" value={formatCurrency(summary.totalExpense)} icon={Receipt} iconBg="#FAECE7" iconColor="#993C1D" />
+            <StatCard title="Total expense" value={formatCurrency(summary.totalExpense)} icon={Receipt} iconBg="#FAECE7" iconColor="#E31E24" />
             <StatCard title="Outstanding" value={formatCurrency(summary.outstandingAmount)} icon={AlertTriangle} iconBg="#FAEEDA" iconColor="#854F0B" />
             <StatCard title="Net profit" value={formatCurrency(summary.netProfit)} icon={TrendingUp} iconBg="#EAF3DE" iconColor="#3B6D11" />
           </div>
 
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-5">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#DAD7CA]">
+                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#E31E24]">
                   <th className="py-2 pr-4 font-medium">Line item</th>
                   <th className="py-2 pr-4 font-medium text-right">Amount</th>
                 </tr>

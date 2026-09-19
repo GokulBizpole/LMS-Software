@@ -20,7 +20,7 @@ function TrendRow({ trend, trendLabel, fallback }: { trend: Trend; trendLabel: s
 
   const isUp = trend.direction === "up";
   const isFlat = trend.direction === "flat";
-  const color = isFlat ? "#6B6A62" : isUp ? "#3B6D11" : "#993C1D";
+  const color = isFlat ? "#6B6A62" : isUp ? "#3B6D11" : "#E31E24";
   const arrow = isFlat ? "•" : isUp ? "▲" : "▼";
 
   return (

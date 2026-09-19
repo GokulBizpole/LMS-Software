@@ -5,8 +5,10 @@ import { useState } from "react";
 import type { WeeklyTrendDay } from "@/types/dashboard";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const BAR_COLOR = "#185FA5";
-const FUTURE_BAR_COLOR = "#E6F1FB";
+// Single-hue gradient (light -> dark) in the app's now-established red brand
+// accent (#E31E24), matching the sidebar/header/logo.
+const BAR_GRADIENT = "linear-gradient(180deg, #F0555B 0%, #E31E24 100%)";
+const FUTURE_BAR_COLOR = "#FCE4E4";
 
 export default function CollectionTrendChart({
   data,
@@ -40,10 +42,10 @@ export default function CollectionTrendChart({
                 </div>
               )}
               <div
-                className="w-full rounded-t-md transition-[height] duration-150"
+                className="w-full rounded-t-lg transition-[height] duration-150"
                 style={{
                   height: `${heightPct}%`,
-                  backgroundColor: d.future ? FUTURE_BAR_COLOR : BAR_COLOR,
+                  background: d.future ? FUTURE_BAR_COLOR : BAR_GRADIENT,
                   opacity: isHovered && !d.future ? 0.85 : 1,
                 }}
               />

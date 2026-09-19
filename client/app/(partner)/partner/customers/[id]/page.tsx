@@ -126,7 +126,7 @@ export default function PartnerCustomerDetailPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 h-24" />
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6 h-24" />
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default function PartnerCustomerDetailPage() {
         <Link href="/partner/customers" className="text-sm text-[#185FA5]">
           ← Back to customers
         </Link>
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-3">{error ?? "Customer not found."}</p>
           <button onClick={load} className="text-sm font-semibold underline">
             Try again
@@ -164,9 +164,9 @@ export default function PartnerCustomerDetailPage() {
         ← Back to customers
       </button>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-lg font-semibold">
+          <div className="w-14 h-14 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-lg font-semibold">
             {initials}
           </div>
           <div>
@@ -207,7 +207,7 @@ export default function PartnerCustomerDetailPage() {
 
       {tab === "Overview" && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
             <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Personal details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Field label="Phone" value={customer.phone} />
@@ -221,7 +221,7 @@ export default function PartnerCustomerDetailPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
             <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Guarantor</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Field label="Guarantor name" value={customer.guarantorName} />
@@ -229,7 +229,7 @@ export default function PartnerCustomerDetailPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Field label="Registered" value={formatDate(customer.createdAt)} />
               <Field label="Last updated" value={formatDate(customer.updatedAt)} />
@@ -253,7 +253,7 @@ export default function PartnerCustomerDetailPage() {
       {tab === "Documents" && (
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 space-y-4">
           {docError && (
-            <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D]">
+            <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#E31E24]">
               {docError}
             </div>
           )}
@@ -315,7 +315,7 @@ export default function PartnerCustomerDetailPage() {
                       <td className="py-3 px-4 text-right">
                         <button
                           onClick={() => handleDeleteDocument(d.id)}
-                          className="text-[#993C1D] font-medium hover:underline"
+                          className="text-[#E31E24] font-medium hover:underline"
                         >
                           Delete
                         </button>

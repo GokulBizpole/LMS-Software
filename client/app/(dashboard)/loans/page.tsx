@@ -18,12 +18,12 @@ const TABS: { key: "ALL" | LoanStatus; label: string }[] = [
 ];
 
 const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
-  PENDING: { bg: "#FAEEDA", text: "#854F0B" },
+  PENDING: { bg: "#FCE4E4", text: "#E31E24" },
   APPROVED: { bg: "#EAF3DE", text: "#3B6D11" },
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: LoanStatus }) {
@@ -57,11 +57,11 @@ function LoanCard({ loan, onView }: { loan: Loan; onView: (id: string) => void }
     .slice(0, 2)
     .toUpperCase();
 
-  const borderAccent = isPending ? "border-l-4 border-l-[#D98324]" : "";
+  const borderAccent = isPending ? "border-l-4 border-l-[#E31E24]" : "";
 
   return (
     <div
-      className={`rounded-2xl border border-[#DAD7CA] bg-white p-5 ${borderAccent}`}
+      className={`rounded-2xl border border-[#E31E24] bg-white p-5 ${borderAccent}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div className="flex items-start gap-3">
@@ -71,7 +71,7 @@ function LoanCard({ loan, onView }: { loan: Loan; onView: (id: string) => void }
               <StatusBadge status={loan.status} />
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#993C1D] text-[11px] font-semibold">
+              <div className="w-7 h-7 shrink-0 rounded-full bg-[#FAECE7] flex items-center justify-center text-[#E31E24] text-[11px] font-semibold">
                 {initials}
               </div>
               <div>
@@ -192,14 +192,14 @@ export default function LoansPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-2">{error}</p>
           <button onClick={refetch} className="text-sm font-semibold underline">
             Try again
           </button>
         </div>
       ) : filteredLoans.length === 0 ? (
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-10 text-center text-sm text-[#6B6A62]">
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-10 text-center text-sm text-[#6B6A62]">
           No loans found for this filter.
         </div>
       ) : (

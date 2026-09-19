@@ -47,7 +47,7 @@ const LOAN_STATUS_STYLES: Record<PartnerLoanSummary["status"], { bg: string; tex
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
@@ -61,7 +61,7 @@ function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[#DAD7CA] bg-[#ECE9DF] p-4">
+    <div className="rounded-xl border border-[#E31E24] bg-[#ECE9DF] p-4">
       <p className="text-xs text-[#45443E] mb-1">{label}</p>
       <p className="text-lg font-bold text-[#1A1A18]">{value}</p>
     </div>
@@ -146,7 +146,7 @@ export default function PartnerViewModal({
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-[#993C1D] text-[#993C1D] hover:bg-[#FAECE7]"
+                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-[#E31E24] text-[#E31E24] hover:bg-[#FAECE7]"
               >
                 <Trash2 size={14} />
                 Delete
@@ -161,7 +161,7 @@ export default function PartnerViewModal({
             <div className="h-32 bg-[#ECE9DF] rounded-xl" />
           </div>
         ) : error || !partner ? (
-          <div className="p-6 text-center text-sm text-[#993C1D]">{error ?? "Partner not found."}</div>
+          <div className="p-6 text-center text-sm text-[#E31E24]">{error ?? "Partner not found."}</div>
         ) : (
           <>
             <ViewModalSummary

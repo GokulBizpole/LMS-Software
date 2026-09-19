@@ -17,7 +17,7 @@ import StatusDot from "@/components/ui/StatusDot";
 const STATUS_STYLE: Record<PaymentStatus, { color: string; label: string }> = {
   PAID: { color: "#3B6D11", label: "Paid" },
   PENDING: { color: "#854F0B", label: "Pending" },
-  LATE: { color: "#993C1D", label: "Late" },
+  LATE: { color: "#E31E24", label: "Late" },
 };
 
 export default function AdminPaymentTable({ payments }: { payments: Payment[] }) {

@@ -92,13 +92,13 @@ git commit -m "Add overflow-x safety net for mobile layouts"
 In `client/components/ui/FilterPopover.tsx`, change line 99 from:
 
 ```tsx
-        <div className="absolute right-0 z-40 mt-2 w-[340px] rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-[340px] rounded-2xl border border-[#E31E24] bg-white p-5 shadow-xl">
 ```
 
 to:
 
 ```tsx
-        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-[340px] rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-[340px] rounded-2xl border border-[#E31E24] bg-white p-5 shadow-xl">
 ```
 
 - [ ] **Step 2: Verify**

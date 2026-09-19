@@ -49,7 +49,7 @@ export default function PartnersPage() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="flex items-center gap-2 border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
+            className="flex items-center gap-2 bg-[#FCE4E4] text-sm font-medium px-4 py-2 rounded-lg text-[#E31E24] hover:bg-[#E31E24]/15"
           >
             <Download size={15} />
             Export
@@ -133,8 +133,8 @@ export default function PartnersPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

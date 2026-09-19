@@ -99,7 +99,7 @@ export default function PartnerReportPage() {
         <StatCard title="Partners" value={String(summary.count)} icon={Handshake} iconBg="#ECE9DF" iconColor="#45443E" />
         <StatCard title="Total investment" value={formatCurrency(summary.totalInvestment)} icon={Wallet} iconBg="#E6F1FB" iconColor="#185FA5" />
         <StatCard title="Total collection" value={formatCurrency(summary.totalCollection)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <StatCard title="Total outstanding" value={formatCurrency(summary.totalOutstanding)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
+        <StatCard title="Total outstanding" value={formatCurrency(summary.totalOutstanding)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
       </div>
 
       <div className="flex items-center gap-3">
@@ -122,8 +122,8 @@ export default function PartnerReportPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

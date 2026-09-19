@@ -36,7 +36,7 @@ const LOAN_STATUS_STYLES: Record<PartnerLoanSummary["status"], { bg: string; tex
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
@@ -53,7 +53,7 @@ function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-5">
+    <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-5">
       <p className="text-xs text-[#45443E] mb-1">{label}</p>
       <p className="text-xl font-bold text-[#1A1A18]">{value}</p>
     </div>
@@ -110,7 +110,7 @@ export default function PartnerDetailPage() {
 
   if (error || !partner) {
     return (
-      <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+      <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
         {error ?? "Partner not found."}
       </div>
     );
@@ -133,7 +133,7 @@ export default function PartnerDetailPage() {
       </button>
 
       {/* Profile header */}
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center justify-between">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[#534AB7] text-lg font-semibold">
             {initials}
@@ -159,7 +159,7 @@ export default function PartnerDetailPage() {
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}
-            className="flex items-center gap-2 border border-[#993C1D] text-sm font-medium px-4 py-2 rounded-lg text-[#993C1D] hover:bg-[#FAECE7] disabled:opacity-50"
+            className="flex items-center gap-2 border border-[#E31E24] text-sm font-medium px-4 py-2 rounded-lg text-[#E31E24] hover:bg-[#FAECE7] disabled:opacity-50"
           >
             <Trash2 size={16} />
             {deleting ? "Deleting..." : "Delete"}
@@ -178,7 +178,7 @@ export default function PartnerDetailPage() {
       </div>
 
       {/* Contact details */}
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Contact details</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
           <Field label="Phone" value={partner.phone} />
@@ -187,7 +187,7 @@ export default function PartnerDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-6">
         <div className="grid grid-cols-2 gap-6">
           <Field label="Joined" value={formatDate(partner.createdAt)} />
           <Field label="Last updated" value={formatDate(partner.updatedAt)} />
@@ -195,7 +195,7 @@ export default function PartnerDetailPage() {
       </div>
 
       {/* Borrowers */}
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">
           Customers who received loans through this partner
         </h2>
@@ -208,7 +208,7 @@ export default function PartnerDetailPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#DAD7CA]">
+                <tr className="text-left text-[#6B6A62] text-xs border-b border-[#E31E24]">
                   <th className="py-2 pr-4 font-medium">Loan no</th>
                   <th className="py-2 pr-4 font-medium">Customer</th>
                   <th className="py-2 pr-4 font-medium">Principal</th>

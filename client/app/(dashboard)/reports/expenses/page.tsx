@@ -142,7 +142,7 @@ export default function ExpenseReportPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total expenses" value={String(total)} icon={ListChecks} iconBg="#ECE9DF" iconColor="#45443E" />
-        <StatCard title="Total amount" value={formatCurrency(totalAmount)} icon={Receipt} iconBg="#FAECE7" iconColor="#993C1D" />
+        <StatCard title="Total amount" value={formatCurrency(totalAmount)} icon={Receipt} iconBg="#FAECE7" iconColor="#E31E24" />
       </div>
 
       <div className="flex items-center gap-3">
@@ -168,8 +168,8 @@ export default function ExpenseReportPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

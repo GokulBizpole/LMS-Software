@@ -21,7 +21,7 @@ export const NOTIFICATION_SEVERITY_STYLES: Record<
 > = {
   SUCCESS: { bg: "#EAF3DE", color: "#3B6D11" },
   WARNING: { bg: "#FAEEDA", color: "#854F0B" },
-  ERROR: { bg: "#FAECE7", color: "#993C1D" },
+  ERROR: { bg: "#FAECE7", color: "#E31E24" },
   INFO: { bg: "#E6F1FB", color: "#185FA5" },
 };
 

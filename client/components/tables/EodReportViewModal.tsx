@@ -18,7 +18,7 @@ import { formatDate } from "@/utils/formatDate";
 const STATUS_STYLES: Record<EodStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   CLOSED: { bg: "#EAF3DE", text: "#3B6D11" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: EodStatus }) {
@@ -78,7 +78,7 @@ export default function EodReportViewModal({
           <div className="h-32 bg-[#ECE9DF] rounded-xl" />
         </div>
       ) : error || !report ? (
-        <div className="p-6 text-center text-sm text-[#993C1D]">{error ?? "EOD report not found."}</div>
+        <div className="p-6 text-center text-sm text-[#E31E24]">{error ?? "EOD report not found."}</div>
       ) : (
         <>
           <ViewModalSummary
@@ -119,7 +119,7 @@ export default function EodReportViewModal({
 
             {report.status === "REJECTED" && report.rejectionReason && (
               <ViewModalSection title="Rejection Reason">
-                <p className="text-sm text-[#993C1D] pt-1">{report.rejectionReason}</p>
+                <p className="text-sm text-[#E31E24] pt-1">{report.rejectionReason}</p>
               </ViewModalSection>
             )}
           </div>

@@ -14,7 +14,7 @@ import { formatDate } from "@/utils/formatDate";
 const STATUS_STYLES: Record<EodStatus, { bg: string; text: string }> = {
   PENDING: { bg: "#FAEEDA", text: "#854F0B" },
   CLOSED: { bg: "#EAF3DE", text: "#3B6D11" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: EodStatus }) {
@@ -152,7 +152,7 @@ export default function PartnerEodPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <label className="block text-xs text-[#6B6A62] mb-1">Report date</label>
         <input
           type="date"
@@ -164,12 +164,12 @@ export default function PartnerEodPage() {
       </div>
 
       {loadingPreview ? (
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 space-y-3 animate-pulse">
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6 space-y-3 animate-pulse">
           <div className="h-10 bg-[#ECE9DF] rounded" />
           <div className="h-10 bg-[#ECE9DF] rounded" />
         </div>
       ) : previewError ? (
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-3">{previewError}</p>
           <button onClick={() => loadPreview(reportDate)} className="text-sm font-semibold underline">
             Try again
@@ -177,7 +177,7 @@ export default function PartnerEodPage() {
         </div>
       ) : (
         <>
-          <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+          <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
             <div className="flex items-center gap-3 mb-4">
               <h2 className="text-sm font-semibold text-[#1A1A18]">
                 Report for {formatDate(reportDate)}
@@ -186,7 +186,7 @@ export default function PartnerEodPage() {
             </div>
 
             {isResubmit && existing?.rejectionReason && (
-              <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
+              <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#E31E24] mb-4">
                 <p className="font-medium mb-0.5">This report was rejected:</p>
                 <p>{existing.rejectionReason}</p>
                 <p className="mt-1 text-xs">Update the expenses below and resubmit.</p>
@@ -211,7 +211,7 @@ export default function PartnerEodPage() {
           </div>
 
           {isLocked ? (
-            <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+            <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
               <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">
                 Expenses ({existing!.expenses.length})
               </h2>
@@ -240,7 +240,7 @@ export default function PartnerEodPage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+            <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-[#1A1A18]">Expenses</h2>
                 <button
@@ -253,7 +253,7 @@ export default function PartnerEodPage() {
               </div>
 
               {formError && (
-                <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#993C1D] mb-4">
+                <div className="rounded-lg border border-[#FAECE7] bg-[#FAECE7] p-3 text-sm text-[#E31E24] mb-4">
                   {formError}
                 </div>
               )}
@@ -307,7 +307,7 @@ export default function PartnerEodPage() {
                       <button
                         type="button"
                         onClick={() => removeRow(row.key)}
-                        className="text-sm font-medium text-[#993C1D] hover:underline px-2 py-2"
+                        className="text-sm font-medium text-[#E31E24] hover:underline px-2 py-2"
                       >
                         Remove
                       </button>

@@ -89,14 +89,14 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
       >
         Filter
         {visibleKeys.length > 0 && (
-          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#D98324] text-white text-[11px] font-semibold">
+          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#E31E24] text-white text-[11px] font-semibold">
             {visibleKeys.length}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-85 rounded-2xl border border-[#DAD7CA] bg-white p-5 shadow-xl">
+        <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-85 rounded-2xl border border-[#E31E24] bg-white p-5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1A1A18]">
               Filters{visibleKeys.length > 0 ? ` (${visibleKeys.length})` : ""}
@@ -112,7 +112,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
                   + Add filter
                 </button>
                 {addMenuOpen && (
-                  <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border border-[#DAD7CA] bg-white py-1 shadow-lg">
+                  <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border border-[#E31E24] bg-white py-1 shadow-lg">
                     {hiddenFields.map((f) => (
                       <button
                         key={f.key}
@@ -136,7 +136,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
               {visibleFields.map((field, i) => (
                 <div
                   key={field.key}
-                  className="rounded-lg border border-[#DAD7CA] bg-[#FAFAF7] p-3"
+                  className="rounded-lg border border-[#E31E24] bg-[#FAFAF7] p-3"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-medium tracking-wide text-[#6B6A62]">
@@ -197,7 +197,7 @@ export default function FilterPopover({ fields }: { fields: FilterFieldSpec[] })
               type="button"
               onClick={handleClearAll}
               disabled={visibleKeys.length === 0}
-              className="text-sm font-medium text-[#993C1D] hover:underline disabled:opacity-40 disabled:hover:no-underline"
+              className="text-sm font-medium text-[#E31E24] hover:underline disabled:opacity-40 disabled:hover:no-underline"
             >
               Clear all
             </button>

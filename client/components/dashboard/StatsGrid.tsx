@@ -99,7 +99,7 @@ export default function StatsGrid({
       value: String(stats.rejectedLoans),
       icon: AlertTriangle,
       iconBg: "#FAECE7",
-      iconColor: "#993C1D",
+      iconColor: "#E31E24",
     },
 
     {
@@ -123,7 +123,7 @@ export default function StatsGrid({
       value: formatCurrency(Number(stats.outstandingAmount)),
       icon: AlertTriangle,
       iconBg: "#FAECE7",
-      iconColor: "#993C1D",
+      iconColor: "#E31E24",
     },
 
     {
@@ -139,7 +139,7 @@ export default function StatsGrid({
       value: formatCurrency(Number(stats.monthlyExpense)),
       icon: Receipt,
       iconBg: "#FAECE7",
-      iconColor: "#993C1D",
+      iconColor: "#E31E24",
     },
 
     {
@@ -147,7 +147,7 @@ export default function StatsGrid({
       value: formatCurrency(Number(stats.totalExpense)),
       icon: Receipt,
       iconBg: "#FAECE7",
-      iconColor: "#993C1D",
+      iconColor: "#E31E24",
     },
 
     {
@@ -163,7 +163,7 @@ export default function StatsGrid({
       value: formatCurrency(Number(stats.todayExpense)),
       icon: Receipt,
       iconBg: "#FAECE7",
-      iconColor: "#993C1D",
+      iconColor: "#E31E24",
     },
   ];
 

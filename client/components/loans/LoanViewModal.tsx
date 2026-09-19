@@ -21,7 +21,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: LoanStatus }) {
@@ -81,7 +81,7 @@ export default function LoanViewModal({
           <div className="h-32 bg-[#ECE9DF] rounded-xl" />
         </div>
       ) : error || !loan ? (
-        <div className="p-6 text-center text-sm text-[#993C1D]">{error ?? "Loan not found."}</div>
+        <div className="p-6 text-center text-sm text-[#E31E24]">{error ?? "Loan not found."}</div>
       ) : (
         <>
           <ViewModalSummary
@@ -119,7 +119,7 @@ export default function LoanViewModal({
 
             {loan.status === "REJECTED" && loan.rejectionReason && (
               <ViewModalSection title="Rejection Reason">
-                <p className="text-sm text-[#993C1D] pt-1">{loan.rejectionReason}</p>
+                <p className="text-sm text-[#E31E24] pt-1">{loan.rejectionReason}</p>
               </ViewModalSection>
             )}
           </div>

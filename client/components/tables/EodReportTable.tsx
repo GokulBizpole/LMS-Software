@@ -11,7 +11,7 @@ import StatusDot from "@/components/ui/StatusDot";
 const STATUS_STYLE: Record<EodStatus, { color: string; label: string }> = {
   PENDING: { color: "#854F0B", label: "Pending" },
   CLOSED: { color: "#3B6D11", label: "Closed" },
-  REJECTED: { color: "#993C1D", label: "Rejected" },
+  REJECTED: { color: "#E31E24", label: "Rejected" },
 };
 
 export default function EodReportTable({

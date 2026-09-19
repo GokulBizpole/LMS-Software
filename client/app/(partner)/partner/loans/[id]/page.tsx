@@ -16,7 +16,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   ACTIVE: { bg: "#EAF3DE", text: "#3B6D11" },
   CLOSED: { bg: "#ECE9DF", text: "#45443E" },
   OVERDUE: { bg: "#FAEEDA", text: "#854F0B" },
-  REJECTED: { bg: "#FAECE7", text: "#993C1D" },
+  REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
 function StatusBadge({ status }: { status: LoanStatus }) {
@@ -69,7 +69,7 @@ export default function PartnerLoanDetailPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-4 w-32 bg-[#ECE9DF] rounded" />
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 h-40" />
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6 h-40" />
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function PartnerLoanDetailPage() {
         <Link href="/partner/loans" className="text-sm text-[#185FA5]">
           ← Back to loans
         </Link>
-        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+        <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
           <p className="mb-3">{error ?? "Loan not found."}</p>
           <button onClick={load} className="text-sm font-semibold underline">
             Try again
@@ -113,7 +113,7 @@ export default function PartnerLoanDetailPage() {
         )}
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
           <div>
             <p className="text-xs text-[#6B6A62] mb-2">Customer</p>
@@ -156,12 +156,12 @@ export default function PartnerLoanDetailPage() {
         {loan.status === "REJECTED" && loan.rejectionReason && (
           <div className="border-t border-[#ECE9DF] pt-4 mt-4">
             <p className="text-xs text-[#6B6A62] mb-1">Rejection reason</p>
-            <p className="text-sm text-[#993C1D]">{loan.rejectionReason}</p>
+            <p className="text-sm text-[#E31E24]">{loan.rejectionReason}</p>
           </div>
         )}
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Repayment schedule</h2>
         {!loan.schedules || loan.schedules.length === 0 ? (
           <div className="flex items-center justify-center h-24 text-sm text-[#6B6A62]">

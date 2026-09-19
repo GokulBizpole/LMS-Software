@@ -50,7 +50,7 @@ export default function CustomersPage() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="flex items-center gap-2 border border-[#9C9A8D] text-sm font-medium px-4 py-2 rounded-lg text-[#45443E] hover:bg-[#ECE9DF]"
+            className="flex items-center gap-2 bg-[#FCE4E4] text-sm font-medium px-4 py-2 rounded-lg text-[#E31E24] hover:bg-[#E31E24]/15"
           >
             <Download size={15} />
             Export
@@ -68,7 +68,7 @@ export default function CustomersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <ListStatCard label="Total customers" value={stats.total} icon={Users} iconBg="#E6F1FB" iconColor="#185FA5" />
         <ListStatCard label="Active" value={stats.active} icon={CheckCircle2} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <ListStatCard label="Blocked" value={stats.blocked} icon={Ban} iconBg="#FAECE7" iconColor="#993C1D" />
+        <ListStatCard label="Blocked" value={stats.blocked} icon={Ban} iconBg="#FAECE7" iconColor="#E31E24" />
         <ListStatCard
           label="Added this month"
           value={stats.addedThisMonth}
@@ -134,8 +134,8 @@ export default function CustomersPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

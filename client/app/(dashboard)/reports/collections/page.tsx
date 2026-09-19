@@ -163,7 +163,7 @@ export default function CollectionReportPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total received" value={formatCurrency(summary.totalReceived)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <StatCard title="Total penalty" value={formatCurrency(summary.totalPenalty)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#993C1D" />
+        <StatCard title="Total penalty" value={formatCurrency(summary.totalPenalty)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
         <StatCard title="Payments" value={String(summary.count)} icon={Receipt} iconBg="#ECE9DF" iconColor="#45443E" />
         <StatCard title="Paid / Pending / Late" value={`${summary.byStatus.PAID ?? 0} / ${summary.byStatus.PENDING ?? 0} / ${summary.byStatus.LATE ?? 0}`} icon={ListChecks} iconBg="#EEEDFE" iconColor="#534AB7" />
       </div>
@@ -188,8 +188,8 @@ export default function CollectionReportPage() {
           </div>
         ) : error ? (
           <div className="text-center py-6">
-            <p className="text-[#993C1D] text-sm mb-2">{error}</p>
-            <button onClick={refetch} className="text-sm font-semibold text-[#993C1D] underline">
+            <p className="text-[#E31E24] text-sm mb-2">{error}</p>
+            <button onClick={refetch} className="text-sm font-semibold text-[#E31E24] underline">
               Try again
             </button>
           </div>

@@ -47,7 +47,7 @@ export default function Modal({
       <div
         className={`relative w-full ${maxWidth} max-h-[90vh] rounded-2xl bg-white shadow-xl flex flex-col`}
       >
-        <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-[#DAD7CA] shrink-0">
+        <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-[#E31E24] shrink-0">
           <div className="min-w-0">
             <h2 className="text-lg font-semibold text-[#1A1A18]">{title}</h2>
             {subtitle && <p className="text-sm text-[#45443E] mt-0.5">{subtitle}</p>}
@@ -65,7 +65,7 @@ export default function Modal({
         <div className="overflow-y-auto px-6 py-5 flex-1">{children}</div>
 
         {footer && (
-          <div className="px-6 py-4 border-t border-[#DAD7CA] shrink-0">{footer}</div>
+          <div className="px-6 py-4 border-t border-[#E31E24] shrink-0">{footer}</div>
         )}
       </div>
     </div>

@@ -101,15 +101,15 @@ export default function PartnerProfilePage() {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 h-24" />
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 h-56" />
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6 h-24" />
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6 h-56" />
       </div>
     );
   }
 
   if (error || !partner) {
     return (
-      <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#993C1D] text-sm">
+      <div className="rounded-2xl border border-[#FAECE7] bg-[#FAECE7] p-6 text-center text-[#E31E24] text-sm">
         <p className="mb-3">{error ?? "Profile not found."}</p>
         <button onClick={load} className="text-sm font-semibold underline">
           Try again
@@ -128,7 +128,7 @@ export default function PartnerProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6 flex items-center gap-4">
+      <div className="rounded-2xl border border-[#E31E24] bg-white p-6 flex items-center gap-4">
         <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F1FB] flex items-center justify-center text-[#185FA5] text-lg font-semibold overflow-hidden">
           {partner.profilePicture ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -153,7 +153,7 @@ export default function PartnerProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
           <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Edit profile</h2>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
@@ -170,7 +170,7 @@ export default function PartnerProfilePage() {
           </form>
         </div>
 
-        <div className="rounded-2xl border border-[#DAD7CA] bg-white p-6">
+        <div className="rounded-2xl border border-[#E31E24] bg-white p-6">
           <h2 className="text-sm font-semibold text-[#1A1A18] mb-4">Change password</h2>
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
@@ -209,7 +209,7 @@ export default function PartnerProfilePage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#DAD7CA] bg-[#ECE9DF] p-6">
+      <div className="rounded-2xl border border-[#E31E24] bg-[#ECE9DF] p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <p className="text-xs text-[#6B6A62] mb-1">Total invested</p>

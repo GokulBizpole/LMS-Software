@@ -21,7 +21,7 @@ const CATEGORY_STYLE: Record<ExpenseCategory, string> = {
   OFFICE: "#185FA5",
   SALARY: "#3B6D11",
   PETROL: "#854F0B",
-  ELECTRICITY: "#993C1D",
+  ELECTRICITY: "#E31E24",
   RENT: "#534AB7",
   OTHER: "#6B6A62",
 };
@@ -143,7 +143,7 @@ export default function AdminExpenseTable({
                   <button
                     onClick={() => setConfirmingId(e.id)}
                     disabled={deletingId === e.id}
-                    className="text-[#993C1D] font-medium hover:underline disabled:opacity-50"
+                    className="text-[#E31E24] font-medium hover:underline disabled:opacity-50"
                   >
                     {deletingId === e.id ? "Deleting..." : "Delete"}
                   </button>

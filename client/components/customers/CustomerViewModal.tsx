@@ -161,7 +161,7 @@ export default function CustomerViewModal({
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-[#993C1D] text-[#993C1D] hover:bg-[#FAECE7]"
+                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-[#E31E24] text-[#E31E24] hover:bg-[#FAECE7]"
               >
                 <Trash2 size={14} />
                 Delete
@@ -176,13 +176,13 @@ export default function CustomerViewModal({
             <div className="h-32 bg-[#ECE9DF] rounded-xl" />
           </div>
         ) : error || !customer ? (
-          <div className="p-6 text-center text-sm text-[#993C1D]">{error ?? "Customer not found."}</div>
+          <div className="p-6 text-center text-sm text-[#E31E24]">{error ?? "Customer not found."}</div>
         ) : (
           <>
             <ViewModalSummary
               initials={initials}
               avatarBg="#FAECE7"
-              avatarColor="#993C1D"
+              avatarColor="#E31E24"
               name={customer.name}
               badge={<StatusBadge status={customer.status} />}
               subtitle={`${customer.customerCode} · ${customer.phone}`}

@@ -180,7 +180,7 @@ export default function CollectPaymentModal({
         </div>
 
         {loanId && (
-          <div className="rounded-lg border border-[#DAD7CA] bg-[#FAFAF7] p-3 text-sm">
+          <div className="rounded-lg border border-[#E31E24] bg-[#FAFAF7] p-3 text-sm">
             {loadingLoan ? (
               <p className="text-[#6B6A62]">Loading installment details...</p>
             ) : nextInstallment ? (
@@ -189,7 +189,7 @@ export default function CollectPaymentModal({
                 {formatCurrency(nextInstallment.amount)}
               </p>
             ) : (
-              <p className="text-[#993C1D]">This loan has no pending installments.</p>
+              <p className="text-[#E31E24]">This loan has no pending installments.</p>
             )}
           </div>
         )}
