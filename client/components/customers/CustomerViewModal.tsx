@@ -161,7 +161,7 @@ export default function CustomerViewModal({
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border border-[#E31E24] text-[#E31E24] hover:bg-[#FAECE7]"
+                className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#FCE4E4] text-[#E31E24] hover:bg-[#E31E24]/15"
               >
                 <Trash2 size={14} />
                 Delete

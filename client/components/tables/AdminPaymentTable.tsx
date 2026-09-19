@@ -12,6 +12,9 @@ import { useState } from "react";
 import type { Payment, PaymentStatus } from "@/types/payment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
+import { downloadReceipt } from "@/services/payment.service";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import StatusDot from "@/components/ui/StatusDot";
 
 const STATUS_STYLE: Record<PaymentStatus, { color: string; label: string }> = {
@@ -22,6 +25,19 @@ const STATUS_STYLE: Record<PaymentStatus, { color: string; label: string }> = {
 
 export default function AdminPaymentTable({ payments }: { payments: Payment[] }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const toast = useToast();
+
+  const handleDownloadReceipt = async (paymentId: string) => {
+    setDownloadingId(paymentId);
+    try {
+      await downloadReceipt(paymentId);
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Could not download receipt. Please try again."));
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   if (payments.length === 0) {
     return (
@@ -110,14 +126,14 @@ export default function AdminPaymentTable({ payments }: { payments: Payment[] })
                 </td>
                 <td className="py-3 px-4 text-[#45443E]">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
                 <td className="py-3 px-4 text-right">
-                  <a
-                    href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/${p.id}/receipt`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#185FA5] font-medium hover:underline"
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadReceipt(p.id)}
+                    disabled={downloadingId === p.id}
+                    className="text-[#185FA5] font-medium hover:underline disabled:opacity-50"
                   >
-                    Receipt
-                  </a>
+                    {downloadingId === p.id ? "Downloading..." : "Receipt"}
+                  </button>
                 </td>
               </tr>
             );

@@ -1,7 +1,13 @@
 // components/tables/PaymentTable.tsx
+"use client";
+
+import { useState } from "react";
 import type { Payment, PaymentStatus } from "@/types/payment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
+import { downloadReceipt } from "@/services/payment.service";
+import { useToast } from "@/hooks/useToast";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 function StatusBadge({ status }: { status: PaymentStatus }) {
   const map: Record<PaymentStatus, { bg: string; text: string }> = {
@@ -27,6 +33,24 @@ export default function PaymentTable({
   payments: Payment[];
   onDownloadReceipt?: (paymentId: string) => void;
 }) {
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const toast = useToast();
+
+  // No onDownloadReceipt passed means this is one of the admin-side call
+  // sites (partner call sites always pass their own handler) — download the
+  // receipt as an authenticated blob instead of a raw <a href> to the API,
+  // which can't attach the Bearer token and gets rejected with 401.
+  const handleDefaultDownload = async (paymentId: string) => {
+    setDownloadingId(paymentId);
+    try {
+      await downloadReceipt(paymentId);
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Could not download receipt. Please try again."));
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   if (payments.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-sm text-[#6B6A62]">
@@ -76,24 +100,14 @@ export default function PaymentTable({
               <td className="py-3 px-4"><StatusBadge status={p.paymentStatus} /></td>
               <td className="py-3 px-4 text-[#45443E]">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
               <td className="py-3 px-4 text-right">
-                {onDownloadReceipt ? (
-                  <button
-                    type="button"
-                    onClick={() => onDownloadReceipt(p.id)}
-                    className="text-[#185FA5] font-medium hover:underline"
-                  >
-                    Receipt
-                  </button>
-                ) : (
-                  <a
-                    href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/${p.id}/receipt`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#185FA5] font-medium hover:underline"
-                  >
-                    Receipt
-                  </a>
-                )}
+                <button
+                  type="button"
+                  onClick={() => (onDownloadReceipt ? onDownloadReceipt(p.id) : handleDefaultDownload(p.id))}
+                  disabled={downloadingId === p.id}
+                  className="text-[#185FA5] font-medium hover:underline disabled:opacity-50"
+                >
+                  {downloadingId === p.id ? "Downloading..." : "Receipt"}
+                </button>
               </td>
             </tr>
           ))}

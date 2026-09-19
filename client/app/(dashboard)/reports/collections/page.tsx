@@ -1,12 +1,11 @@
 // app/(dashboard)/reports/collections/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCollectionReport } from "@/hooks/useCollectionReport";
 import PaymentTable from "@/components/tables/PaymentTable";
 import StatCard from "@/components/dashboard/StatCard";
 import Pagination from "@/components/ui/Pagination";
-import FilterPopover, { type FilterFieldSpec } from "@/components/ui/FilterPopover";
 import { getPartners } from "@/services/partner.service";
 import { getCustomers } from "@/services/customer.service";
 import type { Partner } from "@/types/partner";
@@ -15,7 +14,7 @@ import type { PaymentStatus } from "@/types/payment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
 import { exportReportPdf } from "@/utils/exportPdf";
-import { PiggyBank, AlertTriangle, Receipt, ListChecks } from "lucide-react";
+import { PiggyBank, Receipt, Users, AlertTriangle, Download, FileDown } from "lucide-react";
 
 const STATUS_OPTIONS: { key: PaymentStatus | "all"; label: string }[] = [
   { key: "all", label: "All statuses" },
@@ -59,47 +58,12 @@ export default function CollectionReportPage() {
     getCustomers({ limit: 1000 }).then((r) => setCustomers(r.customers)).catch(() => setCustomers([]));
   }, []);
 
-  const filterFields: FilterFieldSpec[] = [
-    {
-      key: "status",
-      label: "Status",
-      kind: "select",
-      value: status,
-      onChange: (v) => setStatus(v as typeof status),
-      options: STATUS_OPTIONS.map((s) => ({ value: s.key, label: s.label })),
-    },
-    {
-      key: "partner",
-      label: "Partner",
-      kind: "select",
-      value: partnerCode,
-      onChange: (v) => setPartnerCode(v),
-      options: [
-        { value: "all", label: "All partners" },
-        ...partners.map((p) => ({ value: p.partnerCode, label: `${p.partnerCode} · ${p.name}` })),
-      ],
-    },
-    {
-      key: "customer",
-      label: "Customer",
-      kind: "select",
-      value: customerCode,
-      onChange: (v) => setCustomerCode(v),
-      options: [
-        { value: "all", label: "All customers" },
-        ...customers.map((c) => ({ value: c.customerCode, label: `${c.customerCode} · ${c.name}` })),
-      ],
-    },
-    {
-      key: "date",
-      label: "Date",
-      kind: "dateRange",
-      startValue: startDate,
-      endValue: endDate,
-      onStartChange: (v) => setStartDate(v),
-      onEndChange: (v) => setEndDate(v),
-    },
-  ];
+  // Reports UI only — computed client-side from the already-fetched `filtered`
+  // set, no new API/data-fetching.
+  const uniqueCustomers = useMemo(
+    () => new Set(filtered.map((p) => p.loan.customer.customerCode)).size,
+    [filtered]
+  );
 
   const filtersSummary = [
     startDate && `From ${startDate}`,
@@ -145,30 +109,31 @@ export default function CollectionReportPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-[#1A1A18]">Collection Report</h1>
-          <p className="text-sm text-[#45443E]">
-            {summary.count} payment{summary.count !== 1 ? "s" : ""} · {formatCurrency(summary.totalReceived)} received
-          </p>
+          <p className="text-sm text-[#45443E]">Payments received, by status, partner and date.</p>
         </div>
-        <button
-          onClick={handleDownload}
-          disabled={loading || filtered.length === 0}
-          className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
-        >
-          Download PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-[#FCE4E4] text-sm font-medium px-4 py-2 rounded-lg text-[#E31E24] hover:bg-[#E31E24]/15"
+          >
+            <FileDown size={15} />
+            Export CSV
+          </button>
+          <button
+            onClick={handleDownload}
+            disabled={loading || filtered.length === 0}
+            className="flex items-center gap-2 bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            <Download size={15} />
+            Download PDF
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total received" value={formatCurrency(summary.totalReceived)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
-        <StatCard title="Total penalty" value={formatCurrency(summary.totalPenalty)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
-        <StatCard title="Payments" value={String(summary.count)} icon={Receipt} iconBg="#ECE9DF" iconColor="#45443E" />
-        <StatCard title="Paid / Pending / Late" value={`${summary.byStatus.PAID ?? 0} / ${summary.byStatus.PENDING ?? 0} / ${summary.byStatus.LATE ?? 0}`} icon={ListChecks} iconBg="#EEEDFE" iconColor="#534AB7" />
-      </div>
-
-      <div className="flex items-center gap-3">
+      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 space-y-4">
         <input
           type="text"
           value={search}
@@ -176,7 +141,85 @@ export default function CollectionReportPage() {
           placeholder="Search receipt, loan, customer..."
           className="w-full max-w-sm rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm"
         />
-        <FilterPopover fields={filterFields} />
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+          <div>
+            <label className="block text-xs text-[#6B6A62] mb-1">From date</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-[#6B6A62] mb-1">To date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-[#6B6A62] mb-1">Partner</label>
+            <select
+              value={partnerCode}
+              onChange={(e) => setPartnerCode(e.target.value)}
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18] bg-white"
+            >
+              <option value="all">All partners</option>
+              {partners.map((p) => (
+                <option key={p.id} value={p.partnerCode}>
+                  {p.partnerCode} · {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-[#6B6A62] mb-1">Customer</label>
+            <select
+              value={customerCode}
+              onChange={(e) => setCustomerCode(e.target.value)}
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18] bg-white"
+            >
+              <option value="all">All customers</option>
+              {customers.map((c) => (
+                <option key={c.id} value={c.customerCode}>
+                  {c.customerCode} · {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-[#6B6A62] mb-1">Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as typeof status)}
+              className="w-full rounded-lg border border-[#9C9A8D] px-3 py-2 text-sm text-[#1A1A18] bg-white"
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="button"
+            onClick={refetch}
+            className="bg-[#E31E24] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#E31E24]/90"
+          >
+            Apply filters
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="Total collected" value={formatCurrency(summary.totalReceived)} icon={PiggyBank} iconBg="#EAF3DE" iconColor="#3B6D11" />
+        <StatCard title="Number of receipts" value={String(summary.count)} icon={Receipt} iconBg="#ECE9DF" iconColor="#45443E" />
+        <StatCard title="Unique customers" value={String(uniqueCustomers)} icon={Users} iconBg="#EEEDFE" iconColor="#534AB7" />
+        <StatCard title="Total penalty" value={formatCurrency(summary.totalPenalty)} icon={AlertTriangle} iconBg="#FAECE7" iconColor="#E31E24" />
       </div>
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5">

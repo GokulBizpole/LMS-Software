@@ -47,7 +47,7 @@ export function ViewModalShell({
       <div
         className={`relative w-full ${maxWidth} max-h-[90vh] rounded-2xl bg-white shadow-xl flex flex-col`}
       >
-        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#E31E24] shrink-0">
+        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b-3 border-[#E31E24] shrink-0">
           <h2 className="text-lg font-semibold text-[#1A1A18]">{title}</h2>
           <div className="flex items-center gap-3 shrink-0">
             {actions}
@@ -124,7 +124,7 @@ export function ViewModalTabs({
   onChange: (key: string) => void;
 }) {
   return (
-    <div className="flex gap-1 border-b border-[#E31E24] px-6">
+    <div className="flex gap-1  px-6">
       {tabs.map((t) => (
         <button
           key={t.key}
@@ -132,7 +132,7 @@ export function ViewModalTabs({
           onClick={() => onChange(t.key)}
           className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
             active === t.key
-              ? "border-[#1A1A18] text-[#1A1A18]"
+              ? "border-[#E31E24] text-[#E31E24]"
               : "border-transparent text-[#6B6A62] hover:text-[#45443E]"
           }`}
         >
@@ -162,7 +162,7 @@ export function ViewModalSection({
         className="w-full flex items-center justify-between px-4 py-3"
       >
         <span className="flex items-center gap-2 text-sm font-semibold text-[#1A1A18]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#3B6D11]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E31E24]" />
           {title}
         </span>
         <ChevronDown
@@ -179,7 +179,7 @@ export function ViewModalField({ label, value }: { label: string; value?: ReactN
   return (
     <div>
       <p className="text-xs text-[#6B6A62] mb-1">{label}</p>
-      <p className="text-sm text-[#1A1A18] wrap-break-word">{value || "—"}</p>
+      <p className="text-[15px] font-bold text-[#1A1A18] wrap-break-word">{value || "—"}</p>
     </div>
   );
 }
@@ -192,7 +192,7 @@ export function ViewModalFooterStrip({
   updated?: string;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-6 px-6 py-4 bg-[#ECE9DF]">
+    <div className="grid grid-cols-2 gap-6 px-6 py-4 bg-[#FCE4E4]">
       <ViewModalField label="Registered" value={registered} />
       <ViewModalField label="Last updated" value={updated} />
     </div>

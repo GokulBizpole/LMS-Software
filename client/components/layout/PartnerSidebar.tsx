@@ -2,7 +2,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -14,6 +13,7 @@ import {
   UserCircle,
   ClipboardCheck,
 } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
@@ -48,11 +48,8 @@ export default function PartnerSidebar({
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-      <div className="flex items-center gap-2 mb-3 px-1">
-        <Image src="/logo.svg" alt="SKA Trust" width={32} height={32} />
-        <span className="text-[15px] font-semibold text-[#1A1A18]">
-          SKA Trust
-        </span>
+      <div className="flex items-center mb-3 px-1">
+        <BrandLogo size="sm" />
       </div>
 
       <span className="self-start mb-6 px-2 py-0.5 rounded-md bg-[#185FA5] text-white text-[10px] font-semibold tracking-wide">

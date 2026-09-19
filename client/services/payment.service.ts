@@ -38,3 +38,22 @@ export async function getPaymentById(id: string): Promise<Payment> {
 
   return data.data;
 }
+
+// Receipt downloads need the auth header, so a plain <a href> won't work —
+// fetch the PDF as a blob (token attached by the axios interceptor) and
+// trigger the browser's save flow from the resulting object URL. Mirrors
+// downloadMyReceipt in partnerPayment.service.ts for the admin endpoint.
+export async function downloadReceipt(paymentId: string): Promise<void> {
+  const response = await api.get(`/payments/${paymentId}/receipt`, {
+    responseType: "blob",
+  });
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `receipt-${paymentId}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}

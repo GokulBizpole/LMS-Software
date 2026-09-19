@@ -61,7 +61,7 @@ function LoanStatusBadge({ status }: { status: PartnerLoanSummary["status"] }) {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[#E31E24] bg-[#ECE9DF] p-4">
+    <div className="rounded-xl  bg-[#ECE9DF] p-4">
       <p className="text-xs text-[#45443E] mb-1">{label}</p>
       <p className="text-lg font-bold text-[#1A1A18]">{value}</p>
     </div>

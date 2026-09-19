@@ -161,7 +161,7 @@ function Section({
   edit: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
+    <div className="rounded-2xl border  bg-white p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-sm font-semibold text-[#1A1A18]">{title}</h2>
@@ -294,14 +294,14 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="flex gap-1 border-b border-[#E31E24] flex-wrap">
+      <div className="flex gap-1  flex-wrap">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => handleTabChange(t.key)}
             className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
               tab === t.key
-                ? "border-[#1A1A18] text-[#1A1A18]"
+                ? "border-[#E31E24] text-[#E31E24]"
                 : "border-transparent text-[#6B6A62] hover:text-[#45443E]"
             }`}
           >
@@ -323,7 +323,7 @@ export default function SettingsPage() {
       ) : (
         <div className="space-y-6">
           {user && (
-            <div className="rounded-2xl border border-[#E31E24] bg-white p-5">
+            <div className="rounded-2xl border  bg-white p-5">
               <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Signed in as</h2>
               <p className="text-sm text-[#1A1A18]">{user.name}</p>
               <p className="text-xs text-[#6B6A62]">

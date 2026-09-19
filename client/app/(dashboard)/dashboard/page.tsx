@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Wallet,
@@ -14,6 +13,7 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 import StatCard from "@/components/dashboard/StatCard";
 import CompactStatCard from "@/components/dashboard/CompactStatCard";
 import RecentActivityTable from "@/components/dashboard/RecentActivityTable";
@@ -28,7 +28,7 @@ import { DASHBOARD_PERIOD_OPTIONS } from "@/types/dashboard";
 function DashboardLoadingView() {
   return (
     <div className="flex flex-col items-center justify-center gap-5 py-24">
-      <Image src="/logo.svg" alt="SKA Trust" width={64} height={64} />
+      <BrandLogo size="lg" />
       <div className="w-8 h-8 rounded-full border-2 border-[#E31E24] border-t-[#185FA5] animate-spin" />
       <p className="text-sm text-[#45443E]">Loading your workspace…</p>
     </div>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import BackButtonLogoutGuard from "./BackButtonLogoutGuard";
 
 export default function DashboardLayout({
   children,
@@ -17,25 +18,45 @@ export default function DashboardLayout({
   // Auth check — token lives in localStorage (backend doesn't set a cookie),
   // so this has to run client-side rather than in middleware.ts.
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.replace("/login");
-      return;
-    }
-
-    const storedUser = localStorage.getItem("authUser");
-    try {
-      const role = storedUser ? JSON.parse(storedUser)?.role : null;
-      if (role === "PARTNER") {
-        router.replace("/partner/dashboard");
+    // Named so it can re-run both on mount and on `pageshow` below — the
+    // browser's back-forward cache can restore this exact page (frozen JS
+    // state, no fresh mount) after a logout that happened elsewhere, so the
+    // one-time mount check alone isn't enough to keep it out.
+    const runAuthCheck = (isCacheRestore: boolean) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // A full navigation (not router.replace) guarantees a clean app
+        // instance when recovering from a frozen bfcache page.
+        if (isCacheRestore) {
+          window.location.replace("/login");
+        } else {
+          router.replace("/login");
+        }
         return;
       }
-    } catch {
-      // Malformed stored user — fall through and let the page load;
-      // API calls will 401/403 if the token is actually bad.
-    }
 
-    setChecked(true);
+      const storedUser = localStorage.getItem("authUser");
+      try {
+        const role = storedUser ? JSON.parse(storedUser)?.role : null;
+        if (role === "PARTNER") {
+          router.replace("/partner/dashboard");
+          return;
+        }
+      } catch {
+        // Malformed stored user — fall through and let the page load;
+        // API calls will 401/403 if the token is actually bad.
+      }
+
+      setChecked(true);
+    };
+
+    runAuthCheck(false);
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) runAuthCheck(true);
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, [router]);
 
   if (!checked) {
@@ -48,6 +69,8 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#FFFFFF]">
+      {/* Confirms before leaving via the browser Back button while authenticated. */}
+      <BackButtonLogoutGuard enabled={checked} />
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Header />

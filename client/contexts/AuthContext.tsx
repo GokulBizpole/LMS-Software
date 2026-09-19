@@ -1,7 +1,7 @@
 // contexts/AuthContext.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { login as loginRequest } from "@/services/auth.service";
 import type { AuthUser } from "@/types/auth";
@@ -36,30 +36,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  async function handleLoginSuccess(result: { token: string; user: AuthUser }) {
-    // This is the actual setItem call that was missing on the frontend.
-    localStorage.setItem("token", result.token);
-    localStorage.setItem("authUser", JSON.stringify(result.user));
-    setUser(result.user);
+  // Memoized so consumers (e.g. the back-button logout guard) that depend
+  // on `login`/`logout` in an effect's dependency array don't tear down and
+  // re-run on every render — AuthProvider wraps {children} at the root, so
+  // its body re-executes on every navigation, and un-memoized functions here
+  // would get a new identity each time.
+  const handleLoginSuccess = useCallback(
+    async (result: { token: string; user: AuthUser }) => {
+      // This is the actual setItem call that was missing on the frontend.
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("authUser", JSON.stringify(result.user));
+      setUser(result.user);
 
-    if (result.user.role === "PARTNER") {
-      router.push("/partner/dashboard");
-    } else {
-      router.push("/dashboard");
-    }
-  }
+      if (result.user.role === "PARTNER") {
+        router.push("/partner/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    },
+    [router]
+  );
 
-  async function login(email: string, password: string) {
-    const result = await loginRequest({ email, password });
-    await handleLoginSuccess(result);
-  }
+  const login = useCallback(
+    async (email: string, password: string) => {
+      const result = await loginRequest({ email, password });
+      await handleLoginSuccess(result);
+    },
+    [handleLoginSuccess]
+  );
 
-  function logout() {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("authUser");
     setUser(null);
-    router.push("/login");
-  }
+    // replace, not push — logging out shouldn't leave a forward-navigable
+    // history entry pointing back at the now-invalid authenticated page.
+    router.replace("/login");
+  }, [router]);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>

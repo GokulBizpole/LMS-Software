@@ -26,10 +26,21 @@ export function exportReportPdf({
 }: ExportReportPdfOptions) {
   const doc = new jsPDF({ orientation: columns.length > 6 ? "landscape" : "portrait" });
   const marginX = 14;
-  let cursorY = 16;
+  let cursorY = 14;
 
+  // Brand letterhead — two-tone "SKA"/"Trust" wordmark. jsPDF can't embed the
+  // brand icon's SVG without rasterizing it first, so this is text-only.
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(26, 29, 36);
+  doc.text("SKA", marginX, cursorY);
+  doc.setTextColor(224, 32, 32);
+  doc.text("Trust", marginX + doc.getTextWidth("SKA ") , cursorY);
+
+  cursorY += 8;
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
+  doc.setTextColor(26, 29, 36);
   doc.text(title, marginX, cursorY);
 
   cursorY += 6;

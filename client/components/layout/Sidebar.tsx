@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import { ADMIN_NAV_SECTIONS } from "@/config/adminNav";
 import { getSettings } from "@/services/setting.service";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -34,16 +35,8 @@ export default function Sidebar() {
         {collapsed ? <ChevronRight size={13} /> : <ChevronLeft size={13} />}
       </button>
 
-      <div className={`flex items-center gap-2.5 mb-6 px-1 ${collapsed ? "justify-center" : ""}`}>
-        <div className="w-9 h-9 shrink-0 rounded-xl bg-[#E31E24]/10 flex items-center justify-center">
-          <Building2 size={18} className="text-[#E31E24]" />
-        </div>
-        {!collapsed && (
-          <div className="leading-tight">
-            <p className="text-sm font-bold text-[#E31E24]">SKA Trust</p>
-            <p className="text-xs text-[#45443E]">Finance</p>
-          </div>
-        )}
+      <div className={`flex items-center mb-6 px-1 ${collapsed ? "justify-center" : ""}`}>
+        <BrandLogo size="sm" showWordmark={!collapsed} />
       </div>
 
       <nav className="flex flex-col gap-5 flex-1 overflow-y-auto overflow-x-hidden">

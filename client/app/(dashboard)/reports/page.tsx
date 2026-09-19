@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Receipt,
   TrendingUp,
+  ArrowRight,
 } from "lucide-react";
 import { useDashboard } from "@/hooks/useDashboard";
 import StatCard from "@/components/dashboard/StatCard";
@@ -18,12 +19,54 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { exportReportPdf } from "@/utils/exportPdf";
 
 const REPORT_LINKS = [
-  { href: "/reports/collections", label: "Collection Report", description: "Payments received, by status, partner and date." },
-  { href: "/reports/loans", label: "Loan Report", description: "Loan book by status, partner and customer." },
-  { href: "/reports/partners", label: "Partner Report", description: "Per-partner investment, collection and outstanding." },
-  { href: "/reports/customers", label: "Customer Report", description: "Customer master data and status breakdown." },
-  { href: "/reports/expenses", label: "Expense Report", description: "Expenses by category, partner and date." },
-  { href: "/reports/profit-loss", label: "Profit & Loss Report", description: "Collections vs expenses, net profit." },
+  {
+    href: "/reports/collections",
+    label: "Collection Report",
+    description: "Payments received, by status, partner and date.",
+    icon: PiggyBank,
+    iconBg: "#FAEEDA",
+    iconColor: "#854F0B",
+  },
+  {
+    href: "/reports/loans",
+    label: "Loan Report",
+    description: "Loan book by status, partner and customer.",
+    icon: FileText,
+    iconBg: "#E6F1FB",
+    iconColor: "#185FA5",
+  },
+  {
+    href: "/reports/partners",
+    label: "Partner Report",
+    description: "Per-partner investment, collection and outstanding.",
+    icon: Handshake,
+    iconBg: "#FAEEDA",
+    iconColor: "#854F0B",
+  },
+  {
+    href: "/reports/customers",
+    label: "Customer Report",
+    description: "Customer master data and status breakdown.",
+    icon: Users,
+    iconBg: "#EEEDFE",
+    iconColor: "#534AB7",
+  },
+  {
+    href: "/reports/expenses",
+    label: "Expense Report",
+    description: "Expenses by category, partner and date.",
+    icon: Receipt,
+    iconBg: "#FCE4E4",
+    iconColor: "#E31E24",
+  },
+  {
+    href: "/reports/profit-loss",
+    label: "Profit & Loss Report",
+    description: "Collections vs expenses, net profit.",
+    icon: TrendingUp,
+    iconBg: "#E6F1FB",
+    iconColor: "#185FA5",
+  },
 ];
 
 export default function ReportsDashboardPage() {
@@ -115,16 +158,28 @@ export default function ReportsDashboardPage() {
       <div>
         <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Detailed reports</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {REPORT_LINKS.map((r) => (
-            <Link
-              key={r.href}
-              href={r.href}
-              className="rounded-2xl border border-[#E31E24] bg-white p-5 hover:border-[#9C9A8D] transition-colors"
-            >
-              <p className="text-sm font-semibold text-[#1A1A18] mb-1">{r.label}</p>
-              <p className="text-xs text-[#6B6A62]">{r.description}</p>
-            </Link>
-          ))}
+          {REPORT_LINKS.map((r) => {
+            const Icon = r.icon;
+            return (
+              <Link
+                key={r.href}
+                href={r.href}
+                className="rounded-2xl border border-[#E5E7EB] bg-white p-5 hover:border-[#E31E24] transition-colors"
+              >
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
+                  style={{ backgroundColor: r.iconBg, color: r.iconColor }}
+                >
+                  <Icon size={17} />
+                </div>
+                <p className="flex items-center gap-1.5 text-sm font-semibold text-[#1A1A18] mb-1">
+                  {r.label}
+                  <ArrowRight size={14} className="text-[#6B6A62]" />
+                </p>
+                <p className="text-xs text-[#6B6A62]">{r.description}</p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
