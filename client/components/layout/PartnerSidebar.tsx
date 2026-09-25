@@ -12,12 +12,14 @@ import {
   BarChart3,
   UserCircle,
   ClipboardCheck,
+  Boxes,
 } from "lucide-react";
 import BrandLogo from "@/components/ui/BrandLogo";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
   { label: "Customers", href: "/partner/customers", icon: Users },
+  { label: "Groups", href: "/partner/groups", icon: Boxes },
   { label: "Loans", href: "/partner/loans", icon: FileText },
   { label: "Payments", href: "/partner/payments", icon: Wallet },
   { label: "Investments", href: "/partner/investments", icon: PiggyBank },

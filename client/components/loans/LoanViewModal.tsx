@@ -97,6 +97,15 @@ export default function LoanViewModal({
             <ViewModalSection title="Loan Terms">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-1">
                 <ViewModalField label="Principal amount" value={formatCurrency(loan.principalAmount)} />
+                {loan.requestedAmount != null && (
+                  <>
+                    <ViewModalField label="Requested amount" value={formatCurrency(loan.requestedAmount)} />
+                    <ViewModalField
+                      label="Previous loan deduction"
+                      value={`− ${formatCurrency(loan.previousLoanDeduction ?? 0)}`}
+                    />
+                  </>
+                )}
                 <ViewModalField
                   label="Interest / Duration"
                   value={`${loan.interestPercentage}% · ${loan.duration} ${loan.paymentFrequency === "MONTHLY" ? "months" : "weeks"}`}

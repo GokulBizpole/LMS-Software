@@ -13,6 +13,7 @@ import {
   ClipboardCheck,
   Clock,
   AlertTriangle,
+  Boxes,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +34,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { label: "Customers", href: "/customers", icon: Users },
+      { label: "Groups", href: "/groups", icon: Boxes },
       { label: "Partners", href: "/partners", icon: Handshake },
       { label: "Loans", href: "/loans", icon: FileText },
       { label: "Payments", href: "/payments", icon: Wallet },

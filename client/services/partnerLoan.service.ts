@@ -1,6 +1,6 @@
 // services/partnerLoan.service.ts
 import api from "@/lib/axios";
-import type { Loan, LoanListResponse } from "@/types/loan";
+import type { Loan, LoanEligibility, LoanListResponse } from "@/types/loan";
 
 export interface GetMyLoansParams {
   page?: number;
@@ -70,4 +70,18 @@ export async function createMyLoan(
   }
 
   return { data: data.data, message: data.message };
+}
+
+export async function getMyCustomerLoanEligibility(
+  customerId: string
+): Promise<LoanEligibility> {
+  const { data } = await api.get<{ success: boolean; data: LoanEligibility }>(
+    `/partners/me/customers/${customerId}/loan-eligibility`
+  );
+
+  if (!data.success) {
+    throw new Error("Failed to check loan eligibility");
+  }
+
+  return data.data;
 }

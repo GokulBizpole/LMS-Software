@@ -66,6 +66,11 @@ enum EodStatus {
   CLOSED
 }
 
+enum GroupCreatorType {
+  ADMIN
+  PARTNER
+}
+
 // ================= ADMIN =================
 
 model Admin {
@@ -132,6 +137,8 @@ model Partner {
 
   eodReports EodReport[]
 
+  groups Group[]
+
   notifications Notification[]
 
   createdAt DateTime @default(now())
@@ -185,6 +192,10 @@ model Customer {
   notifications Notification[]
 
   documents CustomerDocument[]
+
+  headOfGroups Group[] @relation("GroupHead")
+
+  groupMembership GroupMember?
 
   createdAt DateTime @default(now())
 
@@ -250,6 +261,15 @@ model Loan {
   remarks String? @db.Text
 
   rejectionReason String? @db.Text
+
+  // Set only when this loan was taken while a previous loan was in its
+  // final weeks: principalAmount = requestedAmount - previousLoanDeduction,
+  // where the deduction is what was still payable on previousLoanId.
+  requestedAmount Decimal? @db.Decimal(15, 2)
+
+  previousLoanDeduction Decimal? @db.Decimal(15, 2)
+
+  previousLoanId String?
 
   payments Payment[]
 
@@ -380,6 +400,76 @@ model EodExpense {
 
   @@index([eodReportId])
   @@map("eod_expenses")
+}
+
+// ================= GROUP =================
+
+model Group {
+  id String @id @default(uuid())
+
+  // Auto-generated GRP001, GRP002, ... from the "GROUP" row in
+  // code_sequences, which only ever increments, so a deleted group's code
+  // is never reused.
+  groupCode String @unique @db.VarChar(20)
+
+  name String @db.VarChar(100)
+
+  groupHeadId String
+
+  groupHead Customer @relation("GroupHead", fields: [groupHeadId], references: [id])
+
+  // Partner that owns every member of this group (null when the members
+  // are admin-created customers with no partner).
+  partnerId String?
+
+  partner Partner? @relation(fields: [partnerId], references: [id])
+
+  // Polymorphic creator (Admin or Partner id), so no FK. createdByName is a
+  // snapshot taken at creation time for display.
+  createdByType GroupCreatorType
+
+  createdById String @db.VarChar(100)
+
+  createdByName String @db.VarChar(100)
+
+  members GroupMember[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([groupHeadId])
+  @@map("groups")
+}
+
+model GroupMember {
+  id String @id @default(uuid())
+
+  groupId String
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  // A customer can belong to at most one group.
+  customerId String @unique
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([groupId])
+  @@map("group_members")
+}
+
+// ================= CODE SEQUENCE =================
+
+// Monotonic counters for auto-generated record codes (e.g. key "GROUP").
+model CodeSequence {
+  key String @id @db.VarChar(50)
+
+  value Int @default(0)
+
+  @@map("code_sequences")
 }
 
 // ================= CUSTOMER DOCUMENT =================

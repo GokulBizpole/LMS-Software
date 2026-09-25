@@ -5,6 +5,7 @@ import {
   createLoan,
   generateLoanNumber,
   getAllLoans,
+  getLoanEligibility,
   getLoanById,
   rejectLoanById,
   updateLoanById,
@@ -241,6 +242,33 @@ export const addMyLoan = async (req: any, res: Response) => {
     });
   } catch (error) {
     return res.status(400).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+// GET MY CUSTOMER'S LOAN ELIGIBILITY — read-only preview of the
+// one-active-loan rule that createLoan enforces, for the Create Loan form.
+export const getMyCustomerLoanEligibility = async (req: any, res: Response) => {
+  try {
+    const customer = await getCustomerById(String(req.params.id));
+
+    if (customer.partnerId !== req.user?.id) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer not found",
+      });
+    }
+
+    const data = await getLoanEligibility(customer.id);
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    return res.status(404).json({
       success: false,
       message: (error as Error).message,
     });

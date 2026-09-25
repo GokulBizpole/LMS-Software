@@ -8,6 +8,7 @@ import {
   rejectLoan,
   updateLoan,
 } from "../controllers/loan.controller";
+import { getLoanCollectionView } from "../controllers/payment.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
 import { adminOnly } from "../middleware/role.middleware";
@@ -19,6 +20,8 @@ router.post("/", authenticate, adminOnly, addLoan);
 router.get("/", authenticate, adminOnly, getLoans);
 
 router.get("/:id", authenticate, adminOnly, getLoan);
+
+router.get("/:id/collection", authenticate, adminOnly, getLoanCollectionView);
 
 router.put("/:id", authenticate, adminOnly, updateLoan);
 

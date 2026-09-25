@@ -4,13 +4,19 @@
 import { useEffect, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import { TextField, SelectField, TextareaField } from "@/components/ui/FormField";
-import { createMyLoan, type CreateMyLoanData } from "@/services/partnerLoan.service";
+import {
+  createMyLoan,
+  getMyCustomerLoanEligibility,
+  type CreateMyLoanData,
+} from "@/services/partnerLoan.service";
 import { getMyCustomers } from "@/services/partnerCustomer.service";
+import { StatusBadge as LoanStatusBadge } from "@/components/tables/LoanTable";
 import { useToast } from "@/hooks/useToast";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { notifyDesktop } from "@/utils/electronNotify";
+import { formatCurrency } from "@/utils/formatCurrency";
 import type { Customer } from "@/types/customer";
-import type { Loan } from "@/types/loan";
+import type { Loan, LoanEligibility } from "@/types/loan";
 
 interface FormState {
   customerId: string;
@@ -48,7 +54,45 @@ export default function LoanFormModal({
   const [form, setForm] = useState<FormState>(emptyForm());
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  // Preview of the server's one-active-loan rule for the selected customer.
+  // Display only — the API re-checks and applies it on submit.
+  const [eligibility, setEligibility] = useState<LoanEligibility | null>(null);
+  const [eligibilityLoading, setEligibilityLoading] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    if (!open || !form.customerId) {
+      const clear = () => setEligibility(null);
+      clear();
+      return;
+    }
+    let cancelled = false;
+    const load = () => {
+      setEligibilityLoading(true);
+      getMyCustomerLoanEligibility(form.customerId)
+        .then((res) => {
+          if (!cancelled) setEligibility(res);
+        })
+        .catch(() => {
+          if (!cancelled) setEligibility(null);
+        })
+        .finally(() => {
+          if (!cancelled) setEligibilityLoading(false);
+        });
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, form.customerId]);
+
+  const existingLoan = eligibility?.existingLoan ?? null;
+  const blocked = eligibility !== null && !eligibility.eligible;
+  const requestedAmount = Number(form.principalAmount) || 0;
+  const newLoanAmount =
+    existingLoan && eligibility?.eligible
+      ? Math.round((requestedAmount - existingLoan.remainingPayable) * 100) / 100
+      : null;
 
   useEffect(() => {
     if (!open) return;
@@ -106,7 +150,7 @@ export default function LoanFormModal({
           <button
             type="submit"
             form="partner-loan-form"
-            disabled={submitting}
+            disabled={submitting || blocked || eligibilityLoading}
             className="bg-[#1A1A18] text-white text-sm font-medium px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {submitting ? "Submitting..." : "Submit loan"}
@@ -179,6 +223,65 @@ export default function LoanFormModal({
             required
           />
         </div>
+
+        {form.customerId && eligibilityLoading && (
+          <div className="h-16 bg-[#ECE9DF] rounded-xl animate-pulse" />
+        )}
+
+        {!eligibilityLoading && existingLoan && (
+          <div
+            className={`rounded-xl border p-4 space-y-3 ${
+              blocked ? "border-[#E31E24]/40 bg-[#FCE4E4]/60" : "border-[#854F0B]/30 bg-[#FAEEDA]/60"
+            }`}
+          >
+            <p className={`text-sm font-semibold ${blocked ? "text-[#E31E24]" : "text-[#854F0B]"}`}>
+              {blocked
+                ? eligibility?.reason ?? "Customer already has an active loan."
+                : `Existing loan is in its final ${eligibility?.maxCarryOverWeeks} weeks — the remaining amount will be deducted from this loan.`}
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-[#6B6A62] mb-1">Existing loan</p>
+                <p className="font-semibold text-[#1A1A18]">{existingLoan.loanNumber}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#6B6A62] mb-1">Status</p>
+                <LoanStatusBadge status={existingLoan.status} />
+              </div>
+              <div>
+                <p className="text-xs text-[#6B6A62] mb-1">Remaining weeks</p>
+                <p className="font-semibold text-[#1A1A18]">
+                  {existingLoan.remainingWeeks}
+                  <span className="font-normal text-xs text-[#6B6A62]">
+                    {" "}
+                    ({existingLoan.paidInstallments}/{existingLoan.totalInstallments} paid)
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-[#6B6A62] mb-1">Remaining amount</p>
+                <p className="font-semibold text-[#1A1A18]">{formatCurrency(existingLoan.remainingPayable)}</p>
+              </div>
+            </div>
+
+            {newLoanAmount !== null && (
+              <div className="rounded-lg bg-white border border-[#E5E7EB] px-3 py-2.5 text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-[#6B6A62]">Requested {formatCurrency(requestedAmount)}</span>
+                <span className="text-[#6B6A62]">− remaining {formatCurrency(existingLoan.remainingPayable)}</span>
+                <span className="text-[#6B6A62]">=</span>
+                <span className={`font-bold ${newLoanAmount > 0 ? "text-[#3B6D11]" : "text-[#E31E24]"}`}>
+                  New loan amount {formatCurrency(Math.max(newLoanAmount, 0))}
+                </span>
+                {requestedAmount > 0 && newLoanAmount <= 0 && (
+                  <span className="w-full text-xs text-[#E31E24]">
+                    Requested amount must be more than the remaining amount.
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <TextareaField
           label="Remarks"

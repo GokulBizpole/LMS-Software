@@ -13,7 +13,7 @@ const STATUS_STYLES: Record<LoanStatus, { bg: string; text: string }> = {
   REJECTED: { bg: "#FAECE7", text: "#E31E24" },
 };
 
-function StatusBadge({ status }: { status: LoanStatus }) {
+export function StatusBadge({ status }: { status: LoanStatus }) {
   const c = STATUS_STYLES[status] ?? STATUS_STYLES.PENDING;
   return (
     <span

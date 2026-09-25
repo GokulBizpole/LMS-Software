@@ -174,6 +174,15 @@ export default function LoanDetailPage() {
               <p className="text-xs text-[#6B6A62] mb-3">Loan terms</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-4">
                 <Field label="Principal amount" value={formatCurrency(loan.principalAmount)} />
+                {loan.requestedAmount != null && (
+                  <>
+                    <Field label="Requested amount" value={formatCurrency(loan.requestedAmount)} />
+                    <Field
+                      label="Previous loan deduction"
+                      value={`− ${formatCurrency(loan.previousLoanDeduction ?? 0)}`}
+                    />
+                  </>
+                )}
                 <Field
                   label="Interest / Duration"
                   value={`${loan.interestPercentage}% - ${loan.duration} ${loan.paymentFrequency === "MONTHLY" ? "months" : "weeks"}`}

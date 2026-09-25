@@ -58,9 +58,32 @@ export interface Loan {
   endDate?: string | null;
   remarks?: string | null;
   rejectionReason?: string | null;
+  // Set only for a loan taken during a previous loan's final weeks:
+  // principalAmount = requestedAmount - previousLoanDeduction.
+  requestedAmount?: string | number | null;
+  previousLoanDeduction?: string | number | null;
+  previousLoanId?: string | null;
   schedules?: LoanScheduleEntry[];
   createdAt: string;
   updatedAt: string;
+}
+
+// Server preview of the one-active-loan rule (see loan.service getLoanEligibility).
+export interface LoanEligibility {
+  eligible: boolean;
+  reason?: string;
+  maxCarryOverWeeks: number;
+  existingLoan: {
+    id: string;
+    loanNumber: string;
+    status: LoanStatus;
+    paymentFrequency: "WEEKLY" | "MONTHLY";
+    totalInstallments: number;
+    paidInstallments: number;
+    remainingInstallments: number;
+    remainingWeeks: number;
+    remainingPayable: number;
+  } | null;
 }
 
 export interface LoanListResponse {

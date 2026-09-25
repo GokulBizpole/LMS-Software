@@ -13,6 +13,97 @@ export const generateLoanNumber = async () => {
   return "LN" + String(count + 1).padStart(6, "0");
 };
 
+// ================= ONE-ACTIVE-LOAN RULE =================
+// A customer may have only one open loan. The one exception: when that loan
+// has MAX_CARRY_OVER_WEEKS or fewer weeks left in its schedule, a new loan is
+// allowed, and whatever is still payable on the old loan is deducted from the
+// new loan's requested amount. The old loan itself is left untouched and is
+// paid off through the normal payment flow.
+
+export const MAX_CARRY_OVER_WEEKS = 3;
+
+const OPEN_LOAN_STATUSES = ["PENDING", "APPROVED", "ACTIVE", "OVERDUE"] as const;
+
+export const ACTIVE_LOAN_ERROR = "Customer already has an active loan.";
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+export interface LoanEligibility {
+  eligible: boolean;
+  reason?: string;
+  maxCarryOverWeeks: number;
+  existingLoan: {
+    id: string;
+    loanNumber: string;
+    status: string;
+    paymentFrequency: "WEEKLY" | "MONTHLY";
+    totalInstallments: number;
+    paidInstallments: number;
+    remainingInstallments: number;
+    remainingWeeks: number;
+    // Unpaid installment amounts plus any penalties already applied to them.
+    remainingPayable: number;
+  } | null;
+}
+
+export const getLoanEligibility = async (customerId: string): Promise<LoanEligibility> => {
+  const openLoans = await prisma.loan.findMany({
+    where: { customerId, status: { in: [...OPEN_LOAN_STATUSES] } },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      loanNumber: true,
+      status: true,
+      paymentFrequency: true,
+      totalInstallments: true,
+      schedules: {
+        where: { isPaid: false },
+        select: { amount: true, penalty: true },
+      },
+    },
+  });
+
+  if (openLoans.length === 0) {
+    return { eligible: true, maxCarryOverWeeks: MAX_CARRY_OVER_WEEKS, existingLoan: null };
+  }
+
+  const loan = openLoans[0];
+  const remainingInstallments = loan.schedules.length;
+  // Remaining time is read from the schedule: one weekly installment = one
+  // week; a monthly installment is counted as 4 weeks (the shortest month),
+  // so a monthly loan only qualifies once fully paid.
+  const remainingWeeks =
+    loan.paymentFrequency === "WEEKLY" ? remainingInstallments : remainingInstallments * 4;
+  const remainingPayable = round2(
+    loan.schedules.reduce((sum, s) => sum + Number(s.amount) + Number(s.penalty), 0)
+  );
+
+  const existingLoan = {
+    id: loan.id,
+    loanNumber: loan.loanNumber,
+    status: loan.status,
+    paymentFrequency: loan.paymentFrequency,
+    totalInstallments: loan.totalInstallments,
+    paidInstallments: loan.totalInstallments - remainingInstallments,
+    remainingInstallments,
+    remainingWeeks,
+    remainingPayable,
+  };
+
+  // More than one open loan (e.g. a carry-over loan is already pending) or
+  // more than 3 weeks left: no new loan.
+  if (openLoans.length > 1 || remainingWeeks > MAX_CARRY_OVER_WEEKS) {
+    return {
+      eligible: false,
+      reason: ACTIVE_LOAN_ERROR,
+      maxCarryOverWeeks: MAX_CARRY_OVER_WEEKS,
+      existingLoan,
+    };
+  }
+
+  return { eligible: true, maxCarryOverWeeks: MAX_CARRY_OVER_WEEKS, existingLoan };
+};
+
 interface CreateLoanData {
   loanNumber: string;
   customerId: string;
@@ -69,12 +160,36 @@ export const createLoan = async (
     throw new Error("Loan number already exists");
   }
 
+  // One-active-loan rule (source of truth for every create path).
+  const eligibility = await getLoanEligibility(data.customerId);
+
+  if (!eligibility.eligible) {
+    throw new Error(eligibility.reason ?? ACTIVE_LOAN_ERROR);
+  }
+
+  // In the final-weeks exception, the amount still payable on the old loan
+  // is deducted from the requested amount; the rest of the calculation and
+  // the schedule below then run on the reduced principal as usual.
+  const carryOver = eligibility.existingLoan;
+  const requestedAmount = Number(data.principalAmount);
+  let principalAmount = requestedAmount;
+
+  if (carryOver) {
+    principalAmount = round2(requestedAmount - carryOver.remainingPayable);
+
+    if (principalAmount <= 0) {
+      throw new Error(
+        `Requested amount must be more than ₹${carryOver.remainingPayable} still payable on loan ${carryOver.loanNumber}.`
+      );
+    }
+  }
+
   // Interest
   const interestAmount =
-    (data.principalAmount * data.interestPercentage) / 100;
+    (principalAmount * data.interestPercentage) / 100;
 
   const totalPayable =
-    data.principalAmount + interestAmount;
+    principalAmount + interestAmount;
 
   const installmentAmount =
     totalPayable / data.duration;
@@ -95,6 +210,11 @@ export const createLoan = async (
 const loan = await prisma.loan.create({
   data: {
     ...data,
+    principalAmount,
+    // Always set explicitly so these can't be supplied via the request body.
+    requestedAmount: carryOver ? requestedAmount : null,
+    previousLoanDeduction: carryOver ? carryOver.remainingPayable : null,
+    previousLoanId: carryOver ? carryOver.id : null,
     startDate,
     interestAmount,
     totalPayable,

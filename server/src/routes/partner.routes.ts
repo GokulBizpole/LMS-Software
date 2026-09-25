@@ -18,10 +18,17 @@ import {
   getMyCustomerPayments,
   getMyCustomers,
 } from "../controllers/customer.controller";
-import { addMyLoan, getMyLoan, getMyLoans } from "../controllers/loan.controller";
+import {
+  addMyLoan,
+  getMyCustomerLoanEligibility,
+  getMyLoan,
+  getMyLoans,
+} from "../controllers/loan.controller";
 import {
   addMyPayment,
+  collectMyLoanPayment,
   downloadMyReceipt,
+  getMyLoanCollection,
   getMyPayment,
   getMyPayments,
 } from "../controllers/payment.controller";
@@ -37,6 +44,15 @@ import {
   removeMyCustomerDocument,
   uploadMyCustomerDocument,
 } from "../controllers/document.controller";
+import {
+  addGroup,
+  deleteGroup,
+  getGroup,
+  getGroupEligibleCustomers,
+  getGroupOverviewView,
+  getGroups,
+  updateGroup,
+} from "../controllers/group.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
 import { adminOnly, partnerOnly } from "../middleware/role.middleware";
@@ -75,6 +91,12 @@ router.get(
   getMyCustomerPayments
 );
 router.get(
+  "/me/customers/:id/loan-eligibility",
+  authenticate,
+  partnerOnly,
+  getMyCustomerLoanEligibility
+);
+router.get(
   "/me/customers/:id/documents",
   authenticate,
   partnerOnly,
@@ -97,6 +119,18 @@ router.delete(
 router.get("/me/loans", authenticate, partnerOnly, getMyLoans);
 router.post("/me/loans", authenticate, partnerOnly, addMyLoan);
 router.get("/me/loans/:id", authenticate, partnerOnly, getMyLoan);
+router.get(
+  "/me/loans/:id/collection",
+  authenticate,
+  partnerOnly,
+  getMyLoanCollection
+);
+router.post(
+  "/me/loans/:id/collect",
+  authenticate,
+  partnerOnly,
+  collectMyLoanPayment
+);
 
 router.get("/me/payments", authenticate, partnerOnly, getMyPayments);
 router.post("/me/payments", authenticate, partnerOnly, addMyPayment);
@@ -124,6 +158,24 @@ router.get(
 
 router.get("/me/eod/preview", authenticate, partnerOnly, myEodPreview);
 router.post("/me/eod", authenticate, partnerOnly, submitEod);
+
+router.get("/me/groups", authenticate, partnerOnly, getGroups);
+router.post("/me/groups", authenticate, partnerOnly, addGroup);
+router.get(
+  "/me/groups/eligible-customers",
+  authenticate,
+  partnerOnly,
+  getGroupEligibleCustomers
+);
+router.get("/me/groups/:id", authenticate, partnerOnly, getGroup);
+router.get(
+  "/me/groups/:id/overview",
+  authenticate,
+  partnerOnly,
+  getGroupOverviewView
+);
+router.put("/me/groups/:id", authenticate, partnerOnly, updateGroup);
+router.delete("/me/groups/:id", authenticate, partnerOnly, deleteGroup);
 
 // ============================================================
 // Admin management of partner records
